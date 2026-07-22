@@ -1,0 +1,4 @@
+import type { AtlasNewsItem } from "@/types/atlas-data";
+function canonical(url: string): string { const value = new URL(url); value.hash = ""; for (const key of [...value.searchParams.keys()]) if (/^(utm_|fbclid|gclid)/i.test(key)) value.searchParams.delete(key); return value.toString().replace(/\/$/, ""); }
+function titleKey(title: string): string { return title.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+export function deduplicateNews(items: AtlasNewsItem[]): AtlasNewsItem[] { const urls = new Set<string>(); const titles = new Set<string>(); return items.filter((item) => { const url = canonical(item.sourceUrl); const title = titleKey(item.title); if (urls.has(url) || titles.has(title)) return false; urls.add(url); titles.add(title); return true; }); }

@@ -11,12 +11,14 @@ import maplibregl, {
   Map as MapLibreMap,
   MapLayerMouseEvent,
 } from "maplibre-gl";
+import { EARTHQUAKE_LAYER_IDS, earthquakeLayersVisible } from "@/lib/dashboard-logic.mjs";
 
 
 type FeedRange = "24h" | "7d" | "30d";
 
 type AtlasMapProps = {
   activeLayer: string;
+  onCoordinateSelect?: (longitude: number, latitude: number) => void;
 };
 
 type EarthquakeProperties = {
@@ -80,23 +82,24 @@ function normalizeFeatures(
 ): EarthquakeCollection {
   return {
     ...collection,
-    features: collection.features.filter(
-      (feature) =>
-        feature.geometry?.type === "Point" &&
-        Array.isArray(feature.geometry.coordinates) &&
-        feature.geometry.coordinates.length >= 2
-    ),
+    features: collection.features.filter((feature) => {
+      if (feature.geometry?.type !== "Point" || !Array.isArray(feature.geometry.coordinates)) return false;
+      const [longitude, latitude] = feature.geometry.coordinates;
+      return Number.isFinite(longitude) && Number.isFinite(latitude) && longitude >= -180 && longitude <= 180 && latitude >= -90 && latitude <= 90;
+    }),
   };
 }
 
 export function AtlasMap({
   activeLayer,
+  onCoordinateSelect,
 }: AtlasMapProps) {
   const containerRef =
     useRef<HTMLDivElement | null>(null);
 
   const mapRef =
     useRef<MapLibreMap | null>(null);
+  const activeLayerRef = useRef(activeLayer);
 
   const [range, setRange] =
     useState<FeedRange>("24h");
@@ -112,6 +115,14 @@ export function AtlasMap({
 
   const [globeEnabled, setGlobeEnabled] =
     useState(false);
+  const [reloadToken, setReloadToken] = useState(0);
+
+  function applyLayerVisibility(map: MapLibreMap, layer: string) {
+    const visibility = earthquakeLayersVisible(layer) ? "visible" : "none";
+    for (const layerId of EARTHQUAKE_LAYER_IDS) {
+      if (map.getLayer(layerId)) map.setLayoutProperty(layerId, "visibility", visibility);
+    }
+  }
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) {
@@ -274,6 +285,8 @@ export function AtlasMap({
         },
       });
 
+      applyLayerVisibility(map, activeLayerRef.current);
+
       map.on(
         "click",
         "earthquake-clusters",
@@ -382,7 +395,9 @@ export function AtlasMap({
                 ${properties.tsunami === 1
                   ? "Yes"
                   : "No"}
+                <br>Category: earthquake
               </p>
+              ${properties.url ? `<a href="${escapeHtml(properties.url)}" target="_blank" rel="noopener noreferrer">USGS source ↗</a>` : ""}
             </article>
           `;
 
@@ -413,6 +428,10 @@ export function AtlasMap({
           map.getCanvas().style.cursor = "";
         });
       }
+
+      map.on("click", (event) => {
+        if (activeLayerRef.current === "Weather") onCoordinateSelect?.(event.lngLat.lng, event.lngLat.lat);
+      });
     });
 
     mapRef.current = map;
@@ -428,7 +447,7 @@ export function AtlasMap({
       map.remove();
       mapRef.current = null;
     };
-  }, []);
+  }, [onCoordinateSelect]);
 
   useEffect(() => {
     let cancelled = false;
@@ -514,9 +533,10 @@ export function AtlasMap({
       cancelled = true;
       window.clearInterval(refreshInterval);
     };
-  }, [range]);
+  }, [range, reloadToken]);
 
   useEffect(() => {
+    activeLayerRef.current = activeLayer;
     const map = mapRef.current;
 
     if (
@@ -526,24 +546,7 @@ export function AtlasMap({
       return;
     }
 
-    const visible =
-      activeLayer === "All Layers" ||
-      activeLayer === "Earthquake";
-
-    for (const layerId of [
-      "earthquake-clusters",
-      "earthquake-cluster-count",
-      "earthquake-points",
-      "earthquake-pulse",
-    ]) {
-      if (map.getLayer(layerId)) {
-        map.setLayoutProperty(
-          layerId,
-          "visibility",
-          visible ? "visible" : "none"
-        );
-      }
-    }
+    applyLayerVisibility(map, activeLayer);
   }, [activeLayer]);
 
   function toggleGlobe() {
@@ -583,7 +586,7 @@ export function AtlasMap({
 
   return (
     <section className="atlas-live-map">
-      <div className="atlas-map-statusbar">
+      <div className="atlas-map-statusbar" aria-live="polite">
         <div>
           <span className="atlas-map-live">
             LIVE
@@ -613,6 +616,8 @@ export function AtlasMap({
                   : ""
               }
               onClick={() => setRange(value)}
+              aria-pressed={range === value}
+              aria-label={`Show earthquakes from the last ${label}`}
             >
               {label}
             </button>
@@ -633,6 +638,8 @@ export function AtlasMap({
               globeEnabled ? "active" : ""
             }
             onClick={toggleGlobe}
+            aria-pressed={globeEnabled}
+            aria-label={`Switch to ${globeEnabled ? "Mercator" : "globe"} projection`}
           >
             Globe
           </button>
@@ -659,20 +666,33 @@ export function AtlasMap({
 
           <button
             type="button"
+            aria-label="Reset compass to north"
+            onClick={() => mapRef.current?.easeTo({ bearing: 0, pitch: 0 })}
+          >
+            Compass
+          </button>
+
+          <button
+            type="button"
             onClick={resetView}
+            aria-label="Reset map view"
           >
             Reset
           </button>
         </div>
 
         {error ? (
-          <div className="atlas-map-error">
-            {error}
+          <div className="atlas-map-error" role="alert" aria-live="assertive">
+            {error} <button type="button" onClick={() => setReloadToken((value) => value + 1)}>Retry</button>
           </div>
         ) : null}
 
+        {!loading && !error && eventCount === 0 ? (
+          <div className="atlas-map-empty" role="status">No earthquakes were reported for this range.</div>
+        ) : null}
+
         <div className="atlas-map-source-note">
-          MapLibre • USGS GeoJSON • WGS84
+          MapLibre • USGS GeoJSON • WGS84 • fetched via ATLAS
         </div>
       </div>
     </section>

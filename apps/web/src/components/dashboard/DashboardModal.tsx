@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+
 type DashboardModalProps = {
   title: string;
   description: string;
@@ -13,6 +15,22 @@ export function DashboardModal({
   open,
   onClose,
 }: DashboardModalProps) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.activeElement as HTMLElement | null;
+    closeRef.current?.focus();
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      previous?.focus();
+    };
+  }, [open, onClose]);
+
   if (!open) {
     return null;
   }
@@ -37,6 +55,7 @@ export function DashboardModal({
           </div>
 
           <button
+            ref={closeRef}
             type="button"
             aria-label="Close modal"
             onClick={onClose}
@@ -45,7 +64,7 @@ export function DashboardModal({
           </button>
         </div>
 
-        <p>{description}</p>
+        <p className="dashboard-modal-description">{description}</p>
 
         <div className="dashboard-modal-actions">
           <button type="button" onClick={onClose}>

@@ -1,61 +1,27 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { AtlasMap } from "@/components/map/AtlasMap";
 import { AtlasSidebar } from "./AtlasSidebar";
 import { MetricStrip } from "./MetricStrip";
+import { DashboardModal } from "./DashboardModal";
+import { filterEvents, marketRowsForTab, routeForMenu } from "@/lib/dashboard-logic.mjs";
 
-const timelineEvents = [
-  ["10:15", "M 6.4 Earthquake", "Hachijojima, Japan", "red"],
-  ["10:22", "Flood Warning", "Guangdong, China", "blue"],
-  ["10:30", "Oil Price +2.3%", "Brent Crude", "orange"],
-  ["10:35", "OpenAI Announces", "GPT-4o Update", "purple"],
-  ["10:42", "Middle East Tensions", "Multiple reports", "red"],
-  ["10:48", "NASDAQ +1.02%", "Markets Open", "green"],
-  ["10:55", "Volcano Activity", "Popocatépetl, Mexico", "red"],
-];
+type DashboardRow = [string, string, string, string, string, string, string];
+type QuakeFeature = { id: string; geometry: { coordinates: [number, number, number] }; properties: { mag: number | null; place: string; time: number; tsunami: number; url: string; sourceName: string } };
+type NewsItem = { id: string; title: string; summary: string; publishedAt: string; sourceName: string; sourceUrl: string; category: string };
+type CycloneEvent = { id: string; title: string; summary: string; occurredAt: string; sourceName: string; sourceUrl: string };
 
-const earthquakeRows = [
-  ["M 5.2", "Taiwan Region", "09:58 UTC"],
-  ["M 4.8", "Northern Chile", "09:42 UTC"],
-  ["M 4.6", "Kermadec Islands", "09:28 UTC"],
-  ["M 4.3", "Philippines", "09:12 UTC"],
-  ["M 3.9", "Greece", "08:57 UTC"],
-];
-
-const marketRows = [
-  ["S&P 500", "5,347.89", "+0.83%"],
-  ["NASDAQ", "17,168.42", "+1.45%"],
-  ["DOW JONES", "38,711.29", "+0.67%"],
-  ["NIKKEI 225", "38,470.38", "-0.31%"],
-  ["GOLD", "2,315.60", "+0.28%"],
-  ["OIL (Brent)", "79.45", "+2.32%"],
-];
-
-const aiRows = [
-  ["OpenAI", "GPT-4o Update Released", "10:35"],
-  ["Google DeepMind", "Gemini 1.5 Pro", "09:50"],
-  ["Anthropic", "Claude 3.5 Sonnet", "08:20"],
-  ["Meta AI", "Llama 3 Now Available", "Jun 7"],
-  ["NVIDIA", "New AI Chip Announced", "Jun 7"],
-];
-
-const menuRoutes: Record<string, string> = {
-  "Global Overview": "/app",
-  "World Map": "/app/monitor",
-  "Event Timeline": "/app/timeline",
-  "Breaking News": "/app/news",
-  Earthquake: "/app/earthquake",
-  "Weather & Climate": "/app/weather",
-  "Economy & Markets": "/app/markets",
-  "AI & Technology": "/app/ai",
-  Settings: "/app/settings",
+const labels = {
+  English: { search: "Search for events, places, topics...", login: "Login", liveMap: "LIVE GLOBAL MAP", timeline: "GLOBAL TIMELINE" },
+  ไทย: { search: "ค้นหาเหตุการณ์ สถานที่ หัวข้อ...", login: "เข้าสู่ระบบ", liveMap: "แผนที่โลกสด", timeline: "ไทม์ไลน์ทั่วโลก" },
 };
 
 export function AtlasDashboard() {
   const router = useRouter();
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const [activeMenu, setActiveMenu] =
     useState("Global Overview");
@@ -72,18 +38,19 @@ export function AtlasDashboard() {
     useState("Indices");
 
   const [message, setMessage] = useState("");
+  const [panel, setPanel] = useState<{ title: string; description: string } | null>(null);
+  const [quakes, setQuakes] = useState<QuakeFeature[]>([]); const [earthquakesAvailable, setEarthquakesAvailable] = useState(false); const [cycloneCount, setCycloneCount] = useState<number | null>(null); const [cyclones, setCyclones] = useState<CycloneEvent[]>([]); const [news, setNews] = useState<NewsItem[]>([]); const [liveLoading, setLiveLoading] = useState(true);
+  const timelineEvents: DashboardRow[] = useMemo(() => [...quakes.slice(0, 5).map((quake): DashboardRow => [new Date(quake.properties.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), `${quake.properties.mag === null ? "M ?" : `M ${quake.properties.mag.toFixed(1)}`} Earthquake`, quake.properties.place, quake.properties.mag !== null && quake.properties.mag >= 6 ? "red" : "orange", "USGS", quake.properties.url, new Date(quake.properties.time).toISOString()]), ...cyclones.slice(0, 2).map((event): DashboardRow => [new Date(event.occurredAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), event.title, "NOAA/NHC advisory", "blue", event.sourceName, event.sourceUrl, event.occurredAt]), ...news.slice(0, 2).map((item): DashboardRow => [new Date(item.publishedAt).toLocaleDateString(), item.title, item.sourceName, "purple", item.sourceName, item.sourceUrl, item.publishedAt])].slice(0, 7), [quakes, cyclones, news]);
 
-  const filteredTimeline = useMemo(() => {
+  const filteredTimeline: DashboardRow[] = useMemo(() => {
     const normalized = query.trim().toLowerCase();
 
     if (!normalized) {
       return timelineEvents;
     }
 
-    return timelineEvents.filter((event) =>
-      event.join(" ").toLowerCase().includes(normalized)
-    );
-  }, [query]);
+    return filterEvents(timelineEvents, normalized) as DashboardRow[];
+  }, [query, timelineEvents]);
 
   function showMessage(text: string) {
     setMessage(text);
@@ -96,15 +63,51 @@ export function AtlasDashboard() {
   function handleMenu(item: string) {
     setActiveMenu(item);
 
-    const route = menuRoutes[item];
+    const route = routeForMenu(item);
 
     if (route) {
       router.push(route);
       return;
     }
 
-    showMessage(`${item} selected`);
+    setPanel({ title: item, description: `${item} is ready for a future data integration. No live backend is configured for this module yet.` });
   }
+
+  async function shareDashboard() {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "ATLAS Living Dashboard", url });
+        return;
+      }
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        showMessage("Dashboard link copied");
+        return;
+      }
+    } catch (error) {
+      if ((error as DOMException).name === "AbortError") return;
+    }
+    setPanel({ title: "Share ATLAS", description: `Copy this dashboard address: ${url}` });
+  }
+
+  const ui = labels[language];
+  const visibleMarketRows = marketRowsForTab({ Indices: [["Integration pending", "—", "No live source"]], Commodities: [["Integration pending", "—", "No live source"]], Crypto: [["Integration pending", "—", "No live source"]], Currencies: [["Integration pending", "—", "No live source"]] }, marketTab) as string[][];
+
+  useEffect(() => { let cancelled = false; Promise.allSettled([fetch("/api/earthquakes?range=24h").then(async (r) => { if (!r.ok) throw new Error(); return r.json(); }), fetch("/api/cyclones").then(async (r) => { if (!r.ok && r.status !== 206) throw new Error(); return r.json(); }), fetch("/api/news").then(async (r) => { if (!r.ok && r.status !== 206) throw new Error(); return r.json(); })]).then(([earthquakes, cycloneResult, officialNews]) => { if (cancelled) return; if (earthquakes.status === "fulfilled") { setQuakes(earthquakes.value.features ?? []); setEarthquakesAvailable(true); } if (cycloneResult.status === "fulfilled") { setCycloneCount(cycloneResult.value.events?.length ?? 0); setCyclones(cycloneResult.value.events ?? []); } if (officialNews.status === "fulfilled") setNews(officialNews.value.items ?? []); setLiveLoading(false); }); return () => { cancelled = true; }; }, []);
+
+  const selectWeatherCoordinate = useCallback((longitude: number, latitude: number) => { setPanel({ title: "Weather • Loading", description: `Requesting Open-Meteo observations for ${latitude.toFixed(3)}, ${longitude.toFixed(3)}…` }); fetch(`/api/weather?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}`).then(async (response) => { const data = await response.json(); if (!response.ok) throw new Error(data.error?.message); const weather = data.snapshot; setPanel({ title: "Weather • Open-Meteo", description: `${weather.location}\nObserved ${weather.observedAt}. ${weather.temperatureCelsius}°C (feels ${weather.apparentTemperatureCelsius}°C), humidity ${weather.humidityPercent}%, precipitation ${weather.precipitationMillimeters} mm, cloud ${weather.cloudCoverPercent}%, pressure ${weather.pressureHpa} hPa, wind ${weather.windSpeedKph} km/h gusting ${weather.windGustKph} km/h at ${weather.windDirectionDegrees}°. Source: ${weather.sourceUrl}. Fetched: ${data.fetchedAt}. Category: weather.` }); }).catch(() => setPanel({ title: "Weather unavailable", description: "Open-Meteo could not be reached. No substitute values are shown." })); }, []);
+
+  useEffect(() => {
+    const focusSearch = (event: KeyboardEvent) => {
+      if (event.key === "/" && document.activeElement?.tagName !== "INPUT") {
+        event.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", focusSearch);
+    return () => document.removeEventListener("keydown", focusSearch);
+  }, []);
 
   return (
     <div className="atlas-v4">
@@ -119,9 +122,11 @@ export function AtlasDashboard() {
             <span>⌕</span>
 
             <input
+              ref={searchRef}
               type="search"
               value={query}
-              placeholder="Search for events, places, topics..."
+              placeholder={ui.search}
+              aria-label={ui.search}
               onChange={(event) =>
                 setQuery(event.target.value)
               }
@@ -129,7 +134,7 @@ export function AtlasDashboard() {
                 if (event.key === "Enter") {
                   showMessage(
                     query
-                      ? `Searching for “${query}”`
+                      ? `${filteredTimeline.length} matching visible event${filteredTimeline.length === 1 ? "" : "s"}`
                       : "Enter a search term"
                   );
                 }
@@ -142,6 +147,7 @@ export function AtlasDashboard() {
           <div className="atlas-v4-header-actions">
             <button
               type="button"
+              aria-label="Change language"
               onClick={() =>
                 setLanguage((current) =>
                   current === "English"
@@ -155,9 +161,8 @@ export function AtlasDashboard() {
 
             <button
               type="button"
-              onClick={() =>
-                showMessage("No new system alerts")
-              }
+              aria-label="System status"
+              onClick={() => setPanel({ title: "System status", description: "The dashboard is operational. Live earthquake availability depends on the upstream USGS feed." })}
             >
               ♧
             </button>
@@ -165,19 +170,18 @@ export function AtlasDashboard() {
             <button
               className="atlas-v4-notification"
               type="button"
-              onClick={() =>
-                showMessage("12 monitored notifications")
-              }
+              aria-label="Open notifications"
+              aria-expanded={panel?.title === "Notifications"}
+              onClick={() => setPanel({ title: "Notifications", description: "No live notifications source is configured. Persistent, personalized notifications are not currently available." })}
             >
               ♢
-              <span>12</span>
+              <span>•</span>
             </button>
 
             <button
               type="button"
-              onClick={() =>
-                showMessage("Share link prepared")
-              }
+              aria-label="Share dashboard"
+              onClick={shareDashboard}
             >
               ↗
             </button>
@@ -187,26 +191,24 @@ export function AtlasDashboard() {
               type="button"
               onClick={() => router.push("/login")}
             >
-              Login
+              {ui.login}
             </button>
           </div>
         </header>
 
-        <MetricStrip />
+        <MetricStrip earthquakeCount={earthquakesAvailable ? quakes.length : null} cycloneCount={cycloneCount} loading={liveLoading} />
 
         <section className="atlas-v4-primary">
           <div className="atlas-v4-left">
             <article className="atlas-v4-card atlas-v4-map-panel">
               <div className="atlas-v4-map-heading">
-                <h2>LIVE GLOBAL MAP</h2>
+                <h2>{ui.liveMap}</h2>
 
                 <span className="atlas-v4-live">
                   LIVE
                 </span>
 
-                <small>
-                  ● Real global events detected
-                </small>
+                <small>● Official-source events only</small>
               </div>
 
               <div className="atlas-v4-layers">
@@ -229,8 +231,10 @@ export function AtlasDashboard() {
                     }
                     onClick={() => {
                       setActiveLayer(layer);
-                      showMessage(`${layer} enabled`);
+                      if (layer === "Weather") setPanel({ title: "Weather", description: "Click anywhere on the map to request real current conditions for those coordinates from Open-Meteo." });
+                      else if (!["All Layers", "Earthquake"].includes(layer)) setPanel({ title: layer, description: `${layer} map data is not connected yet. No live values are shown.` });
                     }}
+                    aria-pressed={activeLayer === layer}
                   >
                     {layer}
                   </button>
@@ -240,26 +244,25 @@ export function AtlasDashboard() {
               <div className="atlas-v4-map-body">
                 <AtlasMap
                   activeLayer={activeLayer}
+                  onCoordinateSelect={selectWeatherCoordinate}
                 />
               </div>
             </article>
 
             <article className="atlas-v4-card atlas-v4-timeline">
               <div className="atlas-v4-section-title">
-                <h2>GLOBAL TIMELINE</h2>
+                <h2>{ui.timeline}</h2>
                 <span>Live events</span>
               </div>
 
               <div className="atlas-v4-timeline-row">
                 {filteredTimeline.map(
-                  ([time, title, place, tone]) => (
+                  ([time, title, place, tone, source, sourceUrl, publishedAt]) => (
                     <button
                       type="button"
                       key={`${time}-${title}`}
                       className={`atlas-v4-event ${tone}`}
-                      onClick={() =>
-                        showMessage(`${title} — ${place}`)
-                      }
+                      onClick={() => setPanel({ title, description: `${time} — ${place}. Source: ${source}. Published: ${publishedAt}. Category: ${source === "USGS" ? "earthquake" : source.includes("Hurricane") ? "cyclone" : "space/news"}. ${sourceUrl}` })}
                     >
                       <span>{time}</span>
                       <strong>{title}</strong>
@@ -267,6 +270,7 @@ export function AtlasDashboard() {
                     </button>
                   )
                 )}
+                {filteredTimeline.length === 0 ? <p className="atlas-v4-no-results" role="status">No visible events match “{query}”.</p> : null}
               </div>
             </article>
           </div>
@@ -275,38 +279,31 @@ export function AtlasDashboard() {
             <article className="atlas-v4-card atlas-v4-summary">
               <div className="atlas-v4-section-title">
                 <h2>〽 AI GLOBAL SUMMARY</h2>
-                <span>Updated 2 min ago</span>
+                <span>Integration pending</span>
               </div>
 
-              <h3>
-                วันนี้ความเสี่ยงของโลกเพิ่มขึ้น 8%
-              </h3>
-
-              <p>
-                เนื่องจากแผ่นดินไหวรุนแรงในแปซิฟิก
-                และความตึงเครียดทางภูมิรัฐศาสตร์
-                ขณะที่ภาคเทคโนโลยียังมีแนวโน้มเชิงบวก
-              </p>
+              <h3>No sourced global summary available</h3>
+              <p>ATLAS does not generate or display an unsourced risk narrative. A cited report integration is pending.</p>
 
               <div className="atlas-v4-summary-list">
                 <div>
                   <span>◉ Risk Level</span>
-                  <b className="red">High</b>
+                  <b className="orange">Pending</b>
                 </div>
 
                 <div>
                   <span>◉ Economic Impact</span>
-                  <b className="orange">Moderate</b>
+                  <b className="orange">Pending</b>
                 </div>
 
                 <div>
                   <span>◉ AI & Tech Outlook</span>
-                  <b className="green">Positive</b>
+                  <b className="orange">Pending</b>
                 </div>
 
                 <div>
                   <span>◉ Climate Outlook</span>
-                  <b className="purple">Unstable</b>
+                  <b className="orange">Pending</b>
                 </div>
               </div>
 
@@ -317,11 +314,8 @@ export function AtlasDashboard() {
               <button
                 className="atlas-v4-panel-button"
                 type="button"
-                onClick={() =>
-                  showMessage(
-                    "AI intelligence report opened"
-                  )
-                }
+                aria-expanded={panel?.title === "AI Global Report"}
+                onClick={() => setPanel({ title: "AI Global Report", description: "This summary is demonstration content. A report-generation API is required for sourced, current intelligence; no report has been fabricated or saved." })}
               >
                 View Full Report →
               </button>
@@ -345,21 +339,10 @@ export function AtlasDashboard() {
 
               <div className="atlas-v4-quake-primary">
                 <div>
-                  <strong>M 6.4</strong>
-                  <small>Strong Earthquake</small>
-
-                  <h3>
-                    Near Hachijojima, Japan
-                  </h3>
-
-                  <p>
-                    Jun 8, 2024 10:15 UTC
-                    <br />
-                    Depth: 42 km
-                    <br />
-                    Tsunami Risk:
-                    <b className="green"> Low</b>
-                  </p>
+                  <strong>{quakes[0]?.properties.mag === null ? "M ?" : quakes[0] ? `M ${quakes[0].properties.mag?.toFixed(1)}` : liveLoading ? "Loading…" : "Unavailable"}</strong>
+                  <small>USGS • earthquake</small>
+                  <h3>{quakes[0]?.properties.place ?? "No current USGS item available"}</h3>
+                  {quakes[0] ? <p>{new Date(quakes[0].properties.time).toLocaleString()}<br />Depth: {quakes[0].geometry.coordinates[2].toFixed(1)} km<br />Tsunami flag: <b className={quakes[0].properties.tsunami ? "red" : "green"}>{quakes[0].properties.tsunami ? "Yes" : "No"}</b><br /><a href={quakes[0].properties.url} target="_blank" rel="noopener noreferrer">USGS source ↗</a></p> : null}
                 </div>
 
                 <div className="atlas-v4-radar">
@@ -371,23 +354,18 @@ export function AtlasDashboard() {
               </div>
 
               <div className="atlas-v4-quake-list">
-                {earthquakeRows.map(
-                  ([magnitude, place, time]) => (
+                {quakes.slice(1, 6).map((quake) => {
+                  const magnitude = quake.properties.mag === null ? "M ?" : `M ${quake.properties.mag.toFixed(1)}`; const place = quake.properties.place; const time = new Date(quake.properties.time).toLocaleTimeString([], { timeZone: "UTC", hour: "2-digit", minute: "2-digit" }); return (
                     <button
                       type="button"
-                      key={place}
-                      onClick={() =>
-                        showMessage(
-                          `${magnitude} — ${place}`
-                        )
-                      }
+                      key={quake.id}
+                      onClick={() => setPanel({ title: `${magnitude} Earthquake`, description: `${place}, ${time} UTC. Source: USGS. Published: ${new Date(quake.properties.time).toISOString()}. Category: earthquake. ${quake.properties.url}` })}
                     >
                       <strong>{magnitude}</strong>
                       <span>{place}</span>
                       <small>{time}</small>
                     </button>
-                  )
-                )}
+                  ); })}
               </div>
             </article>
           </aside>
@@ -399,19 +377,18 @@ export function AtlasDashboard() {
               <h2>GLOBAL SENTIMENT INDEX</h2>
             </div>
 
-            <p>Based on news, social, market and events</p>
+            <p>Integration pending • no live source configured</p>
 
             <div className="atlas-v4-gauge">
               <div />
-              <strong>-0.23</strong>
-              <span>Neutral</span>
+              <strong>—</strong><span>Unavailable</span>
             </div>
           </article>
 
           <article className="atlas-v4-card atlas-v4-chart">
             <div className="atlas-v4-section-title">
               <h2>SENTIMENT TREND</h2>
-              <span>7 Days</span>
+              <span>Demo only • no live source</span>
             </div>
 
             <svg viewBox="0 0 300 130">
@@ -453,6 +430,8 @@ export function AtlasDashboard() {
                       : ""
                   }
                   onClick={() => setMarketTab(tab)}
+                  role="tab"
+                  aria-selected={marketTab === tab}
                 >
                   {tab}
                 </button>
@@ -460,7 +439,7 @@ export function AtlasDashboard() {
             </div>
 
             <div className="atlas-v4-market-table">
-              {marketRows.map(
+              {visibleMarketRows.map(
                 ([name, value, change]) => (
                   <div key={name}>
                     <strong>{name}</strong>
@@ -485,27 +464,23 @@ export function AtlasDashboard() {
               <h2>AI & TECHNOLOGY RADAR</h2>
             </div>
 
-            <p>Top AI News</p>
+            <p>Official NASA/JPL technology and space news</p>
 
-            {aiRows.map(
-              ([company, story, time], index) => (
+            {news.slice(0, 5).map((item, index) => (
                 <button
                   type="button"
-                  key={company}
-                  onClick={() =>
-                    showMessage(`${company}: ${story}`)
-                  }
+                  key={item.id}
+                  onClick={() => window.open(item.sourceUrl, "_blank", "noopener,noreferrer")}
                 >
                   <b className={`tone-${index}`}>
                     ◉
                   </b>
 
                   <span>
-                    <strong>{company}</strong>
-                    <small>{story}</small>
+                    <strong>{item.sourceName}</strong><small>{item.title}</small>
                   </span>
 
-                  <time>{time}</time>
+                  <time dateTime={item.publishedAt}>{new Date(item.publishedAt).toLocaleDateString()}</time>
                 </button>
               )
             )}
@@ -520,52 +495,42 @@ export function AtlasDashboard() {
 
             <div className="atlas-v4-disaster-counts">
               <div>
-                <b className="green">3</b>
+                <b className="green">{cycloneCount ?? "—"}</b>
                 <span>Cyclones</span>
               </div>
 
               <div>
-                <b className="red">56</b>
+                <b className="red">—</b>
                 <span>Wildfires</span>
               </div>
 
               <div>
-                <b className="blue">9</b>
+                <b className="blue">—</b>
                 <span>Floods</span>
               </div>
 
               <div>
-                <b className="green">7</b>
+                <b className="green">—</b>
                 <span>Volcanoes</span>
               </div>
             </div>
 
-            <div className="atlas-v4-mini-map">
-              <i className="one" />
-              <i className="two" />
-              <i className="three" />
-              <i className="four" />
-              <i className="five" />
-            </div>
+            <div className="atlas-v4-mini-map" aria-label="Disaster map integration pending" />
           </article>
         </section>
 
         <footer className="atlas-v4-breaking">
-          <strong>BREAKING NEWS</strong>
-
-          <span>UN Urges Ceasefire in Gaza</span>
-          <span>NASA Launches New Earth Satellite</span>
-          <span>Hurricane Season Forecast Released</span>
-          <span>EU Passes AI Regulation Act</span>
-          <span>Bitcoin Reaches New High</span>
+          <strong>LATEST OFFICIAL NEWS</strong>
+          {news.length ? news.slice(0, 5).map((item) => <a key={item.id} href={item.sourceUrl} target="_blank" rel="noopener noreferrer"><span>{item.title} • {item.sourceName} • {new Date(item.publishedAt).toLocaleString()}</span></a>) : <span>{liveLoading ? "Loading official feeds…" : "Official feeds unavailable — no placeholder news shown"}</span>}
         </footer>
       </main>
 
       {message ? (
-        <div className="atlas-v4-toast">
+        <div className="atlas-v4-toast" role="status" aria-live="polite">
           ✓ {message}
         </div>
       ) : null}
+      <DashboardModal title={panel?.title ?? ""} description={panel?.description ?? ""} open={panel !== null} onClose={() => setPanel(null)} />
     </div>
   );
 }

@@ -1,75 +1,10 @@
-const metrics = [
-  {
-    label: "PLANET PULSE",
-    value: "82.4",
-    detail: "▲ +1.3",
-    tone: "green",
-  },
-  {
-    label: "PLANET HEALTH",
-    value: "♡ 97%",
-    detail: "Stable",
-    tone: "green",
-  },
-  {
-    label: "EARTH MOOD",
-    value: "🙂 Positive",
-    detail: "Improving",
-    tone: "green",
-  },
-  {
-    label: "GLOBAL RISK",
-    value: "◔ 68/100",
-    detail: "High",
-    tone: "red",
-  },
-  {
-    label: "EARTHQUAKES 24H",
-    value: "28",
-    detail: "▲ 12%",
-    tone: "green",
-  },
-  {
-    label: "CYCLONES",
-    value: "3",
-    detail: "Active",
-    tone: "blue",
-  },
-  {
-    label: "WILDFIRES",
-    value: "🔥 56",
-    detail: "▲ 8%",
-    tone: "green",
-  },
-  {
-    label: "CONFLICT ZONES",
-    value: "17",
-    detail: "High",
-    tone: "red",
-  },
-  {
-    label: "MARKET STATUS",
-    value: "Cautious",
-    detail: "Monitoring",
-    tone: "orange",
-  },
-];
-
-export function MetricStrip() {
-  return (
-    <section className="atlas-v4-metrics">
-      {metrics.map((metric) => (
-        <article
-          className="atlas-v4-metric"
-          key={metric.label}
-        >
-          <span>{metric.label}</span>
-          <strong>{metric.value}</strong>
-          <small className={metric.tone}>
-            {metric.detail}
-          </small>
-        </article>
-      ))}
-    </section>
-  );
+type Props = { earthquakeCount: number | null; cycloneCount: number | null; loading: boolean };
+export function MetricStrip({ earthquakeCount, cycloneCount, loading }: Props) {
+  const metrics = [
+    ["PLANET PULSE", "Pending", "No live source", "orange"], ["PLANET HEALTH", "Pending", "No live source", "orange"], ["EARTH MOOD", "Pending", "No live source", "orange"], ["GLOBAL RISK", "Pending", "No live source", "orange"],
+    ["EARTHQUAKES 24H", loading ? "…" : earthquakeCount === null ? "Unavailable" : earthquakeCount.toLocaleString(), "USGS • 24h", earthquakeCount === null ? "red" : "green"],
+    ["CYCLONES", loading ? "…" : cycloneCount === null ? "Unavailable" : cycloneCount.toLocaleString(), "NOAA/NHC active advisories", cycloneCount === null ? "red" : "blue"],
+    ["WILDFIRES", "Pending", "No live source", "orange"], ["CONFLICT ZONES", "Pending", "No live source", "orange"], ["MARKET STATUS", "Pending", "No live source", "orange"],
+  ];
+  return <section className="atlas-v4-metrics">{metrics.map(([label, value, detail, tone]) => <article className="atlas-v4-metric" key={label}><span>{label}</span><strong>{value}</strong><small className={tone}>{detail}</small></article>)}</section>;
 }

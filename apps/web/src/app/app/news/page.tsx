@@ -1,30 +1,14 @@
-export default function Page() {
-  return (
-    <main style={{
-      minHeight: "100vh",
-      padding: "48px",
-      background: "var(--background)",
-    }}>
-      <p style={{
-        margin: 0,
-        color: "var(--accent)",
-        letterSpacing: "0.14em",
-      }}>
-        ATLAS PLATFORM
-      </p>
-
-      <h1 style={{
-        margin: "12px 0",
-        fontSize: "48px",
-      }}>
-        Global News
-      </h1>
-
-      <p style={{
-        color: "var(--muted)",
-      }}>
-        ข่าวและเหตุการณ์ทั่วโลก
-      </p>
-    </main>
-  );
+"use client";
+import { useEffect, useMemo, useState } from "react";
+import type { AtlasNewsItem } from "@/types/atlas-data";
+type Payload = { items: AtlasNewsItem[]; sources: { sourceName: string; ok: boolean }[]; error?: { message: string } };
+export default function BreakingNewsPage() {
+  const [payload, setPayload] = useState<Payload | null>(null); const [error, setError] = useState(""); const [activeFilter, setActiveFilter] = useState("All"); const [query, setQuery] = useState("");
+  useEffect(() => { let cancelled = false; fetch("/api/news").then(async (response) => { const data = await response.json() as Payload; if (!cancelled) { setPayload(data); if (!response.ok) setError(data.error?.message ?? "Official news is unavailable"); } }).catch(() => { if (!cancelled) setError("Official news is unavailable"); }); return () => { cancelled = true; }; }, []);
+  const filters = useMemo(() => ["All", ...new Set(payload?.items.map((item) => item.category) ?? [])], [payload]);
+  const filteredNews = useMemo(() => (payload?.items ?? []).filter((item) => (activeFilter === "All" || item.category === activeFilter) && `${item.title} ${item.summary} ${item.sourceName}`.toLowerCase().includes(query.trim().toLowerCase())), [payload, activeFilter, query]);
+  return <main className="breaking-news-page"><header className="breaking-news-header"><div><p>ATLAS OFFICIAL SOURCES</p><h1>Latest News</h1><span>Official NASA/JPL and CNEOS publications</span></div><div className="breaking-news-live"><i />LIVE</div></header><section className="breaking-news-toolbar"><input type="search" value={query} placeholder="Search official news…" onChange={(event) => setQuery(event.target.value)} /><div className="breaking-news-filters">{filters.map((filter) => <button type="button" key={filter} className={activeFilter === filter ? "active" : ""} onClick={() => setActiveFilter(filter)}>{filter}</button>)}</div></section>
+  {!payload && !error ? <div className="breaking-news-empty" role="status">Loading official feeds…</div> : null}{error ? <div className="breaking-news-empty" role="alert">{error}. No placeholder articles are shown.</div> : null}
+  <section className="breaking-news-grid">{filteredNews.map((item) => <article className="breaking-news-card low" key={item.id}><div className="breaking-news-card-top"><span>{item.category}</span><time dateTime={item.publishedAt}>{new Date(item.publishedAt).toLocaleString()}</time></div><h2>{item.title}</h2><p>{item.summary || "No summary was supplied by the official feed."}</p><footer><span>{item.sourceName}</span><a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">Original source →</a></footer></article>)}</section>
+  {payload && !error && filteredNews.length === 0 ? <div className="breaking-news-empty">No official items match this search.</div> : null}</main>;
 }

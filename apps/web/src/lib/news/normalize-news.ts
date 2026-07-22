@@ -1,0 +1,5 @@
+import type { AtlasNewsItem } from "@/types/atlas-data";
+import type { ParsedFeedItem } from "./rss-parser";
+export function stableNewsId(sourceId: string, url: string): string { let hash = 2166136261; for (const char of `${sourceId}:${url}`) { hash ^= char.charCodeAt(0); hash = Math.imul(hash, 16777619); } return `${sourceId}-${(hash >>> 0).toString(36)}`; }
+export function normalizeNewsItem(item: ParsedFeedItem, source: { id: string; name: string; category: string }): AtlasNewsItem { return { id: stableNewsId(source.id, item.link), title: item.title, summary: item.description, publishedAt: item.publishedAt, sourceId: source.id, sourceName: source.name, sourceUrl: item.link, category: source.category, ...(item.author ? { author: item.author } : {}), language: "en" }; }
+export function isBreakingNews(item: AtlasNewsItem, now = Date.now()): boolean { const age = now - new Date(item.publishedAt).valueOf(); return age >= 0 && age <= 6 * 60 * 60 * 1000 && /\b(alert|advisory|warning|emergency|impact|launch failure|asteroid approach)\b/i.test(`${item.title} ${item.summary}`); }

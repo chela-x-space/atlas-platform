@@ -5,6 +5,16 @@ type AtlasSidebarProps = {
   onSelect: (item: string) => void;
 };
 
+const externalLinks: Record<string, string | undefined> = {
+  "App Store": process.env.NEXT_PUBLIC_APP_STORE_URL,
+  "Google Play": process.env.NEXT_PUBLIC_GOOGLE_PLAY_URL,
+  "X / Twitter": process.env.NEXT_PUBLIC_X_URL,
+  Facebook: process.env.NEXT_PUBLIC_FACEBOOK_URL,
+  YouTube: process.env.NEXT_PUBLIC_YOUTUBE_URL,
+  Instagram: process.env.NEXT_PUBLIC_INSTAGRAM_URL,
+  Threads: process.env.NEXT_PUBLIC_THREADS_URL,
+};
+
 const groups = [
   {
     title: "MONITOR",
@@ -102,18 +112,21 @@ export function AtlasSidebar({
           </div>
 
           <div className="atlas-v4-store-row">
-            <button type="button">App Store</button>
-            <button type="button">Google Play</button>
+            {["App Store", "Google Play"].map((label) => externalLinks[label] ? (
+              <a key={label} href={externalLinks[label]} target="_blank" rel="noreferrer">{label}</a>
+            ) : (
+              <button key={label} type="button" disabled title={`${label} link is not configured`} aria-label={`${label} unavailable: link is not configured`}>{label}</button>
+            ))}
           </div>
         </article>
       </div>
 
       <footer className="atlas-v4-social">
-        <button type="button">𝕏</button>
-        <button type="button">f</button>
-        <button type="button">▶</button>
-        <button type="button">◉</button>
-        <button type="button">◎</button>
+        {[["𝕏", "X / Twitter"], ["f", "Facebook"], ["▶", "YouTube"], ["◉", "Instagram"], ["◎", "Threads"]].map(([icon, label]) => externalLinks[label] ? (
+          <a key={label} href={externalLinks[label]} target="_blank" rel="noreferrer" aria-label={label}>{icon}</a>
+        ) : (
+          <button key={label} type="button" disabled title={`${label} link is not configured`} aria-label={`${label} unavailable: link is not configured`}>{icon}</button>
+        ))}
       </footer>
     </aside>
   );

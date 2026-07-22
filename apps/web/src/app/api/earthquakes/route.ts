@@ -1,65 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const USGS_FEEDS = {
-  "24h":
-    "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson",
-  "7d":
-    "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson",
-  "30d":
-    "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
-} as const;
-
-type FeedRange = keyof typeof USGS_FEEDS;
-
-export async function GET(request: NextRequest) {
-  const requestedRange =
-    request.nextUrl.searchParams.get("range") ?? "24h";
-
-  const range: FeedRange =
-    requestedRange in USGS_FEEDS
-      ? (requestedRange as FeedRange)
-      : "24h";
-
-  try {
-    const response = await fetch(USGS_FEEDS[range], {
-      next: {
-        revalidate: 60,
-      },
-      headers: {
-        Accept: "application/geo+json, application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `USGS returned HTTP ${response.status}`
-      );
-    }
-
-    const data = await response.json();
-
-    return NextResponse.json(data, {
-      headers: {
-        "Cache-Control":
-          "public, s-maxage=60, stale-while-revalidate=300",
-      },
-    });
-  } catch (error) {
-    console.error("USGS earthquake fetch failed:", error);
-
-    return NextResponse.json(
-      {
-        type: "FeatureCollection",
-        metadata: {
-          title: "USGS Earthquakes",
-          count: 0,
-          status: 503,
-        },
-        features: [],
-      },
-      {
-        status: 503,
-      }
-    );
-  }
+import { getActiveDataSource } from "@/config/data-sources";
+import { fetchJson } from "@/lib/http/fetch-json";
+import { UpstreamError } from "@/lib/http/fetch-text";
+type Range = "24h" | "7d" | "30d";
+type Feature = { type: "Feature"; id: string; geometry: { type: "Point"; coordinates: [number, number, number] }; properties: { mag: number | null; place: string; time: number; updated: number; tsunami: number; alert: string | null; status: string; url: string; depth: number; sourceId: string; sourceName: string; category: "earthquake" } };
+type Collection = { type: "FeatureCollection"; metadata: Record<string, unknown>; features: Feature[] };
+export function earthquakeRange(value: string | null): Range | null { return value === null ? "24h" : value === "24h" || value === "7d" || value === "30d" ? value : null; }
+function isRawCollection(value: unknown): value is { type: "FeatureCollection"; metadata?: Record<string, unknown>; features: unknown[] } { return !!value && typeof value === "object" && (value as { type?: unknown }).type === "FeatureCollection" && Array.isArray((value as { features?: unknown }).features); }
+function normalize(raw: { type: "FeatureCollection"; metadata?: Record<string, unknown>; features: unknown[] }, endpoint: string): Collection {
+  const features: Feature[] = [];
+  for (const candidate of raw.features) { if (!candidate || typeof candidate !== "object") continue; const item = candidate as { id?: unknown; geometry?: { type?: unknown; coordinates?: unknown }; properties?: Record<string, unknown> }; const c = item.geometry?.coordinates; const p = item.properties; if (typeof item.id !== "string" || item.geometry?.type !== "Point" || !Array.isArray(c) || c.length < 3 || !c.slice(0, 3).every(Number.isFinite) || !p || typeof p.time !== "number") continue; const [longitude, latitude, depth] = c as number[]; if (longitude < -180 || longitude > 180 || latitude < -90 || latitude > 90) continue; const sourceUrl = typeof p.url === "string" && /^https:\/\//.test(p.url) ? p.url : endpoint; features.push({ type: "Feature", id: item.id, geometry: { type: "Point", coordinates: [longitude, latitude, depth] }, properties: { mag: typeof p.mag === "number" ? p.mag : null, place: typeof p.place === "string" && p.place.trim() ? p.place : "Location not provided by USGS", time: p.time, updated: typeof p.updated === "number" ? p.updated : p.time, depth, tsunami: p.tsunami === 1 ? 1 : 0, alert: typeof p.alert === "string" ? p.alert : null, status: typeof p.status === "string" ? p.status : "unknown", url: sourceUrl, sourceId: "usgs-earthquakes", sourceName: "USGS", category: "earthquake" } }); }
+  return { type: "FeatureCollection", metadata: { ...(raw.metadata ?? {}), count: features.length, sourceId: "usgs-earthquakes", sourceName: "U.S. Geological Survey", sourceUrl: endpoint, fetchedAt: new Date().toISOString(), category: "earthquake" }, features };
 }
+export async function GET(request: NextRequest) { const range = earthquakeRange(request.nextUrl.searchParams.get("range")); if (!range) return NextResponse.json({ error: { code: "invalid-parameters", message: "range must be 24h, 7d, or 30d" } }, { status: 400 }); const source = getActiveDataSource("usgs-earthquakes"); const endpoint = source.endpoints[range]; try { const { data } = await fetchJson(endpoint, { timeoutMs: 8000, maxBytes: 15_000_000, revalidate: 60, validate: isRawCollection }); return NextResponse.json(normalize(data, endpoint), { headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" } }); } catch (error) { const upstream = error instanceof UpstreamError ? error : new UpstreamError("unavailable", "USGS unavailable", 503); return NextResponse.json({ error: { code: upstream.code, message: "USGS earthquake data is currently unavailable" }, source: { id: source.id, name: source.name, url: endpoint }, fetchedAt: new Date().toISOString() }, { status: upstream.status, headers: { "Cache-Control": "no-store" } }); } }
