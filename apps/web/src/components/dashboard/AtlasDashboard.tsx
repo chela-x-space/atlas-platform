@@ -8,9 +8,10 @@ import { AtlasSidebar } from "./AtlasSidebar";
 import { MetricStrip } from "./MetricStrip";
 import { DashboardModal } from "./DashboardModal";
 import { filterEvents, marketRowsForTab, routeForMenu } from "@/lib/dashboard-logic.mjs";
+import { safeExternalUrl } from "@/lib/security/external-url.mjs";
 import type { AtlasDashboardSnapshot } from "@/types/atlas-data";
 
-type DashboardRow = [string, string, string, string, string, string, string];
+type DashboardRow = [string, string, string, string, string, string | undefined, string];
 
 const labels = {
   English: { search: "Search for events, places, topics...", login: "Login", liveMap: "LIVE GLOBAL MAP", timeline: "GLOBAL TIMELINE" },
@@ -39,7 +40,7 @@ export function AtlasDashboard() {
   const [panel, setPanel] = useState<{ title: string; description: string } | null>(null);
   const [snapshot, setSnapshot] = useState<AtlasDashboardSnapshot | null>(null); const [liveLoading, setLiveLoading] = useState(true); const [liveError,setLiveError]=useState("");
   const quakes=snapshot?.recentEarthquakes??[],news=snapshot?.technologyNews??[]; const earthquakeMetric=snapshot?.metrics.earthquakes24h,cycloneMetric=snapshot?.metrics.cyclones; const earthquakeCount=earthquakeMetric?.status==="available"?earthquakeMetric.value:null,cycloneCount=cycloneMetric?.status==="available"?cycloneMetric.value:null;
-  const timelineEvents: DashboardRow[] = useMemo(() => (snapshot?.timelineEvents??[]).map((event):DashboardRow=>[new Date(event.occurredAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),event.title,event.region??event.summary,event.severity==="high"||event.severity==="critical"?"red":event.category==="cyclone"?"blue":event.category==="space"||event.category==="technology"?"purple":"orange",event.sourceName,event.sourceUrl,event.occurredAt]).slice(0,7),[snapshot]);
+  const timelineEvents: DashboardRow[] = useMemo(() => (snapshot?.timelineEvents??[]).map((event):DashboardRow=>[new Date(event.occurredAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),event.title,event.region??event.summary,event.severity==="high"||event.severity==="critical"?"red":event.category==="cyclone"?"blue":event.category==="space"||event.category==="technology"?"purple":"orange",event.sourceName,safeExternalUrl(event.sourceUrl)??undefined,event.occurredAt]).slice(0,7),[snapshot]);
 
   const filteredTimeline: DashboardRow[] = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -314,7 +315,7 @@ export function AtlasDashboard() {
                 className="atlas-v4-panel-button"
                 type="button"
                 aria-expanded={panel?.title === "AI Global Report"}
-                onClick={() => setPanel({ title: "AI Global Report", description: "This summary is demonstration content. A report-generation API is required for sourced, current intelligence; no report has been fabricated or saved." })}
+                onClick={() => setPanel({ title: "AI Global Report", description: "Integration pending. No AI report is computed or displayed in the public MVP." })}
               >
                 View Full Report →
               </button>
@@ -341,7 +342,7 @@ export function AtlasDashboard() {
                   <strong>{quakes[0] ? typeof quakes[0].metadata.magnitude === "number" ? `M ${quakes[0].metadata.magnitude.toFixed(1)}` : "M ?" : liveLoading ? "Loading…" : "Unavailable"}</strong>
                   <small>USGS • earthquake</small>
                   <h3>{quakes[0]?.region ?? "No current USGS item available"}</h3>
-                  {quakes[0] ? <p>{new Date(quakes[0].occurredAt).toLocaleString()}<br />Depth: {quakes[0].coordinates?.depthKilometers?.toFixed(1) ?? "Not supplied"} km<br />Tsunami flag: <b className={quakes[0].metadata.tsunami ? "red" : "green"}>{quakes[0].metadata.tsunami ? "Yes" : "No"}</b><br /><a href={quakes[0].sourceUrl} target="_blank" rel="noopener noreferrer">Official source ↗</a></p> : null}
+                  {quakes[0] ? <p>{new Date(quakes[0].occurredAt).toLocaleString()}<br />Depth: {quakes[0].coordinates?.depthKilometers?.toFixed(1) ?? "Not supplied"} km<br />Tsunami flag: <b className={quakes[0].metadata.tsunami ? "red" : "green"}>{quakes[0].metadata.tsunami ? "Yes" : "No"}</b><br />{safeExternalUrl(quakes[0].sourceUrl)?<a href={safeExternalUrl(quakes[0].sourceUrl)!} target="_blank" rel="noopener noreferrer">Official source ↗</a>:<span>Official detail link unavailable</span>}</p> : null}
                 </div>
 
                 <div className="atlas-v4-radar">
@@ -387,25 +388,10 @@ export function AtlasDashboard() {
           <article className="atlas-v4-card atlas-v4-chart">
             <div className="atlas-v4-section-title">
               <h2>SENTIMENT TREND</h2>
-              <span>Demo only • no live source</span>
+              <span>Not computed</span>
             </div>
 
-            <svg viewBox="0 0 300 130">
-              <path
-                className="zero"
-                d="M0 65H300"
-              />
-
-              <path
-                className="positive-line"
-                d="M0 70L20 40L40 55L60 22L80 60L100 78L120 88L140 76L160 65L180 47L200 35L220 72L240 112L260 72L280 51L300 65"
-              />
-
-              <path
-                className="negative-line"
-                d="M90 68L115 91L140 99L165 84L190 72"
-              />
-            </svg>
+            <p>Integration pending • no trend values are generated</p>
           </article>
 
           <article className="atlas-v4-card atlas-v4-market">
@@ -463,13 +449,13 @@ export function AtlasDashboard() {
               <h2>AI & TECHNOLOGY RADAR</h2>
             </div>
 
-            <p>Official NASA/JPL technology and space news</p>
+            <p>Temporarily disabled • source verification pending</p>
 
             {news.slice(0, 5).map((item, index) => (
                 <button
                   type="button"
                   key={item.id}
-                  onClick={() => window.open(item.sourceUrl, "_blank", "noopener,noreferrer")}
+                  onClick={() => {const url=safeExternalUrl(item.sourceUrl);if(url)window.open(url, "_blank", "noopener,noreferrer");}}
                 >
                   <b className={`tone-${index}`}>
                     ◉
@@ -520,8 +506,9 @@ export function AtlasDashboard() {
 
         <footer className="atlas-v4-breaking">
           <strong>LATEST OFFICIAL NEWS</strong>
-          {news.length ? news.slice(0, 5).map((item) => <a key={item.id} href={item.sourceUrl} target="_blank" rel="noopener noreferrer"><span>{item.title} • {item.sourceName} • {new Date(item.occurredAt).toLocaleString()}</span></a>) : <span>{liveLoading ? "Loading official feeds…" : liveError||"Official feeds unavailable — no placeholder news shown"}</span>}
+          {news.length ? news.slice(0, 5).map((item) => {const url=safeExternalUrl(item.sourceUrl);return url?<a key={item.id} href={url} target="_blank" rel="noopener noreferrer"><span>{item.title} • {item.sourceName} • {new Date(item.occurredAt).toLocaleString()}</span></a>:<span key={item.id}>{item.title} • {item.sourceName}</span>;}) : <span>{liveLoading ? "Loading source status…" : liveError||"Technology news integration temporarily disabled — no placeholder news shown"}</span>}
         </footer>
+        <p className="atlas-v4-data-disclaimer">ATLAS aggregates third-party public data. Coverage and update frequency vary. This is not emergency, financial, medical, or security advice; verify critical information with the originating authority.</p>
       </main>
 
       {message ? (

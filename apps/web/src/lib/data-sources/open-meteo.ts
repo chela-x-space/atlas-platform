@@ -17,10 +17,14 @@ function isPayload(value: unknown): value is Payload {
 }
 export async function getWeather(latitude: number, longitude: number): Promise<{ snapshot: AtlasWeatherSnapshot; fetchedAt: string; attribution: string }> {
   const source = getActiveDataSource("open-meteo");
-  const url = new URL(source.endpoints.forecast);
+  const apiKey = process.env.OPEN_METEO_API_KEY;
+  const url = new URL(apiKey ? source.endpoints.customerForecast : source.endpoints.forecast);
   url.searchParams.set("latitude", String(latitude)); url.searchParams.set("longitude", String(longitude));
-  url.searchParams.set("current", FIELDS.join(",")); url.searchParams.set("timezone", "auto");
+  url.searchParams.set("current", FIELDS.join(",")); url.searchParams.set("timezone", "UTC");
+  if (apiKey) url.searchParams.set("apikey", apiKey);
   const { data, fetchedAt } = await fetchJson(url.toString(), { timeoutMs: 8000, maxBytes: 200_000, revalidate: source.refreshSeconds, validate: isPayload });
   const c = data.current;
-  return { fetchedAt, attribution: source.attribution, snapshot: { location: `${data.latitude.toFixed(4)}, ${data.longitude.toFixed(4)} (${data.timezone})`, coordinates: [data.longitude, data.latitude], observedAt: c.time, temperatureCelsius: c.temperature_2m, apparentTemperatureCelsius: c.apparent_temperature, humidityPercent: c.relative_humidity_2m, precipitationMillimeters: c.precipitation, weatherCode: c.weather_code, cloudCoverPercent: c.cloud_cover, pressureHpa: c.pressure_msl, windSpeedKph: c.wind_speed_10m, windDirectionDegrees: c.wind_direction_10m, windGustKph: c.wind_gusts_10m, sourceId: source.id, sourceUrl: url.toString() } };
+  const observedAt = new Date(`${c.time}${/[zZ]|[+-]\d\d:\d\d$/.test(c.time) ? "" : "Z"}`).toISOString();
+  const publicSourceUrl = new URL(url); publicSourceUrl.searchParams.delete("apikey");
+  return { fetchedAt, attribution: source.attribution, snapshot: { location: `${data.latitude.toFixed(4)}, ${data.longitude.toFixed(4)} (${data.timezone})`, coordinates: [data.longitude, data.latitude], observedAt, temperatureCelsius: c.temperature_2m, apparentTemperatureCelsius: c.apparent_temperature, humidityPercent: c.relative_humidity_2m, precipitationMillimeters: c.precipitation, weatherCode: c.weather_code, cloudCoverPercent: c.cloud_cover, pressureHpa: c.pressure_msl, windSpeedKph: c.wind_speed_10m, windDirectionDegrees: c.wind_direction_10m, windGustKph: c.wind_gusts_10m, sourceId: source.id, sourceUrl: publicSourceUrl.toString() } };
 }

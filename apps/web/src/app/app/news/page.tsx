@@ -1,3 +1,19 @@
 "use client";
-import { useEffect,useMemo,useState } from "react";import type { AtlasEvent,AtlasEventPage,AtlasEventSourceHealth } from "@/types/atlas-data";
-export default function BreakingNewsPage(){const[items,setItems]=useState<readonly AtlasEvent[]>([]),[health,setHealth]=useState<readonly AtlasEventSourceHealth[]>([]),[loading,setLoading]=useState(true),[error,setError]=useState(""),[activeFilter,setActiveFilter]=useState("All"),[query,setQuery]=useState("");useEffect(()=>{let cancelled=false;Promise.all([fetch("/api/events?category=space,technology&limit=100").then(async r=>{if(!r.ok)throw new Error();return r.json() as Promise<AtlasEventPage>}),fetch("/api/source-health").then(async r=>r.json() as Promise<{sources:AtlasEventSourceHealth[]}>)]).then(([page,status])=>{if(!cancelled){setItems(page.events);setHealth(status.sources);}}).catch(()=>{if(!cancelled)setError("Official news is unavailable. No placeholder articles are shown.");}).finally(()=>{if(!cancelled)setLoading(false);});return()=>{cancelled=true;};},[]);const filters=useMemo(()=>["All",...new Set(items.map(i=>i.category))],[items]);const filtered=useMemo(()=>items.filter(i=>(activeFilter==="All"||i.category===activeFilter)&&`${i.title} ${i.summary} ${i.sourceName}`.toLowerCase().includes(query.trim().toLowerCase())),[items,activeFilter,query]);const newsHealth=health.filter(h=>h.sourceId==="jpl-news"||h.sourceId==="cneos-news");return <main className="breaking-news-page"><header className="breaking-news-header"><div><p>ATLAS OFFICIAL SOURCES</p><h1>Latest News</h1><span>Normalized official NASA/JPL and CNEOS publications</span></div><div className="breaking-news-live"><i />LIVE</div></header><section className="breaking-news-toolbar"><input type="search" value={query} placeholder="Search official news…" onChange={e=>setQuery(e.target.value)}/><div className="breaking-news-filters">{filters.map(f=><button type="button" key={f} className={activeFilter===f?"active":""} onClick={()=>setActiveFilter(f)}>{f}</button>)}</div></section>{loading?<div className="breaking-news-empty" role="status">Loading ATLAS events…</div>:null}{error?<div className="breaking-news-empty" role="alert">{error}</div>:null}<p className="breaking-news-empty">Source health: {newsHealth.length?newsHealth.map(h=>`${h.sourceId}: ${h.status}`).join(" • "):loading?"checking…":"unavailable"}</p><section className="breaking-news-grid">{filtered.map(item=><article className="breaking-news-card low" key={item.id}><div className="breaking-news-card-top"><span>{item.category}</span><time dateTime={item.occurredAt}>{new Date(item.occurredAt).toLocaleString()}</time></div><h2>{item.title}</h2><p>{item.summary||"No summary was supplied by the official feed."}</p><footer><span>{item.sourceName}</span><a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">Original source →</a></footer></article>)}</section>{!loading&&!error&&filtered.length===0?<div className="breaking-news-empty">No official items match this search.</div>:null}</main>}
+
+import { useEffect, useState } from "react";
+import type { AtlasEventSourceHealth } from "@/types/atlas-data";
+
+export default function BreakingNewsPage() {
+  const [health,setHealth]=useState<readonly AtlasEventSourceHealth[]>([]);
+  const [loading,setLoading]=useState(true);
+  useEffect(()=>{let cancelled=false;fetch("/api/source-health").then(async response=>{const body=await response.json() as {sources?:AtlasEventSourceHealth[]};if(!cancelled)setHealth(body.sources??[]);}).finally(()=>{if(!cancelled)setLoading(false);});return()=>{cancelled=true;};},[]);
+  const newsHealth=health.filter(item=>item.sourceId==="jpl-news"||item.sourceId==="cneos-news");
+  return <main className="breaking-news-page">
+    <header className="breaking-news-header"><div><p>ATLAS SOURCE STATUS</p><h1>Latest News</h1><span>Official news integration is pending verification</span></div><div className="breaking-news-live">DISABLED</div></header>
+    <div className="breaking-news-empty" role="status">
+      <h2>Data source unavailable</h2>
+      <p>NASA/JPL and CNEOS news ingestion is temporarily disabled. ATLAS does not show placeholder or scraped articles.</p>
+      <p>Source status: {loading?"checking…":newsHealth.map(item=>`${item.sourceId}: ${item.status}`).join(" • ")||"disabled"}</p>
+    </div>
+  </main>;
+}

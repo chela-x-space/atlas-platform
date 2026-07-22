@@ -23,7 +23,7 @@ export default function Page() {
       <p style={{
         color: "var(--muted)",
       }}>
-        สภาพอากาศและภัยพิบัติ
+        Integration pending. Open-Meteo is disabled unless this deployment has a commercial API key or explicitly qualifies for non-commercial use. No weather values are shown.
       </p>
     </main>
   );

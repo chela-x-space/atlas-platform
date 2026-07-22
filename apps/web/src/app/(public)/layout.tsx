@@ -45,6 +45,9 @@ export default function PublicLayout({
       </header>
 
       {children}
+      <footer className="public-data-disclaimer">
+        ATLAS aggregates information from third-party public sources. Coverage and update frequency vary by provider. Information is not emergency, financial, medical, or security advice. Verify critical information with the originating authority.
+      </footer>
     </div>
   );
 }

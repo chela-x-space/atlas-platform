@@ -1,22 +1,10 @@
 import Link from "next/link";
 
 const metrics = [
-  {
-    label: "Global events monitored",
-    value: "12,542",
-  },
-  {
-    label: "Countries covered",
-    value: "147",
-  },
-  {
-    label: "Live intelligence sources",
-    value: "480+",
-  },
-  {
-    label: "System availability",
-    value: "99.99%",
-  },
+  { label: "Earthquake source", value: "USGS • active" },
+  { label: "Cyclone coverage", value: "Atlantic + E/C Pacific" },
+  { label: "Weather", value: "Configuration required" },
+  { label: "Computed intelligence", value: "Not computed" },
 ];
 
 const features = [
@@ -28,12 +16,12 @@ const features = [
   {
     title: "AI Situation Summary",
     description:
-      "AI วิเคราะห์ว่าเกิดอะไรขึ้น เหตุใดจึงสำคัญ และมีผลกระทบต่อพื้นที่หรืออุตสาหกรรมใด",
+      "อยู่ระหว่างการเชื่อมต่อ — MVP นี้ไม่สร้างบทสรุปหรือคะแนน AI ที่ไม่มีแหล่งข้อมูลรองรับ",
   },
   {
     title: "Real-time Alerting",
     description:
-      "สร้างการแจ้งเตือนตามประเทศ ประเภทเหตุการณ์ ความรุนแรง และเงื่อนไขที่คุณกำหนด",
+      "อยู่ระหว่างการพัฒนา — ยังไม่มีการส่งการแจ้งเตือนใน Public MVP",
   },
 ];
 
@@ -55,9 +43,8 @@ export default function HomePage() {
           </h1>
 
           <p className="hero-description">
-            ATLAS รวมข่าว ภัยพิบัติ สภาพอากาศ เทคโนโลยี ตลาด
-            และสัญญาณความเสี่ยงจากทั่วโลก
-            มาแสดงและวิเคราะห์อยู่ในแพลตฟอร์มเดียว
+            ATLAS แสดงข้อมูลแผ่นดินไหวจาก USGS และคำแนะนำพายุจาก NOAA/NHC
+            โดยระบุแหล่งที่มาและขอบเขตข้อมูลอย่างชัดเจน
           </p>
 
           <div className="hero-actions">
@@ -72,27 +59,23 @@ export default function HomePage() {
 
           <div className="hero-status">
             <span className="live-indicator" />
-            All intelligence systems operational
+            Public MVP • coverage is limited by source
           </div>
         </div>
 
         <div className="hero-visual" aria-label="ATLAS dashboard preview">
           <div className="visual-toolbar">
-            <span>LIVE GLOBAL MONITOR</span>
+            <span>MVP SOURCE MONITOR</span>
             <span className="visual-live">● LIVE</span>
           </div>
 
           <div className="visual-map">
             <div className="planet-grid" />
 
-            <div className="visual-marker marker-one" />
-            <div className="visual-marker marker-two" />
-            <div className="visual-marker marker-three" />
-
             <div className="visual-information">
-              <span>ACTIVE EVENT</span>
-              <strong>M 6.4 — Japan</strong>
-              <small>AI risk assessment in progress</small>
+              <span>VERIFIED SOURCES</span>
+              <strong>USGS • NOAA/NHC</strong>
+              <small>Additional integrations pending</small>
             </div>
           </div>
         </div>
@@ -118,7 +101,7 @@ export default function HomePage() {
           </h2>
 
           <span>
-            จากเหตุการณ์ดิบ สู่บริบท ความเสี่ยง และการตัดสินใจ
+            Public MVP แสดงเฉพาะข้อมูลจริงที่ผ่านการตรวจสอบแหล่งที่มา
           </span>
         </div>
 

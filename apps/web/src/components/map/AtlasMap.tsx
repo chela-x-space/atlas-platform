@@ -474,7 +474,7 @@ export function AtlasMap({
         }
 
         const page=(await response.json()) as AtlasEventPage;
-        const collection=normalizeFeatures({type:"FeatureCollection",features:page.events.filter(event=>event.coordinates).map(event=>({type:"Feature",id:event.id,geometry:{type:"Point",coordinates:[event.coordinates!.longitude,event.coordinates!.latitude,event.coordinates!.depthKilometers??0]},properties:{mag:typeof event.metadata.magnitude==="number"?event.metadata.magnitude:null,place:event.region??event.title,time:Date.parse(event.occurredAt),url:event.sourceUrl,alert:typeof event.metadata.alert==="string"?event.metadata.alert:null,tsunami:event.metadata.tsunami===true?1:0}}))});
+        const collection=normalizeFeatures({type:"FeatureCollection",features:page.events.filter(event=>event.coordinates).map(event=>({type:"Feature",id:event.id,geometry:{type:"Point",coordinates:[event.coordinates!.longitude,event.coordinates!.latitude,event.coordinates!.depthKilometers??0]},properties:{mag:typeof event.metadata.magnitude==="number"?event.metadata.magnitude:null,place:event.region??event.title,time:Date.parse(event.occurredAt),url:event.sourceUrl??null,alert:typeof event.metadata.alert==="string"?event.metadata.alert:null,tsunami:event.metadata.tsunami===true?1:0}}))});
 
         if (cancelled) {
           return;

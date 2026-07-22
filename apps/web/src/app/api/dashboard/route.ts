@@ -1,2 +1,2 @@
 import { NextResponse } from "next/server";import { getAtlasDataHub } from "@/lib/data-hub";
-export async function GET(){const hub=getAtlasDataHub();await hub.refreshSources();return NextResponse.json(await hub.getDashboardSnapshot(),{headers:{"Cache-Control":"public, s-maxage=60, stale-while-revalidate=300"}});}
+export async function GET(){try{const hub=getAtlasDataHub();await hub.refreshSources();return NextResponse.json(await hub.getDashboardSnapshot(),{headers:{"Cache-Control":"public, s-maxage=60, stale-while-revalidate=300"}});}catch{return NextResponse.json({error:{code:"DATA_HUB_UNAVAILABLE",message:"Dashboard data is temporarily unavailable"},generatedAt:new Date().toISOString()},{status:503,headers:{"Cache-Control":"no-store"}});}}

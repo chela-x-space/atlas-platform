@@ -25,7 +25,7 @@ test("USGS ranges and invalid range API behavior are explicit", async () => {
 test("Open-Meteo validates coordinates and requests only declared fields", async () => {
   const source = await read("../src/lib/data-sources/open-meteo.ts");
   for (const field of ["temperature_2m", "relative_humidity_2m", "apparent_temperature", "precipitation", "rain", "weather_code", "cloud_cover", "pressure_msl", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m"]) assert.match(source, new RegExp(field));
-  assert.match(source, /number >= -limit && number <= limit/); assert.match(source, /timezone", "auto"/);
+  assert.match(source, /number >= -limit && number <= limit/); assert.match(source, /timezone", "UTC"/); assert.match(source, /searchParams\.delete\("apikey"\)/);
 });
 
 test("RSS parser covers RSS and Atom, strips unsafe HTML, and bounds payloads", async () => {
@@ -35,7 +35,7 @@ test("RSS parser covers RSS and Atom, strips unsafe HTML, and bounds payloads", 
 
 test("news normalization deduplicates URL then title and sorts newest first", async () => {
   const dedupe = await read("../src/lib/news/deduplicate-news.ts"); const service = await read("../src/lib/news/news-service.ts");
-  assert.match(dedupe, /urls\.has\(url\) \|\| titles\.has\(title\)/); assert.match(service, /new Date\(b\.publishedAt\).*new Date\(a\.publishedAt\)/);
+  assert.match(dedupe, /url && urls\.has\(url\)/); assert.match(dedupe, /titles\.has\(title\)/); assert.match(service, /new Date\(b\.publishedAt\).*new Date\(a\.publishedAt\)/);
 });
 
 test("news service supports partial and all-source failure without mock fallback", async () => {
