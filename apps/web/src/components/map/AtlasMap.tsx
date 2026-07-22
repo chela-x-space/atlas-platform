@@ -130,18 +130,30 @@ export function AtlasMap({
       return;
     }
 
-    const map = new maplibregl.Map({
-      container: containerRef.current,
-      style:
-        "https://demotiles.maplibre.org/style.json",
-      center: [15, 18],
-      zoom: 1.35,
-      minZoom: 0.7,
-      maxZoom: 15,
-      pitch: 0,
-      bearing: 0,
-      attributionControl: false,
-      maplibreLogo: true,
+    let map: MapLibreMap;
+    try {
+      map = new maplibregl.Map({
+        container: containerRef.current,
+        style: "https://demotiles.maplibre.org/style.json",
+        center: [15, 18],
+        zoom: 1.35,
+        minZoom: 0.7,
+        maxZoom: 15,
+        pitch: 0,
+        bearing: 0,
+        attributionControl: false,
+        maplibreLogo: true,
+      });
+    } catch {
+      queueMicrotask(() => {
+        setLoading(false);
+        setError("Map could not initialize. Use the verified event list instead.");
+      });
+      return;
+    }
+
+    map.on("error", () => {
+      setError("Map tiles are unavailable. Use the verified event list instead.");
     });
 
     map.addControl(

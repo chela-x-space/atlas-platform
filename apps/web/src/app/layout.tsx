@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 
@@ -9,6 +9,14 @@ export const metadata: Metadata = {
   },
   description:
     "Global monitoring, intelligence, weather, earthquake, markets, news and AI analysis platform.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#020a12",
+  colorScheme: "dark",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

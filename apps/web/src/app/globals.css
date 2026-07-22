@@ -25,7 +25,7 @@
 }
 
 html {
-  min-width: 320px;
+  min-width: 0;
   background: var(--background);
 }
 
@@ -586,7 +586,10 @@ button {
 @media (max-width: 720px) {
   .public-header {
     width: calc(100% - 28px);
+    min-height: 72px;
   }
+
+  .public-actions .primary-button { min-height: 44px; padding: 10px 13px; font-size: 13px; }
 
   .login-link {
     display: none;
@@ -601,7 +604,8 @@ button {
   }
 
   .hero-content h1 {
-    font-size: 49px;
+    font-size: clamp(38px, 12vw, 49px);
+    overflow-wrap: anywhere;
   }
 
   .hero-description {
@@ -612,8 +616,12 @@ button {
     flex-direction: column;
   }
 
+  .hero-actions a { width: 100%; min-height: 48px; }
+
+  .hero-visual { min-width: 0; overflow: hidden; }
+
   .visual-map {
-    min-height: 360px;
+    min-height: 300px;
   }
 
   .metric-section {
@@ -633,4 +641,14 @@ button {
     width: calc(100% - 28px);
     padding: 80px 0;
   }
+}
+
+@media (max-width: 380px) {
+  .public-brand small { display: none; }
+  .public-header { width: calc(100% - 20px); }
+  .hero-section { padding-right: 10px; padding-left: 10px; }
+  .hero-content h1 { font-size: 36px; }
+  .hero-eyebrow { font-size: 10px; line-height: 1.5; }
+  .metric-section { grid-template-columns: 1fr; }
+  .home-metric { border-right: 0; border-bottom: 1px solid var(--border); }
 }
