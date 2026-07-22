@@ -1,0 +1,7 @@
+# ATLAS Event Model
+
+`AtlasEvent` is the provider-independent public record. `id` and `fingerprint` are deterministic SHA-256 identifiers. `category`, `type`, `title`, `summary`, `severity`, and `status` describe the event without provider schema. `occurredAt`, `updatedAt`, `ingestedAt`, and optional `expiresAt` are ISO-8601 UTC instants. `sourceId`, `sourceName`, `sourceUrl`, optional `sourceItemId`, `attribution`, and optional internal `rawReference` preserve provenance. `coordinates` is WGS84 with explicit `longitude` then `latitude`, plus optional altitude/depth. Country, region, tags and bounded JSON-safe metadata add context.
+
+Stable upstream item IDs are preferred. Otherwise identity includes source, category, normalized type/title, coordinates rounded to four decimals, and a five-minute occurrence bucket. Similar titles alone never merge. USGS severity is: below M2.5 info, M2.5–4.49 low, M4.5–5.99 moderate, M6–7.49 high, and M7.5+ critical. NHC advisories are conservatively moderate. Normal NASA/JPL/CNEOS articles are info. Open-Meteo incidents require gusts ≥90 km/h, precipitation ≥20 mm in the current interval, or temperature ≥45°C/≤−40°C; higher documented cutoffs raise severity.
+
+Examples are USGS earthquakes with magnitude/depth/tsunami metadata; NHC advisories with basin and advisory number; NASA articles with canonical links; and threshold-crossing Open-Meteo observations. Missing coordinates or summaries are never invented.

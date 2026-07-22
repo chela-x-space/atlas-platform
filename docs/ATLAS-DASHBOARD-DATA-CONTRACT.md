@@ -1,0 +1,7 @@
+# ATLAS Dashboard Data Contract
+
+`GET /api/dashboard` returns `generatedAt`, metrics, strongest/recent earthquakes, active cyclones, timeline events, technology news, breaking items, source health, and unavailable metric keys. Available metrics contain a numeric value, unit and source IDs. Unsupported metrics use `not-computed` or `integration-pending` with a reason; they never contain invented numbers.
+
+`GET /api/events` returns `AtlasEventPage`. It accepts category, severity, source, search, after, before, latitude, longitude, radiusKm, limit (maximum 500), cursor and sort. Radius parameters are all-or-none. `GET /api/events/{id}` returns one normalized event or a consistent 404 envelope. `GET /api/source-health` returns independent health records with stable error classifications and no secrets.
+
+Clients retain fixed panel footprints while loading. Errors state that the source or hub is unavailable and show no substitute data. Partial source health does not hide valid events. Event links open official source URLs with `noopener noreferrer`.

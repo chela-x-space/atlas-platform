@@ -14,3 +14,6 @@ Verified 2026-07-22. Exact machine endpoints are also held in `apps/web/src/conf
 | opensky | OpenSky Network | aviation | `https://opensky-network.org/api` | https://openskynetwork.github.io/opensky-api/index.html | disabled | OAuth2 client credentials | not fetched | The OpenSky Network | Credentials and compatible terms required; anonymous access is not assumed. | 2026-07-22 |
 
 Cache policy refers to ATLAS shared-cache max age; failures are not replaced with stale mock objects. Live response verification details are recorded during validation, not hard-coded as product data.
+# Data Hub status
+
+The active milestone consolidates only USGS earthquakes, Open-Meteo weather, NOAA/NHC cyclone advisories, and NASA/JPL/CNEOS news. No additional external provider is enabled. Source health is independent of event count; Open-Meteo is on-demand and routine weather does not become an event.

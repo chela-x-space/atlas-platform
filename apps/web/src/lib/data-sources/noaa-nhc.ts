@@ -1,15 +1,15 @@
 import { getActiveDataSource } from "@/config/data-sources";
 import { fetchText } from "@/lib/http/fetch-text";
-import type { AtlasEvent } from "@/types/atlas-data";
+type LegacyCycloneEvent = { id:string; category:"cyclone"; title:string; summary:string; severity:"unknown"; occurredAt:string; updatedAt:string; sourceId:string; sourceName:string; sourceUrl:string; coordinates?:[number,number]; metadata:Record<string,unknown> };
 
 function text(block: string, tag: string): string {
   const match = block.match(new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${tag}>`, "i"));
   return match?.[1].replace(/<!\[CDATA\[|\]\]>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() ?? "";
 }
 
-export function normalizeNhcFeed(xml: string, basin: string, sourceUrl: string): AtlasEvent[] {
+export function normalizeNhcFeed(xml: string, basin: string, sourceUrl: string): LegacyCycloneEvent[] {
   const blocks = xml.match(/<item\b[^>]*>[\s\S]*?<\/item>/gi) ?? [];
-  const events: AtlasEvent[] = [];
+  const events: LegacyCycloneEvent[] = [];
   for (const [index, block] of blocks.entries()) {
     if (!/<nhc:Cyclone\b/i.test(block) && !/Summary\s*-/i.test(text(block, "title"))) continue;
     const center = text(block, "nhc:center");
@@ -31,7 +31,7 @@ export async function getCyclones() {
   const source = getActiveDataSource("noaa-nhc");
   const settled = await Promise.all(Object.entries(source.endpoints).map(async ([basin, url]) => {
     try { const result = await fetchText(url, { timeoutMs: 8000, maxBytes: 1_000_000, acceptedContentTypes: ["xml", "rss", "text/plain"], revalidate: source.refreshSeconds }); return { basin, url, ok: true, fetchedAt: result.fetchedAt, events: normalizeNhcFeed(result.body, basin, url) }; }
-    catch { return { basin, url, ok: false, fetchedAt: new Date().toISOString(), events: [] as AtlasEvent[] }; }
+    catch { return { basin, url, ok: false, fetchedAt: new Date().toISOString(), events: [] as LegacyCycloneEvent[] }; }
   }));
   return { events: settled.flatMap((feed) => feed.events), sources: settled.map(({ events, ...feed }) => ({ ...feed, itemCount: events.length })), fetchedAt: new Date().toISOString(), attribution: source.attribution };
 }

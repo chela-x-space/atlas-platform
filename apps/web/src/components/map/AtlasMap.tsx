@@ -12,6 +12,7 @@ import maplibregl, {
   MapLayerMouseEvent,
 } from "maplibre-gl";
 import { EARTHQUAKE_LAYER_IDS, earthquakeLayersVisible } from "@/lib/dashboard-logic.mjs";
+import type { AtlasEventPage } from "@/types/atlas-data";
 
 
 type FeedRange = "24h" | "7d" | "30d";
@@ -457,8 +458,10 @@ export function AtlasMap({
       setError("");
 
       try {
+        const days=range==="24h"?1:range==="7d"?7:30;
+        const after=new Date(Date.now()-days*86_400_000).toISOString();
         const response = await fetch(
-          `/api/earthquakes?range=${range}`,
+          `/api/events?category=earthquake&after=${encodeURIComponent(after)}&limit=500`,
           {
             cache: "no-store",
           }
@@ -470,11 +473,8 @@ export function AtlasMap({
           );
         }
 
-        const collection =
-          normalizeFeatures(
-            (await response.json()) as
-              EarthquakeCollection
-          );
+        const page=(await response.json()) as AtlasEventPage;
+        const collection=normalizeFeatures({type:"FeatureCollection",features:page.events.filter(event=>event.coordinates).map(event=>({type:"Feature",id:event.id,geometry:{type:"Point",coordinates:[event.coordinates!.longitude,event.coordinates!.latitude,event.coordinates!.depthKilometers??0]},properties:{mag:typeof event.metadata.magnitude==="number"?event.metadata.magnitude:null,place:event.region??event.title,time:Date.parse(event.occurredAt),url:event.sourceUrl,alert:typeof event.metadata.alert==="string"?event.metadata.alert:null,tsunami:event.metadata.tsunami===true?1:0}}))});
 
         if (cancelled) {
           return;

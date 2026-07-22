@@ -7,3 +7,6 @@ RSS 2.0 and Atom feeds are bounded before parsing. Unsafe markup is removed, can
 Shared caches reduce upstream load and `stale-while-revalidate` permits a previously validated response to remain useful during refresh. Explicit failure responses use `invalid-parameters`, `timeout`, `unavailable`, `invalid-content-type`, `response-too-large`, `invalid-upstream-data`, or `all-sources-unavailable` without leaking upstream bodies, credentials, or internal errors.
 
 To add a source safely: verify its official documentation and exact HTTPS endpoint; review authentication, licensing, attribution, rate limits, and redistribution rights; add a disabled registry entry first; implement bounded fetch and schema validation; normalize into an ATLAS contract; add partial/all-failure tests; show attribution and original links in the UI; then mark active. Fabricated fallback data and silent mock fallbacks are prohibited.
+# Current ATLAS Data Hub boundary
+
+Dashboard clients now consume `/api/dashboard`, `/api/events`, and `/api/source-health`; provider-specific routes are legacy compatibility endpoints and are not dashboard dependencies. See `ATLAS-DATA-HUB.md` and `ATLAS-EVENT-MODEL.md`.

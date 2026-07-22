@@ -1,0 +1,2 @@
+import { InMemoryAtlasEventStore } from "@/lib/event-store"; import { AtlasDataHub } from "./atlas-data-hub";
+let instance:AtlasDataHub|undefined; export function getAtlasDataHub():AtlasDataHub {if(!instance){const holder:{hub?:AtlasDataHub}={};const store=new InMemoryAtlasEventStore(()=>holder.hub?.getSourceHealth()??[]);const hub=new AtlasDataHub(store);holder.hub=hub;instance=hub;}return instance;} export * from "./atlas-data-hub";export * from "./deduplicate-events";export * from "./event-identity";export * from "./validation";

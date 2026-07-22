@@ -8,11 +8,9 @@ import { AtlasSidebar } from "./AtlasSidebar";
 import { MetricStrip } from "./MetricStrip";
 import { DashboardModal } from "./DashboardModal";
 import { filterEvents, marketRowsForTab, routeForMenu } from "@/lib/dashboard-logic.mjs";
+import type { AtlasDashboardSnapshot } from "@/types/atlas-data";
 
 type DashboardRow = [string, string, string, string, string, string, string];
-type QuakeFeature = { id: string; geometry: { coordinates: [number, number, number] }; properties: { mag: number | null; place: string; time: number; tsunami: number; url: string; sourceName: string } };
-type NewsItem = { id: string; title: string; summary: string; publishedAt: string; sourceName: string; sourceUrl: string; category: string };
-type CycloneEvent = { id: string; title: string; summary: string; occurredAt: string; sourceName: string; sourceUrl: string };
 
 const labels = {
   English: { search: "Search for events, places, topics...", login: "Login", liveMap: "LIVE GLOBAL MAP", timeline: "GLOBAL TIMELINE" },
@@ -39,8 +37,9 @@ export function AtlasDashboard() {
 
   const [message, setMessage] = useState("");
   const [panel, setPanel] = useState<{ title: string; description: string } | null>(null);
-  const [quakes, setQuakes] = useState<QuakeFeature[]>([]); const [earthquakesAvailable, setEarthquakesAvailable] = useState(false); const [cycloneCount, setCycloneCount] = useState<number | null>(null); const [cyclones, setCyclones] = useState<CycloneEvent[]>([]); const [news, setNews] = useState<NewsItem[]>([]); const [liveLoading, setLiveLoading] = useState(true);
-  const timelineEvents: DashboardRow[] = useMemo(() => [...quakes.slice(0, 5).map((quake): DashboardRow => [new Date(quake.properties.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), `${quake.properties.mag === null ? "M ?" : `M ${quake.properties.mag.toFixed(1)}`} Earthquake`, quake.properties.place, quake.properties.mag !== null && quake.properties.mag >= 6 ? "red" : "orange", "USGS", quake.properties.url, new Date(quake.properties.time).toISOString()]), ...cyclones.slice(0, 2).map((event): DashboardRow => [new Date(event.occurredAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), event.title, "NOAA/NHC advisory", "blue", event.sourceName, event.sourceUrl, event.occurredAt]), ...news.slice(0, 2).map((item): DashboardRow => [new Date(item.publishedAt).toLocaleDateString(), item.title, item.sourceName, "purple", item.sourceName, item.sourceUrl, item.publishedAt])].slice(0, 7), [quakes, cyclones, news]);
+  const [snapshot, setSnapshot] = useState<AtlasDashboardSnapshot | null>(null); const [liveLoading, setLiveLoading] = useState(true); const [liveError,setLiveError]=useState("");
+  const quakes=snapshot?.recentEarthquakes??[],news=snapshot?.technologyNews??[]; const earthquakeMetric=snapshot?.metrics.earthquakes24h,cycloneMetric=snapshot?.metrics.cyclones; const earthquakeCount=earthquakeMetric?.status==="available"?earthquakeMetric.value:null,cycloneCount=cycloneMetric?.status==="available"?cycloneMetric.value:null;
+  const timelineEvents: DashboardRow[] = useMemo(() => (snapshot?.timelineEvents??[]).map((event):DashboardRow=>[new Date(event.occurredAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),event.title,event.region??event.summary,event.severity==="high"||event.severity==="critical"?"red":event.category==="cyclone"?"blue":event.category==="space"||event.category==="technology"?"purple":"orange",event.sourceName,event.sourceUrl,event.occurredAt]).slice(0,7),[snapshot]);
 
   const filteredTimeline: DashboardRow[] = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -94,7 +93,7 @@ export function AtlasDashboard() {
   const ui = labels[language];
   const visibleMarketRows = marketRowsForTab({ Indices: [["Integration pending", "—", "No live source"]], Commodities: [["Integration pending", "—", "No live source"]], Crypto: [["Integration pending", "—", "No live source"]], Currencies: [["Integration pending", "—", "No live source"]] }, marketTab) as string[][];
 
-  useEffect(() => { let cancelled = false; Promise.allSettled([fetch("/api/earthquakes?range=24h").then(async (r) => { if (!r.ok) throw new Error(); return r.json(); }), fetch("/api/cyclones").then(async (r) => { if (!r.ok && r.status !== 206) throw new Error(); return r.json(); }), fetch("/api/news").then(async (r) => { if (!r.ok && r.status !== 206) throw new Error(); return r.json(); })]).then(([earthquakes, cycloneResult, officialNews]) => { if (cancelled) return; if (earthquakes.status === "fulfilled") { setQuakes(earthquakes.value.features ?? []); setEarthquakesAvailable(true); } if (cycloneResult.status === "fulfilled") { setCycloneCount(cycloneResult.value.events?.length ?? 0); setCyclones(cycloneResult.value.events ?? []); } if (officialNews.status === "fulfilled") setNews(officialNews.value.items ?? []); setLiveLoading(false); }); return () => { cancelled = true; }; }, []);
+  useEffect(() => { let cancelled=false;fetch("/api/dashboard").then(async r=>{const data=await r.json();if(!r.ok)throw new Error(data.error?.message??"Dashboard unavailable");if(!cancelled)setSnapshot(data as AtlasDashboardSnapshot);}).catch(()=>{if(!cancelled)setLiveError("ATLAS Data Hub is unavailable; no substitute values are shown.");}).finally(()=>{if(!cancelled)setLiveLoading(false);});return()=>{cancelled=true;};},[]);
 
   const selectWeatherCoordinate = useCallback((longitude: number, latitude: number) => { setPanel({ title: "Weather • Loading", description: `Requesting Open-Meteo observations for ${latitude.toFixed(3)}, ${longitude.toFixed(3)}…` }); fetch(`/api/weather?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}`).then(async (response) => { const data = await response.json(); if (!response.ok) throw new Error(data.error?.message); const weather = data.snapshot; setPanel({ title: "Weather • Open-Meteo", description: `${weather.location}\nObserved ${weather.observedAt}. ${weather.temperatureCelsius}°C (feels ${weather.apparentTemperatureCelsius}°C), humidity ${weather.humidityPercent}%, precipitation ${weather.precipitationMillimeters} mm, cloud ${weather.cloudCoverPercent}%, pressure ${weather.pressureHpa} hPa, wind ${weather.windSpeedKph} km/h gusting ${weather.windGustKph} km/h at ${weather.windDirectionDegrees}°. Source: ${weather.sourceUrl}. Fetched: ${data.fetchedAt}. Category: weather.` }); }).catch(() => setPanel({ title: "Weather unavailable", description: "Open-Meteo could not be reached. No substitute values are shown." })); }, []);
 
@@ -196,7 +195,7 @@ export function AtlasDashboard() {
           </div>
         </header>
 
-        <MetricStrip earthquakeCount={earthquakesAvailable ? quakes.length : null} cycloneCount={cycloneCount} loading={liveLoading} />
+        <MetricStrip earthquakeCount={earthquakeCount} cycloneCount={cycloneCount} loading={liveLoading} />
 
         <section className="atlas-v4-primary">
           <div className="atlas-v4-left">
@@ -262,7 +261,7 @@ export function AtlasDashboard() {
                       type="button"
                       key={`${time}-${title}`}
                       className={`atlas-v4-event ${tone}`}
-                      onClick={() => setPanel({ title, description: `${time} — ${place}. Source: ${source}. Published: ${publishedAt}. Category: ${source === "USGS" ? "earthquake" : source.includes("Hurricane") ? "cyclone" : "space/news"}. ${sourceUrl}` })}
+                      onClick={() => setPanel({ title, description: `${time} — ${place}. Source: ${source}. Published: ${publishedAt}. ${sourceUrl}` })}
                     >
                       <span>{time}</span>
                       <strong>{title}</strong>
@@ -339,10 +338,10 @@ export function AtlasDashboard() {
 
               <div className="atlas-v4-quake-primary">
                 <div>
-                  <strong>{quakes[0]?.properties.mag === null ? "M ?" : quakes[0] ? `M ${quakes[0].properties.mag?.toFixed(1)}` : liveLoading ? "Loading…" : "Unavailable"}</strong>
+                  <strong>{quakes[0] ? typeof quakes[0].metadata.magnitude === "number" ? `M ${quakes[0].metadata.magnitude.toFixed(1)}` : "M ?" : liveLoading ? "Loading…" : "Unavailable"}</strong>
                   <small>USGS • earthquake</small>
-                  <h3>{quakes[0]?.properties.place ?? "No current USGS item available"}</h3>
-                  {quakes[0] ? <p>{new Date(quakes[0].properties.time).toLocaleString()}<br />Depth: {quakes[0].geometry.coordinates[2].toFixed(1)} km<br />Tsunami flag: <b className={quakes[0].properties.tsunami ? "red" : "green"}>{quakes[0].properties.tsunami ? "Yes" : "No"}</b><br /><a href={quakes[0].properties.url} target="_blank" rel="noopener noreferrer">USGS source ↗</a></p> : null}
+                  <h3>{quakes[0]?.region ?? "No current USGS item available"}</h3>
+                  {quakes[0] ? <p>{new Date(quakes[0].occurredAt).toLocaleString()}<br />Depth: {quakes[0].coordinates?.depthKilometers?.toFixed(1) ?? "Not supplied"} km<br />Tsunami flag: <b className={quakes[0].metadata.tsunami ? "red" : "green"}>{quakes[0].metadata.tsunami ? "Yes" : "No"}</b><br /><a href={quakes[0].sourceUrl} target="_blank" rel="noopener noreferrer">Official source ↗</a></p> : null}
                 </div>
 
                 <div className="atlas-v4-radar">
@@ -355,11 +354,11 @@ export function AtlasDashboard() {
 
               <div className="atlas-v4-quake-list">
                 {quakes.slice(1, 6).map((quake) => {
-                  const magnitude = quake.properties.mag === null ? "M ?" : `M ${quake.properties.mag.toFixed(1)}`; const place = quake.properties.place; const time = new Date(quake.properties.time).toLocaleTimeString([], { timeZone: "UTC", hour: "2-digit", minute: "2-digit" }); return (
+                  const magnitude = typeof quake.metadata.magnitude === "number" ? `M ${quake.metadata.magnitude.toFixed(1)}` : "M ?"; const place = quake.region??quake.title; const time = new Date(quake.occurredAt).toLocaleTimeString([], { timeZone: "UTC", hour: "2-digit", minute: "2-digit" }); return (
                     <button
                       type="button"
                       key={quake.id}
-                      onClick={() => setPanel({ title: `${magnitude} Earthquake`, description: `${place}, ${time} UTC. Source: USGS. Published: ${new Date(quake.properties.time).toISOString()}. Category: earthquake. ${quake.properties.url}` })}
+                      onClick={() => setPanel({ title: `${magnitude} Earthquake`, description: `${place}, ${time} UTC. Source: ${quake.sourceName}. Published: ${quake.occurredAt}. Category: ${quake.category}. ${quake.sourceUrl}` })}
                     >
                       <strong>{magnitude}</strong>
                       <span>{place}</span>
@@ -480,7 +479,7 @@ export function AtlasDashboard() {
                     <strong>{item.sourceName}</strong><small>{item.title}</small>
                   </span>
 
-                  <time dateTime={item.publishedAt}>{new Date(item.publishedAt).toLocaleDateString()}</time>
+                  <time dateTime={item.occurredAt}>{new Date(item.occurredAt).toLocaleDateString()}</time>
                 </button>
               )
             )}
@@ -521,7 +520,7 @@ export function AtlasDashboard() {
 
         <footer className="atlas-v4-breaking">
           <strong>LATEST OFFICIAL NEWS</strong>
-          {news.length ? news.slice(0, 5).map((item) => <a key={item.id} href={item.sourceUrl} target="_blank" rel="noopener noreferrer"><span>{item.title} • {item.sourceName} • {new Date(item.publishedAt).toLocaleString()}</span></a>) : <span>{liveLoading ? "Loading official feeds…" : "Official feeds unavailable — no placeholder news shown"}</span>}
+          {news.length ? news.slice(0, 5).map((item) => <a key={item.id} href={item.sourceUrl} target="_blank" rel="noopener noreferrer"><span>{item.title} • {item.sourceName} • {new Date(item.occurredAt).toLocaleString()}</span></a>) : <span>{liveLoading ? "Loading official feeds…" : liveError||"Official feeds unavailable — no placeholder news shown"}</span>}
         </footer>
       </main>
 
