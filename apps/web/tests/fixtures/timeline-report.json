@@ -1,0 +1,18 @@
+{
+  "id": "nasa-rss-fixture",
+  "title": "NASA fixture report",
+  "summary": "Official source-provided fixture description.",
+  "publishedAt": "2026-07-23T11:00:00.000Z",
+  "updatedAt": "2026-07-23T11:05:00.000Z",
+  "sourceId": "nasa-rss",
+  "sourceName": "NASA Official RSS",
+  "originalSource": "NASA",
+  "sourceUrl": "https://www.nasa.gov/example/fixture-report/",
+  "canonicalUrl": "https://www.nasa.gov/example/fixture-report/",
+  "category": "space",
+  "language": "en",
+  "attribution": "National Aeronautics and Space Administration (NASA)",
+  "countries": [],
+  "eventTypes": ["official report"],
+  "verificationStatus": "verified"
+}

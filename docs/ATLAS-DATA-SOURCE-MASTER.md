@@ -58,7 +58,7 @@ Event-like records normalize to `AtlasEvent`: stable source-scoped ID and finger
 | `AtlasMap` — Flights | Aircraft state vectors | OpenSky; FAA NAS status; AviationWeather hazards | Disabled/Planned / P2 |
 | `AtlasMap` — Ships | Vessel positions | Licensed terrestrial/satellite AIS; NOAA for marine conditions | Research / P2 |
 | `AtlasMap` — More Layers | Flood, wildfire, volcano, tsunami, cyclone, satellite, energy overlays | GDACS, FIRMS, GVP, tsunami.gov, NHC, CelesTrak, EIA | Planned/Research / P1–P2 |
-| Global Timeline | Unified chronological event list | Every enabled `AtlasEvent` source | Active for USGS/NHC/JPL/CNEOS / P0 |
+| Global Timeline | Unified chronological event and verified-report list | USGS, NOAA/NHC, NASA official RSS, ESA official RSS | Active verified subset / P0 |
 | AI Global Summary panel | Cited current narrative and risk facets | ATLAS computed metrics plus traceable source events; optional LLM rendering | Planned / P1 |
 | Live Earthquake card/list and `/app/earthquake` | Strongest and recent quakes | USGS GeoJSON/FDSN | Card Active; page shell only / P0 |
 | Global Sentiment Index | Human Concern Index gauge | ATLAS-computed, not a third-party sentiment number | Research / P2 |
@@ -68,7 +68,7 @@ Event-like records normalize to `AtlasEvent`: stable source-scoped ID and finger
 | Disaster Overview | Cyclone, wildfire, flood, volcano counts/map | NHC, FIRMS, GDACS, Smithsonian GVP | Cyclone Active; others Planned / P0–P1 |
 | Latest Official News ticker and `/app/news` | Verified publication stream | NASA official RSS and ESA official RSS; ReliefWeb v2 configuration-gated; USGS/NHC event anchors | NASA/ESA Active; ReliefWeb configuration required / P0 |
 | World Map menu / `/app/monitor` | Global event monitor | All geospatial event sources | Active subset / P0 |
-| Event Timeline menu / `/app/timeline` | Searchable historic event list | All event sources plus persistent event store | Active subset; page shell only / P0 |
+| Global Timeline menu / `/app/timeline` | Searchable live activity list | USGS, NOAA/NHC, NASA official RSS, ESA official RSS; persistent history remains future | Active mixed-source bounded stream / P0 |
 | Breaking News menu / `/app/news` | Search/filter official items | NASA and ESA official RSS; ReliefWeb v2 after appname approval | NASA/ESA Active / P0 |
 | Volcano menu/panel | Volcano activity | Smithsonian GVP | Planned / P1 |
 | Weather & Climate menu and `/app/weather` | Weather observations/forecast and climate anomalies | Open-Meteo, NOAA NCEI | Weather Active; climate Planned / P0–P1 |

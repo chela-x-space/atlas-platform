@@ -1,0 +1,29 @@
+{
+  "id": "evt_usgs_fixture",
+  "fingerprint": "sha256:fixture",
+  "category": "earthquake",
+  "type": "earthquake",
+  "title": "M 5.2 earthquake — Test Region",
+  "summary": "M 5.2 - Test Region",
+  "severity": "moderate",
+  "status": "reviewed",
+  "occurredAt": "2026-07-23T10:00:00.000Z",
+  "updatedAt": "2026-07-23T10:02:00.000Z",
+  "ingestedAt": "2026-07-23T10:03:00.000Z",
+  "sourceId": "usgs-earthquakes",
+  "sourceName": "U.S. Geological Survey",
+  "sourceUrl": "https://earthquake.usgs.gov/earthquakes/eventpage/test",
+  "sourceItemId": "test",
+  "coordinates": {
+    "longitude": 120.5,
+    "latitude": 14.6,
+    "depthKilometers": 20
+  },
+  "countryCode": "PH",
+  "region": "Test Region",
+  "tags": ["earthquake", "usgs"],
+  "metadata": {
+    "magnitude": 5.2
+  },
+  "attribution": "Earthquake data courtesy of the U.S. Geological Survey"
+}
