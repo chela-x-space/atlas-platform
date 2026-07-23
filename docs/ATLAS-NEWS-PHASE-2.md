@@ -1,5 +1,7 @@
 # ATLAS News Phase 2
 
+Verified NASA and ESA report cards now link to `/app/events/[id]` using their exact normalized report IDs. “Read original” remains a separate link to the official provider page. Canonical detail relationships only accept existing `exact` groups; strong or probable groupings remain contextual News Center presentation and are not asserted as identity.
+
 **Validation date:** 2026-07-23
 **Scope:** verified public report metadata and short source-supplied excerpts for `/app/news`
 **Policy:** no commercial-publisher scraping, article-body mirroring, media mirroring, unofficial feeds, or LLM summaries.

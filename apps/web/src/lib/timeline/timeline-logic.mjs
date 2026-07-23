@@ -52,7 +52,11 @@ export function normalizeEventTimelineItem(event, stale = false) {
     stale: Boolean(stale),
     relatedEventId: event.id,
     relatedReportId: null,
-    metadata: { ...safeMetadata(event.metadata), sourceRecordId: event.sourceItemId ?? event.id },
+    metadata: {
+      ...safeMetadata(event.metadata),
+      sourceRecordId: event.sourceItemId ?? event.id,
+      eventType: event.type,
+    },
   };
 }
 

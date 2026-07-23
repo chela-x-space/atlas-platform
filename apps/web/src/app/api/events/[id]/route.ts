@@ -1,2 +1,34 @@
-import { NextRequest,NextResponse } from "next/server";import { getAtlasDataHub } from "@/lib/data-hub";
-export async function GET(_request:NextRequest,{params}:{params:Promise<{id:string}>}){const{id}=await params;if(!/^evt_[a-f0-9]{32}$/.test(id))return NextResponse.json({error:{code:"INVALID_EVENT_ID",message:"Invalid event ID"}},{status:400,headers:{"Cache-Control":"no-store"}});try{const hub=getAtlasDataHub();await hub.refreshSources();const event=await hub.getEvent(id);return event?NextResponse.json(event,{headers:{"Cache-Control":"public, s-maxage=60, stale-while-revalidate=300"}}):NextResponse.json({error:{code:"NOT_FOUND",message:"Event not found"}},{status:404,headers:{"Cache-Control":"no-store"}});}catch{return NextResponse.json({error:{code:"DATA_HUB_UNAVAILABLE",message:"Event data is temporarily unavailable"}},{status:503,headers:{"Cache-Control":"no-store"}});}}
+import { NextResponse } from "next/server";
+import { resolveEventDetail } from "@/lib/event-detail/event-detail-resolver";
+
+export const dynamic = "force-dynamic";
+
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+  const result = await resolveEventDetail(id);
+  if (result.status === "invalid") {
+    return NextResponse.json(
+      { error: { code: result.code, message: result.message } },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+  if (result.status === "not_found") {
+    return NextResponse.json(
+      { error: { code: result.code, message: result.message } },
+      { status: 404, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+  if (result.status === "unavailable") {
+    return NextResponse.json(
+      { error: { code: result.code, message: result.message } },
+      { status: 503, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+  return NextResponse.json(result.response, {
+    status: result.response.partial ? 206 : 200,
+    headers: { "Cache-Control": "private, no-cache, must-revalidate" },
+  });
+}

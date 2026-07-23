@@ -65,4 +65,4 @@ The existing dashboard timeline remains unchanged. It consumes a compact `AtlasD
 
 ## Future event-detail integration
 
-A future event-detail service may expose provider revisions and already-established deterministic event/report relationships. Timeline items can then link to those details through `relatedEventId` and `relatedReportId` without changing source provenance or using probabilistic grouping.
+The canonical event-detail service is available at `/app/events/[id]`. Timeline cards use `relatedEventId` or `relatedReportId` for the ATLAS detail action while retaining the original provider link separately. Detail resolution is exact and does not promote probable grouping to canonical identity. A future persistent graph may add provider-owned revisions and explicit cross-provider identifiers without changing source provenance.

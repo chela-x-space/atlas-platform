@@ -11,7 +11,7 @@ import { filterEvents, marketRowsForTab, routeForMenu } from "@/lib/dashboard-lo
 import { safeExternalUrl } from "@/lib/security/external-url.mjs";
 import type { AtlasDashboardSnapshot } from "@/types/atlas-data";
 
-type DashboardRow = [string, string, string, string, string, string | undefined, string];
+type DashboardRow = [string, string, string, string, string, string | undefined, string, string];
 
 const labels = {
   English: { search: "Search for events, places, topics...", login: "Login", liveMap: "LIVE GLOBAL MAP", timeline: "GLOBAL TIMELINE" },
@@ -40,7 +40,7 @@ export function AtlasDashboard() {
   const [panel, setPanel] = useState<{ title: string; description: string } | null>(null);
   const [snapshot, setSnapshot] = useState<AtlasDashboardSnapshot | null>(null); const [liveLoading, setLiveLoading] = useState(true); const [liveError,setLiveError]=useState("");
   const quakes=snapshot?.recentEarthquakes??[],news=snapshot?.technologyNews??[]; const earthquakeMetric=snapshot?.metrics.earthquakes24h,cycloneMetric=snapshot?.metrics.cyclones; const earthquakeCount=earthquakeMetric?.status==="available"?earthquakeMetric.value:null,cycloneCount=cycloneMetric?.status==="available"?cycloneMetric.value:null;
-  const timelineEvents: DashboardRow[] = useMemo(() => (snapshot?.timelineEvents??[]).map((event):DashboardRow=>[new Date(event.occurredAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),event.title,event.region??event.summary,event.severity==="high"||event.severity==="critical"?"red":event.category==="cyclone"?"blue":event.category==="space"||event.category==="technology"?"purple":"orange",event.sourceName,safeExternalUrl(event.sourceUrl)??undefined,event.occurredAt]).slice(0,7),[snapshot]);
+  const timelineEvents: DashboardRow[] = useMemo(() => (snapshot?.timelineEvents??[]).map((event):DashboardRow=>[new Date(event.occurredAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),event.title,event.region??event.summary,event.severity==="high"||event.severity==="critical"?"red":event.category==="cyclone"?"blue":event.category==="space"||event.category==="technology"?"purple":"orange",event.sourceName,safeExternalUrl(event.sourceUrl)??undefined,event.occurredAt,event.id]).slice(0,7),[snapshot]);
 
   const filteredTimeline: DashboardRow[] = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -257,12 +257,12 @@ export function AtlasDashboard() {
 
               <div className="atlas-v4-timeline-row">
                 {filteredTimeline.map(
-                  ([time, title, place, tone, source, sourceUrl, publishedAt]) => (
+                  ([time, title, place, tone, , , , eventId]) => (
                     <button
                       type="button"
                       key={`${time}-${title}`}
                       className={`atlas-v4-event ${tone}`}
-                      onClick={() => setPanel({ title, description: `${time} — ${place}. Source: ${source}. Published: ${publishedAt}. ${sourceUrl}` })}
+                      onClick={() => router.push(`/app/events/${encodeURIComponent(eventId)}`)}
                     >
                       <span>{time}</span>
                       <strong>{title}</strong>
@@ -359,7 +359,7 @@ export function AtlasDashboard() {
                     <button
                       type="button"
                       key={quake.id}
-                      onClick={() => setPanel({ title: `${magnitude} Earthquake`, description: `${place}, ${time} UTC. Source: ${quake.sourceName}. Published: ${quake.occurredAt}. Category: ${quake.category}. ${quake.sourceUrl}` })}
+                      onClick={() => router.push(`/app/events/${encodeURIComponent(quake.id)}`)}
                     >
                       <strong>{magnitude}</strong>
                       <span>{place}</span>

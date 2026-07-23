@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import type {
   TimelineItem,
   TimelineResponse,
@@ -69,7 +70,11 @@ function TimelineCard({ item }: { item: TimelineItem }) {
           {item.stale && <span className="timeline-badge stale">stale</span>}
         </div>
       </div>
-      <h2>{item.title}</h2>
+      <h2>
+        <Link href={`/app/events/${encodeURIComponent(item.relatedEventId ?? item.relatedReportId ?? item.id)}`}>
+          {item.title}
+        </Link>
+      </h2>
       {item.summary && <p>{item.summary}</p>}
       <dl>
         <div><dt>Source</dt><dd>{item.sourceName}</dd></div>

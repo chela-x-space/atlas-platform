@@ -8,7 +8,7 @@ import type { AtlasDashboardSnapshot,AtlasEvent } from "@/types/atlas-data";
 
 function EventCard({event}:{event:AtlasEvent}){
   const url=safeExternalUrl(event.sourceUrl);
-  return <article className="atlas-mobile-event"><div><span>{event.category}</span><time dateTime={event.occurredAt}>{new Date(event.occurredAt).toLocaleString()}</time></div><h3>{event.title}</h3><p>{event.region??event.summary}</p><footer><span>{event.sourceName}</span>{url?<a href={url} target="_blank" rel="noopener noreferrer">Source ↗</a>:<span>Detail link unavailable</span>}</footer></article>;
+  return <article className="atlas-mobile-event"><div><span>{event.category}</span><time dateTime={event.occurredAt}>{new Date(event.occurredAt).toLocaleString()}</time></div><h3><Link href={`/app/events/${encodeURIComponent(event.id)}`}>{event.title}</Link></h3><p>{event.region??event.summary}</p><footer><span>{event.sourceName}</span>{url?<a href={url} target="_blank" rel="noopener noreferrer">Source ↗</a>:<span>Detail link unavailable</span>}</footer></article>;
 }
 
 export function AtlasMobileOverview(){

@@ -6,4 +6,6 @@
 
 `GET /api/timeline` returns the bounded, mixed-source `TimelineResponse` used by `/app/timeline`. It combines verified USGS and NOAA/NHC operational records with NASA and ESA official reports, ordered newest first with cursor pagination. The existing dashboard `timelineEvents` field remains an `AtlasEvent` subset to preserve established dashboard and mobile consumers; it does not duplicate the mixed-source API contract.
 
+`GET /api/events/[id]` resolves exact operational, advisory, verified-report, or timeline identifiers into the canonical `EventDetailResponse`. This intentionally differs from the unchanged `GET /api/events` collection envelope. Dashboard timeline and earthquake actions use the underlying `AtlasEvent.id`; official-provider links remain separate.
+
 Clients retain fixed panel footprints while loading. Errors state that the source or hub is unavailable and show no substitute data. Partial source health does not hide valid events. Event links open official source URLs with `noopener noreferrer`.

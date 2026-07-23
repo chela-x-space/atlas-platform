@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import {
   canUseAiSummary,
   filterNewsGroups,
@@ -59,7 +60,7 @@ function SourceArticle({ article, related }: { article: AtlasNewsItem; related?:
         )}
         <time dateTime={article.publishedAt}>{formatTimestamp(article.publishedAt)}</time>
       </div>
-      {related && <h3>{article.title}</h3>}
+      {related && <h3><Link href={`/app/events/${encodeURIComponent(article.id)}`}>{article.title}</Link></h3>}
       {!related && article.summary && (
         <p className="news-source-summary">
           <span>Source report</span>
@@ -96,7 +97,7 @@ function EventCard({ group }: { group: AtlasNewsEventGroup }) {
         </div>
         <time dateTime={group.latestAt}>{formatTimestamp(group.latestAt)}</time>
       </header>
-      <h2>{group.title}</h2>
+      <h2><Link href={`/app/events/${encodeURIComponent(primary.id)}`}>{group.title}</Link></h2>
       <SourceArticle article={primary} />
       <div className="news-coverage-note">
         <span aria-hidden="true">◇</span>

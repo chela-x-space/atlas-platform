@@ -1,6 +1,7 @@
 import { getAtlasDataHub } from "@/lib/data-hub";
 import { getOfficialNews } from "@/lib/news/news-service";
 import type { ProviderHealth } from "@/lib/news/provider-contract";
+import type { NewsEventGroup } from "@/lib/news/provider-contract";
 import type { AtlasEventSourceHealth } from "@/types/atlas-data";
 import type {
   TimelineFilters,
@@ -29,6 +30,7 @@ const SOURCE_NAMES: Readonly<Record<string, string>> = {
 type AggregatedTimeline = {
   readonly items: TimelineItem[];
   readonly sourceStatus: TimelineSourceStatus[];
+  readonly eventGroups: readonly NewsEventGroup[];
   readonly duplicateCount: number;
   readonly fetchedAt: string;
 };
@@ -100,6 +102,7 @@ export async function aggregateTimeline(): Promise<AggregatedTimeline> {
   return {
     items: deduplicated.items,
     sourceStatus,
+    eventGroups: reportResult.status === "fulfilled" ? reportResult.value.eventGroups : [],
     duplicateCount: deduplicated.duplicates.length,
     fetchedAt,
   };
