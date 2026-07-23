@@ -7,6 +7,7 @@ export const MENU_ROUTES = Object.freeze({
   "Weather & Climate": "/app/weather",
   "Economy & Markets": "/app/markets",
   "AI & Technology": "/app/ai",
+  "Source Center": "/app/sources",
   Settings: "/app/settings",
   "About Atlas": "/about",
 });

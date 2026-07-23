@@ -1,16 +1,19 @@
 import { NextResponse } from "next/server";
 import { getAtlasDataHub } from "@/lib/data-hub";
 import { getOfficialNews } from "@/lib/news/news-service";
+import { buildSourceOperationsProviders } from "@/lib/source-health/source-operations";
 
 export async function GET() {
   const generatedAt = new Date().toISOString();
   try {
     const hub = getAtlasDataHub();
     const [, news] = await Promise.all([hub.refreshSources(), getOfficialNews()]);
+    const sources = hub.getSourceHealth();
     return NextResponse.json({
       generatedAt,
-      sources: hub.getSourceHealth(),
+      sources,
       newsProviders: news.sources,
+      providers: buildSourceOperationsProviders(sources, news.sources),
     }, { headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" } });
   } catch {
     return NextResponse.json({
@@ -18,6 +21,7 @@ export async function GET() {
       generatedAt,
       sources: [],
       newsProviders: [],
+      providers: [],
     }, { status: 503, headers: { "Cache-Control": "no-store" } });
   }
 }

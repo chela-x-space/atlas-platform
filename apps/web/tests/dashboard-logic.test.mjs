@@ -11,6 +11,7 @@ import {
 
 test("sidebar labels resolve only to valid configured routes", () => {
   assert.equal(routeForMenu("World Map"), "/app/monitor");
+  assert.equal(routeForMenu("Source Center"), "/app/sources");
   assert.equal(routeForMenu("Volcano"), null);
 });
 
