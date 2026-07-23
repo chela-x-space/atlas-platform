@@ -2,7 +2,7 @@
 
 **Document status:** Master specification / single source of truth  
 **Applies to:** ATLAS external ingestion, dashboard data provenance, caching, normalization, and future computed intelligence  
-**Inventory date:** 2026-07-22  
+**Inventory date:** 2026-07-23
 **Repository baseline:** `apps/web/src/config/data-sources.ts`, dashboard components, app pages, API routes, tests, and data-hub normalizers  
 **Rule:** A source is not production-enabled merely because it appears in this document. Only rows marked **Active** are currently connected. Status changes require this document and the runtime registry to be updated together.
 
@@ -66,10 +66,10 @@ Event-like records normalize to `AtlasEvent`: stable source-scoped ID and finger
 | Market Overview and `/app/markets` lists | Indices, commodities, crypto, currencies | Twelve Data, CoinGecko, EIA; licensed benchmark review | Planned / P1 |
 | AI & Technology Radar and `/app/ai` list | Official company/agency announcements | OpenAI, Anthropic, Google AI, Meta AI, NVIDIA, Hugging Face, Microsoft AI, NASA/JPL | JPL Active; company feeds Planned / P1 |
 | Disaster Overview | Cyclone, wildfire, flood, volcano counts/map | NHC, FIRMS, GDACS, Smithsonian GVP | Cyclone Active; others Planned / P0–P1 |
-| Latest Official News ticker and `/app/news` | Official publication stream | JPL and CNEOS now; NASA, NOAA, USGS, WHO, ESA, government, technology feeds planned | Active subset / P0 |
+| Latest Official News ticker and `/app/news` | Verified publication stream | NASA official RSS and ESA official RSS; ReliefWeb v2 configuration-gated; USGS/NHC event anchors | NASA/ESA Active; ReliefWeb configuration required / P0 |
 | World Map menu / `/app/monitor` | Global event monitor | All geospatial event sources | Active subset / P0 |
 | Event Timeline menu / `/app/timeline` | Searchable historic event list | All event sources plus persistent event store | Active subset; page shell only / P0 |
-| Breaking News menu / `/app/news` | Search/filter official items | Official RSS/Atom/API sources | Active for JPL/CNEOS / P0 |
+| Breaking News menu / `/app/news` | Search/filter official items | NASA and ESA official RSS; ReliefWeb v2 after appname approval | NASA/ESA Active / P0 |
 | Volcano menu/panel | Volcano activity | Smithsonian GVP | Planned / P1 |
 | Weather & Climate menu and `/app/weather` | Weather observations/forecast and climate anomalies | Open-Meteo, NOAA NCEI | Weather Active; climate Planned / P0–P1 |
 | Disasters menu/panel | Multi-hazard events | GDACS plus hazard owners | Planned / P0 |
@@ -122,7 +122,9 @@ The endpoint is the production candidate, not permission to enable it. “Free�
 |---|---|---|---|---|---|---|---|
 | `jpl-news` — NASA/JPL news and Technology Radar | NASA; Jet Propulsion Laboratory | [JPL RSS](https://www.jpl.nasa.gov/rss/); `https://www.jpl.nasa.gov/feeds/news/` | None; free | NASA/JPL credit; NASA images usually reusable with restrictions for logos, endorsement, people, and third-party material; inspect item media rights | 15 min; RSS/XML; global mission news; feed window only, site archive longer | Medium-high; 15 min | **Active / P0** |
 | `nasa-open-api` — NASA missions/content | NASA | [Open APIs](https://api.nasa.gov/); example `https://api.nasa.gov/planetary/apod` | API key; `DEMO_KEY` free at low limits, registered key typically 1,000 requests/hour | NASA media/data guidance and endpoint-specific terms; attribution and third-party notices; NASA marks/logos restricted | 1–24 h by dataset; JSON; mission/global; endpoint-specific history | High; 1 h | **Planned / P1** |
-| `esa-news` — ESA | European Space Agency | [ESA RSS list](https://www.esa.int/rssfeed/Our_Activities); activity feed URL selected from ESA RSS list | None; free to read | ESA copyright applies; commercial reuse of text/images is not automatically granted; link and excerpt minimally unless permission/license is explicit | 30 min; RSS/XML; ESA missions/global; feed window and web archive | Medium-high; 30 min | **Planned / P1** |
+| `nasa-rss` — NASA official publications | NASA | [NASA RSS directory](https://www.nasa.gov/rss-feeds/); news-release, recent and technology feeds listed there | None | NASA attribution; metadata and bounded feed excerpt only; no article/media mirroring | 15 min; RSS/XML; global agency publication window | Medium-high; 15 min | **Active / P0** |
+| `esa-rss` — ESA official publications | European Space Agency | [ESA activity RSS](https://www.esa.int/rssfeed/Our_Activities) | None; free to read | ESA copyright applies; link, metadata and bounded feed excerpt only; no article/media mirroring | 30 min; RSS/XML; ESA missions/global; feed window and web archive | Medium-high; 30 min | **Active / P0** |
+| `reliefweb` — humanitarian reports | UN OCHA ReliefWeb and named information partners | [API v2](https://apidoc.reliefweb.int/); `/v2/reports` and `/v2/disasters` | Pre-approved `appname` mandatory; 1,000 calls/day and 1,000 entries/call | ReliefWeb plus original-source attribution; partner copyright applies; metadata/short description/link only | 30 min; JSON; global humanitarian reports | High, quota/appname constrained; 30 min | **Configuration required / P0** |
 | `cneos-news` — CNEOS news | NASA/JPL; Center for Near Earth Object Studies | [CNEOS](https://cneos.jpl.nasa.gov/); `https://cneos.jpl.nasa.gov/feed/news.xml` | None; free | NASA/JPL attribution and media rules | 30 min; RSS/XML; global NEO news; feed window | Medium-high; 30 min | **Active / P0** |
 | `nasa-neows` — Near Earth Objects | NASA/JPL; NeoWs/CNEOS | [NeoWs docs](https://api.nasa.gov/); `https://api.nasa.gov/neo/rest/v1/feed` | NASA API key; free quota | NASA terms; attribution to NASA/JPL; do not describe “potentially hazardous” as predicted impact | 6 h; JSON; solar-system objects with Earth close approaches; browse/history endpoint dependent | High; 6 h | **Planned / P1** |
 | `noaa-swpc` — Solar Activity | NOAA/NWS; Space Weather Prediction Center | [Data service](https://services.swpc.noaa.gov/); `https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json`, `.../products/solar-wind/plasma-7-day.json` | None; free | U.S. government data; NOAA/SWPC attribution; products can be experimental and carry product disclaimers | 1–5 min; JSON/text; near-Earth space weather; live 7-day files plus NCEI archives | High; 1–5 min | **Planned / P1** |

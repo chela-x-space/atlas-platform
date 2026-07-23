@@ -1,0 +1,25 @@
+{
+  "count": 1,
+  "data": [
+    {
+      "id": 1234567,
+      "href": "https://api.reliefweb.int/v2/reports/1234567",
+      "fields": {
+        "title": "Flood response situation report no. 3",
+        "url_alias": "https://reliefweb.int/report/example/flood-response-situation-report-no-3",
+        "body": "A short description supplied through the ReliefWeb API.",
+        "date": {
+          "original": "2026-07-22T12:00:00+00:00",
+          "changed": "2026-07-22T13:00:00+00:00"
+        },
+        "source": [{ "id": 10, "name": "Example Humanitarian Organization", "shortname": "EHO" }],
+        "country": [{ "id": 20, "name": "Thailand" }],
+        "disaster": [{ "id": 30, "name": "Thailand: Floods - 2026" }],
+        "disaster_type": [{ "id": 40, "name": "Flood" }],
+        "format": [{ "id": 50, "name": "Situation Report" }],
+        "language": [{ "id": 60, "name": "English" }],
+        "headline": true
+      }
+    }
+  ]
+}

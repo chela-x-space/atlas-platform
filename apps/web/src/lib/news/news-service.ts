@@ -1,43 +1,64 @@
-import { DATA_SOURCES, isDataSourceFetchable } from "@/config/data-sources";
-import { fetchText } from "@/lib/http/fetch-text";
-import type { AtlasNewsItem } from "@/types/atlas-data";
-import { deduplicateNews } from "./deduplicate-news";
-import { normalizeNewsItem } from "./normalize-news";
-import { parseRssOrAtom } from "./rss-parser";
+import { getAtlasDataHub } from "@/lib/data-hub";
+import type { AtlasEvent, AtlasNewsItem } from "@/types/atlas-data";
+import { groupVerifiedReports } from "./event-grouping";
+import type { NewsEventGroup, ProviderHealth } from "./provider-contract";
+import { deduplicateVerifiedReports } from "./report-deduplication";
+import { fetchAllNewsProviders } from "./providers/provider-registry";
 
-export type SourceHealth = { sourceId: string; sourceName: string; url: string; ok: boolean; fetchedAt: string; itemCount: number; error?: "timeout" | "unavailable" | "invalid-upstream-data" | "disabled" };
+export type NewsSnapshot = {
+  readonly items: AtlasNewsItem[];
+  readonly eventGroups: NewsEventGroup[];
+  readonly sources: ProviderHealth[];
+  readonly fetchedAt: string;
+  readonly duplicateCount: number;
+  readonly anchorStatus: "available" | "unavailable";
+};
 
-export async function getOfficialNews(): Promise<{ items: AtlasNewsItem[]; sources: SourceHealth[]; fetchedAt: string }> {
-  const configuredSources = DATA_SOURCES.filter((source) => source.category === "space");
-  const settled = await Promise.all(configuredSources.map(async (source) => {
-    const url = (source.endpoints as Readonly<Record<string, string>>).feed;
-    if (!isDataSourceFetchable(source)) {
-      return {
-        items: [] as AtlasNewsItem[],
-        health: {
-          sourceId: source.id,
-          sourceName: source.name,
-          url,
-          ok: false,
-          fetchedAt: new Date().toISOString(),
-          itemCount: 0,
-          error: "disabled",
-        } satisfies SourceHealth,
-      };
-    }
-    try {
-      const response = await fetchText(url, { timeoutMs: 8000, maxBytes: 1_000_000, acceptedContentTypes: ["xml", "rss", "atom", "text/plain"], revalidate: source.refreshSeconds });
-      const items = parseRssOrAtom(response.body, 25).map((item) => normalizeNewsItem(item, source));
-      return { items, health: { sourceId: source.id, sourceName: source.name, url, ok: true, fetchedAt: response.fetchedAt, itemCount: items.length } satisfies SourceHealth };
-    } catch (error) {
-      const code = error && typeof error === "object" && "code" in error && error.code === "timeout" ? "timeout" : error && typeof error === "object" && "code" in error && error.code === "invalid-upstream-data" ? "invalid-upstream-data" : "unavailable";
-      return { items: [] as AtlasNewsItem[], health: { sourceId: source.id, sourceName: source.name, url, ok: false, fetchedAt: new Date().toISOString(), itemCount: 0, error: code } satisfies SourceHealth };
-    }
-  }));
-  const items = deduplicateNews(settled.flatMap((result) => result.items)).sort((a, b) => new Date(b.publishedAt).valueOf() - new Date(a.publishedAt).valueOf());
-  return { items, sources: settled.map((result) => result.health), fetchedAt: new Date().toISOString() };
+async function getEventAnchors(): Promise<{ events: readonly AtlasEvent[]; status: "available" | "unavailable" }> {
+  try {
+    const hub = getAtlasDataHub();
+    await hub.refreshSources();
+    const page = await hub.queryEvents({ categories: ["earthquake", "cyclone"], limit: 500 });
+    return { events: page.events, status: "available" };
+  } catch {
+    return { events: [], status: "unavailable" };
+  }
 }
 
-export const OFFICIAL_NEWS_SOURCE_IDS: readonly string[] = DATA_SOURCES
-  .filter((source) => source.category === "space")
-  .map((source) => source.id);
+export async function getOfficialNews(): Promise<NewsSnapshot> {
+  const [{ results, health }, anchors] = await Promise.all([
+    fetchAllNewsProviders(),
+    getEventAnchors(),
+  ]);
+  const deduplicated = deduplicateVerifiedReports(results.flatMap((result) => result.reports));
+  const eventGroups = groupVerifiedReports(deduplicated.reports, anchors.events);
+  const providerNames = new Map(health.map((source) => [source.provider, source.name]));
+  const items: AtlasNewsItem[] = deduplicated.reports.map((report) => ({
+    id: report.id,
+    title: report.title,
+    summary: report.summary,
+    publishedAt: report.publishedAt,
+    updatedAt: report.updatedAt,
+    sourceId: report.provider,
+    sourceName: providerNames.get(report.provider) ?? report.provider,
+    originalSource: report.originalSource,
+    sourceUrl: report.sourceUrl,
+    canonicalUrl: report.canonicalUrl,
+    category: report.category,
+    language: report.language,
+    attribution: report.attribution,
+    countries: report.countries,
+    eventTypes: report.eventTypes,
+    verificationStatus: report.verificationStatus,
+  })).sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
+  return {
+    items,
+    eventGroups,
+    sources: health,
+    fetchedAt: new Date().toISOString(),
+    duplicateCount: deduplicated.duplicates.length,
+    anchorStatus: anchors.status,
+  };
+}
+
+export const OFFICIAL_NEWS_SOURCE_IDS: readonly string[] = ["reliefweb", "nasa-rss", "esa-rss"];

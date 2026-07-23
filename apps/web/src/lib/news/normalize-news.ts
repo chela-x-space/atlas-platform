@@ -1,5 +1,5 @@
 import type { AtlasNewsItem } from "@/types/atlas-data";
-import type { ParsedFeedItem } from "./rss-parser";
+import type { ParsedFeedItem } from "./rss-parser.mjs";
 import { safeExternalUrl } from "@/lib/security/external-url.mjs";
 export function stableNewsId(sourceId: string, url: string): string { let hash = 2166136261; for (const char of `${sourceId}:${url}`) { hash ^= char.charCodeAt(0); hash = Math.imul(hash, 16777619); } return `${sourceId}-${(hash >>> 0).toString(36)}`; }
 export function normalizeNewsItem(item: ParsedFeedItem, source: { id: string; name: string; category: string }): AtlasNewsItem { const sourceUrl=safeExternalUrl(item.link)??undefined; return { id: stableNewsId(source.id, sourceUrl??`${item.title}:${item.publishedAt}`), title: item.title, summary: item.description, publishedAt: item.publishedAt, sourceId: source.id, sourceName: source.name, ...(sourceUrl?{sourceUrl}:{}), category: source.category, ...(item.author ? { author: item.author } : {}), language: "en" }; }

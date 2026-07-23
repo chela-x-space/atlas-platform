@@ -29,18 +29,18 @@ test("Open-Meteo validates coordinates and requests only declared fields", async
 });
 
 test("RSS parser covers RSS and Atom, strips unsafe HTML, and bounds payloads", async () => {
-  const source = await read("../src/lib/news/rss-parser.ts");
+  const source = await read("../src/lib/news/rss-parser.mjs");
   assert.match(source, /rss\|feed/); assert.match(source, /item\|entry/); assert.match(source, /script/); assert.match(source, /1_000_000/); assert.match(source, /"published", "updated"/);
 });
 
 test("news normalization deduplicates URL then title and sorts newest first", async () => {
   const dedupe = await read("../src/lib/news/deduplicate-news.ts"); const service = await read("../src/lib/news/news-service.ts");
-  assert.match(dedupe, /url && urls\.has\(url\)/); assert.match(dedupe, /titles\.has\(title\)/); assert.match(service, /new Date\(b\.publishedAt\).*new Date\(a\.publishedAt\)/);
+  assert.match(dedupe, /url && urls\.has\(url\)/); assert.match(dedupe, /titles\.has\(title\)/); assert.match(service, /Date\.parse\(b\.publishedAt\).*Date\.parse\(a\.publishedAt\)/);
 });
 
 test("news service supports partial and all-source failure without mock fallback", async () => {
   const service = await read("../src/lib/news/news-service.ts"); const route = await read("../src/app/api/news/route.ts");
-  assert.match(service, /Promise\.all/); assert.match(route, /some\(\(source\) => !source\.ok\) \? 206 : 200/); assert.match(route, /all-sources-unavailable/); assert.doesNotMatch(route, /placeholder|mock/i);
+  assert.match(service, /Promise\.all/); assert.match(route, /status === "degraded"/); assert.match(route, /all-sources-unavailable/); assert.doesNotMatch(route, /placeholder|mock/i);
 });
 
 test("dashboard consumes the unified ATLAS snapshot", async () => {

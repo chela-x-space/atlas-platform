@@ -1,4 +1,4 @@
-export type AtlasEventCategory = "earthquake" | "cyclone" | "weather" | "space" | "technology" | "news" | "health" | "wildfire" | "flood" | "volcano" | "conflict" | "aviation" | "marine" | "market" | "cyber" | "energy" | "unknown";
+export type AtlasEventCategory = "earthquake" | "cyclone" | "weather" | "climate" | "space" | "science" | "earth-observation" | "technology" | "news" | "health" | "wildfire" | "flood" | "volcano" | "conflict" | "aviation" | "marine" | "market" | "cyber" | "energy" | "unknown";
 export type AtlasSeverity = "info" | "low" | "moderate" | "high" | "critical" | "unknown";
 export type AtlasSourceHealthStatus = "healthy" | "degraded" | "unavailable" | "disabled";
 export type AtlasSourceErrorCode = "TIMEOUT" | "HTTP_ERROR" | "INVALID_CONTENT_TYPE" | "RESPONSE_TOO_LARGE" | "INVALID_PAYLOAD" | "AUTH_REQUIRED" | "DISABLED" | "UNKNOWN";
@@ -21,7 +21,12 @@ export type AtlasEventQuery = { readonly categories?: readonly AtlasEventCategor
 export type AtlasEventPage = { readonly events: readonly AtlasEvent[]; readonly nextCursor?: string; readonly total?: number; readonly generatedAt: string; readonly sourceHealth: readonly AtlasEventSourceHealth[] };
 export type AtlasMetric = { readonly status: "available"; readonly value: number; readonly unit: string; readonly sourceIds: readonly string[] } | { readonly status: "unavailable" | "not-computed" | "integration-pending"; readonly reason: string };
 export type AtlasDashboardSnapshot = { readonly generatedAt: string; readonly metrics: Readonly<Record<string, AtlasMetric>>; readonly strongestEarthquake: AtlasEvent | null; readonly recentEarthquakes: readonly AtlasEvent[]; readonly activeCyclones: readonly AtlasEvent[]; readonly timelineEvents: readonly AtlasEvent[]; readonly technologyNews: readonly AtlasEvent[]; readonly breakingItems: readonly AtlasEvent[]; readonly sourceHealth: readonly AtlasEventSourceHealth[]; readonly unavailableMetrics: readonly string[] };
-export type AtlasNewsItem = { id:string;title:string;summary:string;publishedAt:string;sourceId:string;sourceName:string;sourceUrl?:string;category:string;imageUrl?:string;author?:string;language?:string };
+export type AtlasNewsItem = {
+  id:string;title:string;summary:string;publishedAt:string;updatedAt?:string;
+  sourceId:string;sourceName:string;originalSource?:string;sourceUrl?:string;canonicalUrl?:string;
+  category:string;imageUrl?:string;author?:string;language?:string;attribution?:string;
+  countries?:readonly string[];eventTypes?:readonly string[];verificationStatus?:"verified";
+};
 
 // Legacy weather contract retained for the coordinate-inspection endpoint.
 export type AtlasWeatherSnapshot = { location: string; coordinates: [longitude: number, latitude: number]; observedAt: string; temperatureCelsius: number; apparentTemperatureCelsius: number; humidityPercent: number; precipitationMillimeters: number; weatherCode: number; cloudCoverPercent: number; pressureHpa: number; windSpeedKph: number; windDirectionDegrees: number; windGustKph: number; sourceId: string; sourceUrl: string };

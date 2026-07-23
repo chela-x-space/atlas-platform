@@ -7,6 +7,8 @@ export type AtlasNewsEventGroup = {
   latestAt: string;
   articles: AtlasNewsItem[];
   sourceCount: number;
+  confidence?: "exact" | "strong" | "probable" | "standalone";
+  groupingReason?: string;
 };
 
 export function groupNewsByEvent(items: readonly AtlasNewsItem[]): AtlasNewsEventGroup[];
@@ -19,4 +21,3 @@ export function canUseAiSummary(
   group: AtlasNewsEventGroup,
   trustedSourceIds: readonly string[],
 ): boolean;
-

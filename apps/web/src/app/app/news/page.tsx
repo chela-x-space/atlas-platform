@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   canUseAiSummary,
   filterNewsGroups,
@@ -10,21 +10,32 @@ import {
 import type { AtlasNewsItem } from "@/types/atlas-data";
 
 type NewsSourceHealth = {
-  sourceId: string;
-  sourceName: string;
-  ok: boolean;
-  itemCount: number;
-  error?: "timeout" | "unavailable" | "invalid-upstream-data" | "disabled";
+  provider: string;
+  name: string;
+  status: "online" | "degraded" | "paused" | "disabled" | "configuration_required" | "rate_limited" | "unavailable";
+  stale: boolean;
+  reportCount: number;
+  errorCode: string | null;
 };
 
 type NewsResponse = {
   items?: AtlasNewsItem[];
   sources?: NewsSourceHealth[];
+  eventGroups?: Array<{
+    id: string;
+    eventAnchor: { title: string } | null;
+    relatedReports: Array<{ id: string }>;
+    distinctSourceCount: number;
+    newestPublicationTime: string;
+    categories: string[];
+    confidence: "exact" | "strong" | "probable" | "standalone";
+    groupingReason: string;
+  }>;
   fetchedAt?: string;
   error?: { code: string; message: string };
 };
 
-const TRUSTED_SOURCE_IDS = ["jpl-news", "cneos-news"] as const;
+const TRUSTED_SOURCE_IDS = ["reliefweb", "nasa-rss", "esa-rss"] as const;
 
 function formatTimestamp(value: string) {
   const date = new Date(value);
@@ -43,6 +54,9 @@ function SourceArticle({ article, related }: { article: AtlasNewsItem; related?:
           <span aria-hidden="true">✓</span> Verified source
         </span>
         <span className="news-source-badge">{article.sourceName}</span>
+        {article.originalSource && article.originalSource !== article.sourceName && (
+          <span className="news-source-badge">From {article.originalSource}</span>
+        )}
         <time dateTime={article.publishedAt}>{formatTimestamp(article.publishedAt)}</time>
       </div>
       {related && <h3>{article.title}</h3>}
@@ -51,6 +65,9 @@ function SourceArticle({ article, related }: { article: AtlasNewsItem; related?:
           <span>Source report</span>
           {article.summary}
         </p>
+      )}
+      {article.attribution && (
+        <span className="news-attribution">Attribution: {article.attribution}</span>
       )}
       {article.sourceUrl ? (
         <a href={article.sourceUrl} target="_blank" rel="noreferrer">
@@ -83,7 +100,9 @@ function EventCard({ group }: { group: AtlasNewsEventGroup }) {
       <SourceArticle article={primary} />
       <div className="news-coverage-note">
         <span aria-hidden="true">◇</span>
-        {aiEligible
+        {group.groupingReason
+          ? `${group.confidence === "probable" ? "Probable grouping" : "Grouping"}: ${group.groupingReason}.`
+          : aiEligible
           ? "Multi-source coverage available. No AI summary has been generated."
           : "AI summary withheld until at least two trusted sources cover this event."}
       </div>
@@ -166,17 +185,33 @@ export default function AtlasNewsPage() {
     return () => controller.abort();
   }, []);
 
-  const groups = useMemo(() => groupNewsByEvent(payload?.items ?? []), [payload?.items]);
-  const categories = useMemo(
-    () => ["all", ...new Set(groups.map((group) => group.category))],
-    [groups],
-  );
-  const visibleGroups = useMemo(
-    () => filterNewsGroups(groups, query, category),
-    [category, groups, query],
-  );
-  const activeSources = payload?.sources?.filter((source) => source.ok).length ?? 0;
-  const degraded = Boolean(payload?.sources?.some((source) => !source.ok && source.error !== "disabled"));
+  const groups = (() => {
+    const fallback = groupNewsByEvent(payload?.items ?? []);
+    if (!payload?.eventGroups?.length) return fallback;
+    const itemById = new Map((payload.items ?? []).map((item) => [item.id, item]));
+    return payload.eventGroups.flatMap((group) => {
+      const articles = group.relatedReports.flatMap((report) => {
+        const item = itemById.get(report.id);
+        return item ? [item] : [];
+      });
+      if (!articles.length) return [];
+      return [{
+        id: group.id,
+        title: group.eventAnchor?.title ?? articles[0].title,
+        category: group.categories[0] ?? articles[0].category,
+        latestAt: group.newestPublicationTime,
+        articles,
+        sourceCount: group.distinctSourceCount,
+        confidence: group.confidence,
+        groupingReason: group.groupingReason,
+      }];
+    });
+  })();
+  const categories = ["all", ...new Set(groups.map((group) => group.category))];
+  const visibleGroups = filterNewsGroups(groups, query, category);
+  const freshSources = payload?.sources?.filter((source) => (source.status === "online" || source.status === "degraded") && !source.stale) ?? [];
+  const activeSources = freshSources.length;
+  const degraded = Boolean(payload?.sources?.some((source) => source.status === "degraded" || source.status === "unavailable" || source.status === "rate_limited"));
 
   return (
     <main className="atlas-news-page">

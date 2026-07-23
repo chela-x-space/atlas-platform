@@ -1,6 +1,6 @@
 import type { AtlasEventCategory,AtlasEventQuery,AtlasEventSort,AtlasSeverity } from "@/types/atlas-data";
 
-const categories=new Set<AtlasEventCategory>(["earthquake","cyclone","weather","space","technology","news","health","wildfire","flood","volcano","conflict","aviation","marine","market","cyber","energy","unknown"]);
+const categories=new Set<AtlasEventCategory>(["earthquake","cyclone","weather","climate","space","science","earth-observation","technology","news","health","wildfire","flood","volcano","conflict","aviation","marine","market","cyber","energy","unknown"]);
 const severities=new Set<AtlasSeverity>(["info","low","moderate","high","critical","unknown"]);
 const sorts=new Set<AtlasEventSort>(["occurredAt:desc","occurredAt:asc","updatedAt:desc","severity:desc"]);
 

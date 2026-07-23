@@ -1702,6 +1702,13 @@ button:disabled {
   text-decoration: none;
 }
 
+.news-attribution {
+  margin: 0 0 9px;
+  color: #718a9c;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
 .news-primary-article a:hover,
 .news-related-article a:hover { text-decoration: underline; }
 .news-link-unavailable { color: #718492; font-size: 11px; }
