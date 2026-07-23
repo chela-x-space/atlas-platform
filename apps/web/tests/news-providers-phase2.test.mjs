@@ -89,3 +89,18 @@ test("zero-report response and provider health remain explicit", async () => {
   assert.match(relief, /configurationRequirement/);
   assert.match(healthRoute, /newsProviders/);
 });
+
+test("News page receives the server News API contract before hydration", async () => {
+  const page = await source("../src/app/app/news/page.tsx");
+  const client = await source("../src/app/app/news/NewsCenterClient.tsx");
+  const service = await source("../src/lib/news/news-service.ts");
+  assert.match(page, /dynamic = "force-dynamic"/);
+  assert.match(page, /initialPayload = await getOfficialNews\(\)/);
+  assert.match(page, /<NewsCenterClient initialPayload=\{initialPayload\}/);
+  assert.match(client, /useState<NewsResponse \| null>\(initialPayload\)/);
+  assert.match(client, /fetch\("\/api\/news", \{ signal: controller\.signal, cache: "no-store" \}\)/);
+  for (const field of ["items", "eventGroups", "sources", "fetchedAt"]) {
+    assert.match(service, new RegExp(`readonly ${field}`));
+    assert.match(client, new RegExp(`${field}\\?`));
+  }
+});
