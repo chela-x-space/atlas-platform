@@ -6,6 +6,7 @@ import { AtlasMap } from "@/components/map/AtlasMap";
 import { safeExternalUrl } from "@/lib/security/external-url.mjs";
 import type { AtlasDashboardSnapshot,AtlasEvent } from "@/types/atlas-data";
 import { GlobalMetricsCompact } from "@/components/metrics/GlobalMetricsCompact";
+import { DashboardSentiment } from "@/components/sentiment/DashboardSentiment";
 
 function EventCard({event}:{event:AtlasEvent}){
   const url=safeExternalUrl(event.sourceUrl);
@@ -25,6 +26,7 @@ export function AtlasMobileOverview(){
       <section className="atlas-mobile-intro"><p>ATLAS MOBILE OVERVIEW</p><h1>Verified events, sized for your phone.</h1><span>The full command dashboard is optimized for larger screens.</span><small>Last updated: {snapshot?new Date(snapshot.generatedAt).toLocaleString():loading?"Loading…":"Unavailable"}</small></section>
       {error?<div className="atlas-mobile-alert" role="alert">{error} No substitute values are shown.</div>:null}
       <GlobalMetricsCompact />
+      <DashboardSentiment mobile />
       <section className="atlas-mobile-metrics" aria-label="Current event totals"><article><span>Earthquakes · 24h</span><strong>{earthquake?.status==="available"?earthquake.value.toLocaleString():loading?"…":"Unavailable"}</strong><small>USGS · worldwide reporting</small></article><article><span>Cyclone advisories</span><strong>{cyclone?.status==="available"?cyclone.value.toLocaleString():loading?"…":"Unavailable"}</strong><small>NOAA/NHC · Atlantic + E/C Pacific</small></article></section>
       <section className="atlas-mobile-section"><div className="atlas-mobile-heading"><h2>Latest verified events</h2><Link href="/app/earthquake">View events</Link></div>{loading?<p className="atlas-mobile-empty" role="status">Loading verified events…</p>:latest.length?latest.map(event=><EventCard key={event.id} event={event}/>):<p className="atlas-mobile-empty">No verified events are currently available.</p>}</section>
       <section className="atlas-mobile-summary"><article><h2>Significant earthquake</h2>{snapshot?.strongestEarthquake?<EventCard event={snapshot.strongestEarthquake}/>:<p className="atlas-mobile-empty">Data source unavailable.</p>}</article><article><h2>Active cyclone summary</h2>{snapshot?.activeCyclones.length?<div className="atlas-mobile-cyclones">{snapshot.activeCyclones.slice(0,3).map(event=><EventCard key={event.id} event={event}/>)}</div>:<p className="atlas-mobile-empty">No active advisory is available. Coverage is limited to NOAA/NHC basins.</p>}</article></section>

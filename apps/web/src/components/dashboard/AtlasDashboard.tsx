@@ -8,6 +8,7 @@ import { AtlasSidebar } from "./AtlasSidebar";
 import { MetricStrip } from "./MetricStrip";
 import { DashboardModal } from "./DashboardModal";
 import { GlobalMetricsCompact } from "@/components/metrics/GlobalMetricsCompact";
+import { DashboardSentiment } from "@/components/sentiment/DashboardSentiment";
 import { filterEvents, marketRowsForTab, routeForMenu } from "@/lib/dashboard-logic.mjs";
 import { safeExternalUrl } from "@/lib/security/external-url.mjs";
 import type { AtlasDashboardSnapshot } from "@/types/atlas-data";
@@ -374,18 +375,7 @@ export function AtlasDashboard() {
         </section>
 
         <section className="atlas-v4-bottom">
-          <article className="atlas-v4-card atlas-v4-sentiment">
-            <div className="atlas-v4-section-title">
-              <h2>GLOBAL SENTIMENT INDEX</h2>
-            </div>
-
-            <p>Integration pending • no live source configured</p>
-
-            <div className="atlas-v4-gauge">
-              <div />
-              <strong>—</strong><span>Unavailable</span>
-            </div>
-          </article>
+          <DashboardSentiment />
 
           <article className="atlas-v4-card atlas-v4-chart">
             <div className="atlas-v4-section-title">

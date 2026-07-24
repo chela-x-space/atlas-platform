@@ -2320,6 +2320,65 @@ button:disabled {
 .metrics-methodology p { color: #8da5b3; font-size: 11px; line-height: 1.6; }
 .metrics-methodology-reference { grid-column: 1/-1; margin: 0; color: #69cbf8; font-size: 10px; }
 
+/* Deterministic verified source-text sentiment */
+.atlas-v4-sentiment .atlas-v4-section-title a { color: #64c9f8; font-size: 7px; text-decoration: none; }
+.atlas-sentiment-partial { border-left: 2px solid #d7a72f; padding: 3px 5px; background: #2b2109; color: #ddc06a !important; }
+.atlas-sentiment-value { display: flex; align-items: baseline; gap: 7px; margin: 10px 0 7px; }
+.atlas-sentiment-value strong { color: #eef9fd; font-size: 28px; font-weight: 500; }
+.atlas-sentiment-value span { color: #7dd3f8; font-size: 8px; text-transform: capitalize; }
+.atlas-sentiment-meta { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1px; margin: 0; background: #123248; }
+.atlas-sentiment-meta div { min-width: 0; padding: 5px; background: #061522; }
+.atlas-sentiment-meta dt { color: #6e899b; font-size: 6px; }
+.atlas-sentiment-meta dd { margin: 2px 0 0; color: #c6d7e0; font-size: 7px; overflow-wrap: anywhere; text-transform: capitalize; }
+.atlas-sentiment-unavailable { display: grid; gap: 5px; margin-top: 14px; }
+.atlas-sentiment-unavailable strong { color: #c9d9e2; font-size: 11px; }
+.atlas-sentiment-unavailable span { color: #738c9c; font-size: 8px; }
+.sentiment-page { min-height: 100dvh; padding: 28px clamp(16px,4vw,58px) 50px; overflow-x: clip; background: radial-gradient(circle at 76% 2%,#0b2a3e 0,transparent 31%),#020a12; color: #dcebf3; }
+.sentiment-header,.sentiment-index,.sentiment-section,.sentiment-methodology,.sentiment-partial { width: min(100%,1120px); margin-right: auto; margin-left: auto; }
+.sentiment-header { margin-bottom: 22px; }
+.sentiment-header > p,.sentiment-section-heading span,.sentiment-methodology span { margin: 0 0 8px; color: #5ecbfa; font-size: 9px; font-weight: 700; letter-spacing: .14em; }
+.sentiment-header h1 { margin: 0 0 10px; color: #f2f9fc; font-size: clamp(36px,5vw,58px); line-height: 1.04; }
+.sentiment-header > span { display: block; max-width: 850px; color: #a8bdc9; font-size: 14px; line-height: 1.55; }
+.sentiment-header > div { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+.sentiment-header > div > * { border: 1px solid #173b52; border-radius: 999px; padding: 5px 9px; background: #061927; color: #8fa8b7; font-size: 9px; }
+.sentiment-header > div strong { border-color: #80651d; color: #e1c164; }
+.sentiment-partial { display: flex; gap: 12px; margin-bottom: 16px; border: 1px solid #70560d; border-radius: 7px; padding: 11px 13px; background: #2a2008; color: #d9bd62; font-size: 11px; }
+.sentiment-index { display: grid; grid-template-columns: .75fr 1.25fr; gap: 18px; border: 1px solid #1b526f; border-radius: 10px; padding: 22px; background: linear-gradient(120deg,#082437,#061621); }
+.sentiment-index > div > span { color: #5acdfd; font-size: 9px; letter-spacing: .13em; }
+.sentiment-index h2 { margin: 8px 0 4px; color: #fff; font-size: clamp(54px,8vw,86px); line-height: .9; }
+.sentiment-index h2 small { color: #7792a2; font-size: 16px; }
+.sentiment-index > div > strong { color: #74d6ff; font-size: 11px; text-transform: capitalize; }
+.sentiment-index dl,.sentiment-methodology dl { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1px; margin: 0; overflow: hidden; border: 1px solid #12364b; border-radius: 6px; background: #12364b; }
+.sentiment-index dl div,.sentiment-methodology dl div { padding: 9px; background: #061825; }
+.sentiment-index dt,.sentiment-methodology dt,.sentiment-record dt,.sentiment-sources dt { color: #6f8c9d; font-size: 8px; }
+.sentiment-index dd,.sentiment-methodology dd,.sentiment-record dd,.sentiment-sources dd { margin: 3px 0 0; color: #c9dbe4; font-size: 10px; overflow-wrap: anywhere; }
+.sentiment-index > p { grid-column: 1/-1; margin: 0; border-top: 1px solid #12364b; padding-top: 13px; color: #a6bdc9; font-size: 12px; }
+.sentiment-section { margin-top: 16px; border: 1px solid #12344a; border-radius: 10px; padding: 18px; background: rgb(4 19 30 / 88%); }
+.sentiment-section-heading h2,.sentiment-methodology h2 { margin: 2px 0 14px; color: #e7f3f8; font-size: 20px; }
+.sentiment-distribution { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 7px; }
+.sentiment-distribution article { min-width: 0; border: 1px solid #14364b; border-radius: 6px; padding: 11px; background: #061824; }
+.sentiment-distribution span { display: block; color: #7793a3; font-size: 8px; text-transform: capitalize; }
+.sentiment-distribution strong { display: block; margin-top: 8px; color: #eef8fc; font-size: 23px; }
+.sentiment-sources { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; }
+.sentiment-sources article { border: 1px solid #14394f; border-radius: 7px; padding: 12px; background: #061824; }
+.sentiment-sources article > div { display: flex; justify-content: space-between; gap: 6px; color: #a9bec9; font-size: 9px; }
+.sentiment-sources article > div span { color: #67c9f6; text-transform: capitalize; }
+.sentiment-sources article > b { display: block; margin: 11px 0; color: #eef8fc; font-size: 24px; }
+.sentiment-sources dl,.sentiment-record dl { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; margin: 0; }
+.sentiment-records { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.sentiment-record { position: relative; min-width: 0; border: 1px solid #14394f; border-radius: 7px; padding: 13px 90px 13px 13px; background: #061824; }
+.sentiment-record > div:first-child { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 7px; color: #7793a3; font-size: 8px; }
+.sentiment-record h3 { margin: 9px 0 13px; color: #dceaf1; font-size: 13px; line-height: 1.4; }
+.sentiment-record h3 a { color: inherit; text-decoration: none; }
+.sentiment-record-score { position: absolute; top: 43px; right: 13px; display: grid; text-align: right; }
+.sentiment-record-score strong { color: #72cef7; font-size: 20px; }
+.sentiment-record-score span { color: #7692a2; font-size: 7px; text-transform: capitalize; }
+.sentiment-empty { display: grid; min-height: 160px; place-content: center; gap: 6px; color: #829baa; text-align: center; }
+.sentiment-empty strong { color: #d3e2e9; font-size: 16px; }
+.sentiment-methodology { display: grid; grid-template-columns: 1fr 1.4fr; gap: 18px; margin-top: 16px; border: 1px solid #174058; border-radius: 10px; padding: 20px; background: #061824; }
+.sentiment-methodology p { color: #8da5b3; font-size: 11px; line-height: 1.6; }
+.sentiment-methodology-reference { grid-column: 1/-1; margin: 0; color: #69cbf8; font-size: 10px; }
+
 @media (max-width: 800px) {
   .source-center-page { padding: 18px 12px 32px; }
   .source-center-header { align-items: flex-start; flex-direction: column; gap: 14px; }
@@ -2392,6 +2451,20 @@ button:disabled {
   .global-metrics-compact-grid article { min-height: 86px; padding: 10px; }
   .global-metrics-compact-grid span,.global-metrics-compact-grid small { font-size: 9px; }
   .global-metrics-compact-grid strong { font-size: 18px; }
+  .sentiment-page { padding: 14px 12px 30px; }
+  .sentiment-header h1 { font-size: 34px; }
+  .sentiment-partial { flex-direction: column; gap: 4px; }
+  .sentiment-index,.sentiment-methodology { grid-template-columns: 1fr; padding: 16px; }
+  .sentiment-index > p,.sentiment-methodology-reference { grid-column: auto; }
+  .sentiment-distribution { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .sentiment-sources,.sentiment-records { grid-template-columns: 1fr; }
+  .sentiment-record { padding-right: 82px; }
+  .atlas-mobile-sentiment .atlas-v4-section-title { display: flex; align-items: center; justify-content: space-between; }
+  .atlas-mobile-sentiment .atlas-v4-section-title h2 { font-size: 16px; }
+  .atlas-mobile-sentiment .atlas-v4-section-title a { color: #65caff; font-size: 12px; }
+  .atlas-mobile-sentiment .atlas-sentiment-value strong { font-size: 34px; }
+  .atlas-mobile-sentiment .atlas-sentiment-value span { font-size: 11px; }
+  .atlas-mobile-sentiment .atlas-sentiment-meta dt,.atlas-mobile-sentiment .atlas-sentiment-meta dd { font-size: 10px; }
 }
 
 @media (max-width: 520px) {

@@ -22,6 +22,7 @@ const groups = [
       ["◉", "Global Overview"],
       ["◎", "World Map"],
       ["◫", "Global Metrics"],
+      ["◒", "Source Sentiment"],
       ["▣", "Global Timeline"],
       ["⌘", "Breaking News"],
     ],
