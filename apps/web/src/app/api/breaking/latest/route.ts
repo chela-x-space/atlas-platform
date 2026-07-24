@@ -1,0 +1,5 @@
+import {NextRequest,NextResponse} from "next/server";
+import {filterBreakingEvents,parseBreakingQuery} from "@/lib/breaking/breaking-logic.mjs";
+import {getBreakingSnapshot} from "@/lib/breaking/breaking-service";
+export const dynamic="force-dynamic";
+export async function GET(request:NextRequest){const parsed=parseBreakingQuery(request.nextUrl.searchParams);if(!parsed.ok)return NextResponse.json({error:{code:parsed.code,message:parsed.message}},{status:400});try{const snapshot=await getBreakingSnapshot();const events=filterBreakingEvents(snapshot.events,{...parsed.filters,limit:200}).sort((a,b)=>Date.parse(b.publishedAt)-Date.parse(a.publishedAt)||a.canonicalId.localeCompare(b.canonicalId)).slice(0,Math.min(parsed.filters.limit,25));return NextResponse.json({breakingVersion:snapshot.breakingVersion,generatedAt:snapshot.generatedAt,partial:snapshot.partial,stale:snapshot.stale,events},{status:snapshot.partial?206:200,headers:{"Cache-Control":"public, s-maxage=60, stale-while-revalidate=300"}})}catch{return NextResponse.json({error:{code:"BREAKING_LATEST_UNAVAILABLE",message:"Latest verified events are temporarily unavailable"}},{status:503})}}
