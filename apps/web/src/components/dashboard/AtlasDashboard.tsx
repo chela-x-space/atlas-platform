@@ -7,6 +7,7 @@ import { AtlasMap } from "@/components/map/AtlasMap";
 import { AtlasSidebar } from "./AtlasSidebar";
 import { MetricStrip } from "./MetricStrip";
 import { DashboardModal } from "./DashboardModal";
+import { GlobalMetricsCompact } from "@/components/metrics/GlobalMetricsCompact";
 import { filterEvents, marketRowsForTab, routeForMenu } from "@/lib/dashboard-logic.mjs";
 import { safeExternalUrl } from "@/lib/security/external-url.mjs";
 import type { AtlasDashboardSnapshot } from "@/types/atlas-data";
@@ -197,6 +198,7 @@ export function AtlasDashboard() {
         </header>
 
         <MetricStrip earthquakeCount={earthquakeCount} cycloneCount={cycloneCount} loading={liveLoading} />
+        <GlobalMetricsCompact />
 
         <section className="atlas-v4-primary">
           <div className="atlas-v4-left">

@@ -36,6 +36,15 @@ async function getGlobalGraphData(): Promise<GlobalGraphData> {
   return graphRequest;
 }
 
+/** Shared verified input boundary for deterministic consumers such as Global Metrics. */
+export async function getGraphDataForMetrics() {
+  const { aggregate, snapshot } = await getGlobalGraphData();
+  return {
+    items: aggregate.items,
+    graph: responseMetadata(snapshot, aggregate),
+  };
+}
+
 function responseMetadata(
   snapshot: ReturnType<typeof generateGraph>,
   aggregate: Awaited<ReturnType<typeof aggregateTimeline>>,

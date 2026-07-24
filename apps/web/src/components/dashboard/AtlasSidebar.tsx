@@ -21,6 +21,7 @@ const groups = [
     items: [
       ["◉", "Global Overview"],
       ["◎", "World Map"],
+      ["◫", "Global Metrics"],
       ["▣", "Global Timeline"],
       ["⌘", "Breaking News"],
     ],
