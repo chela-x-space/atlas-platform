@@ -1,30 +1,4 @@
-export default function Page() {
-  return (
-    <main style={{
-      minHeight: "100vh",
-      padding: "48px",
-      background: "var(--background)",
-    }}>
-      <p style={{
-        margin: 0,
-        color: "var(--accent)",
-        letterSpacing: "0.14em",
-      }}>
-        ATLAS PLATFORM
-      </p>
-
-      <h1 style={{
-        margin: "12px 0",
-        fontSize: "48px",
-      }}>
-        AI & Technology
-      </h1>
-
-      <p style={{
-        color: "var(--muted)",
-      }}>
-        ข่าวสารและสัญญาณเทคโนโลยี
-      </p>
-    </main>
-  );
-}
+import { getAiRadar } from "@/lib/ai-radar/ai-radar-service";
+import { AiRadarExplorer } from "@/components/ai-radar/AiRadarExplorer";
+export const dynamic="force-dynamic";
+export default async function AiRadarPage(){return <AiRadarExplorer snapshot={await getAiRadar()}/>}

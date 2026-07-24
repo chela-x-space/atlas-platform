@@ -9,6 +9,7 @@ import { MetricStrip } from "./MetricStrip";
 import { DashboardModal } from "./DashboardModal";
 import { GlobalMetricsCompact } from "@/components/metrics/GlobalMetricsCompact";
 import { DashboardSentiment } from "@/components/sentiment/DashboardSentiment";
+import { DashboardAiRadar } from "@/components/ai-radar/DashboardAiRadar";
 import { filterEvents, marketRowsForTab, routeForMenu } from "@/lib/dashboard-logic.mjs";
 import { safeExternalUrl } from "@/lib/security/external-url.mjs";
 import type { AtlasDashboardSnapshot } from "@/types/atlas-data";
@@ -377,14 +378,7 @@ export function AtlasDashboard() {
         <section className="atlas-v4-bottom">
           <DashboardSentiment />
 
-          <article className="atlas-v4-card atlas-v4-chart">
-            <div className="atlas-v4-section-title">
-              <h2>SENTIMENT TREND</h2>
-              <span>Not computed</span>
-            </div>
-
-            <p>Integration pending • no trend values are generated</p>
-          </article>
+          <DashboardAiRadar />
 
           <article className="atlas-v4-card atlas-v4-market">
             <div className="atlas-v4-section-title">

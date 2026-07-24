@@ -7,6 +7,7 @@ import { safeExternalUrl } from "@/lib/security/external-url.mjs";
 import type { AtlasDashboardSnapshot,AtlasEvent } from "@/types/atlas-data";
 import { GlobalMetricsCompact } from "@/components/metrics/GlobalMetricsCompact";
 import { DashboardSentiment } from "@/components/sentiment/DashboardSentiment";
+import { DashboardAiRadar } from "@/components/ai-radar/DashboardAiRadar";
 
 function EventCard({event}:{event:AtlasEvent}){
   const url=safeExternalUrl(event.sourceUrl);
@@ -27,6 +28,7 @@ export function AtlasMobileOverview(){
       {error?<div className="atlas-mobile-alert" role="alert">{error} No substitute values are shown.</div>:null}
       <GlobalMetricsCompact />
       <DashboardSentiment mobile />
+      <DashboardAiRadar mobile />
       <section className="atlas-mobile-metrics" aria-label="Current event totals"><article><span>Earthquakes · 24h</span><strong>{earthquake?.status==="available"?earthquake.value.toLocaleString():loading?"…":"Unavailable"}</strong><small>USGS · worldwide reporting</small></article><article><span>Cyclone advisories</span><strong>{cyclone?.status==="available"?cyclone.value.toLocaleString():loading?"…":"Unavailable"}</strong><small>NOAA/NHC · Atlantic + E/C Pacific</small></article></section>
       <section className="atlas-mobile-section"><div className="atlas-mobile-heading"><h2>Latest verified events</h2><Link href="/app/earthquake">View events</Link></div>{loading?<p className="atlas-mobile-empty" role="status">Loading verified events…</p>:latest.length?latest.map(event=><EventCard key={event.id} event={event}/>):<p className="atlas-mobile-empty">No verified events are currently available.</p>}</section>
       <section className="atlas-mobile-summary"><article><h2>Significant earthquake</h2>{snapshot?.strongestEarthquake?<EventCard event={snapshot.strongestEarthquake}/>:<p className="atlas-mobile-empty">Data source unavailable.</p>}</article><article><h2>Active cyclone summary</h2>{snapshot?.activeCyclones.length?<div className="atlas-mobile-cyclones">{snapshot.activeCyclones.slice(0,3).map(event=><EventCard key={event.id} event={event}/>)}</div>:<p className="atlas-mobile-empty">No active advisory is available. Coverage is limited to NOAA/NHC basins.</p>}</article></section>
@@ -36,6 +38,6 @@ export function AtlasMobileOverview(){
       <footer className="atlas-mobile-disclaimer">Data: U.S. Geological Survey and NOAA/National Hurricane Center. Coverage and update frequency vary. ATLAS is not emergency, financial, medical, or security advice. Verify critical information with the originating authority.</footer>
     </main>
     <nav className="atlas-mobile-nav" aria-label="Mobile navigation"><Link href="/app">Overview</Link><a href="#mobile-map" onClick={()=>setMapOpen(true)}>Map</a><Link href="/app/earthquake">Events</Link><Link href="/app/alerts">Alerts</Link><button type="button" onClick={()=>setMoreOpen(value=>!value)} aria-expanded={moreOpen} aria-controls="atlas-mobile-more">More</button></nav>
-    {moreOpen?<div className="atlas-mobile-more" id="atlas-mobile-more"><div><strong>More ATLAS services</strong><button type="button" onClick={()=>setMoreOpen(false)} aria-label="Close menu">×</button></div><Link href="/app/metrics">Global Metrics</Link><Link href="/app/timeline">Global Timeline</Link><Link href="/app/news">News · disabled</Link><Link href="/app/weather">Weather · configuration required</Link><Link href="/app/markets">Markets · integration pending</Link><a href="/app?desktop=1">Full dashboard</a></div>:null}
+    {moreOpen?<div className="atlas-mobile-more" id="atlas-mobile-more"><div><strong>More ATLAS services</strong><button type="button" onClick={()=>setMoreOpen(false)} aria-label="Close menu">×</button></div><Link href="/app/ai">AI Technology Radar</Link><Link href="/app/metrics">Global Metrics</Link><Link href="/app/timeline">Global Timeline</Link><Link href="/app/news">News · disabled</Link><Link href="/app/weather">Weather · configuration required</Link><Link href="/app/markets">Markets · integration pending</Link><a href="/app?desktop=1">Full dashboard</a></div>:null}
   </div>;
 }
