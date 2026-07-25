@@ -1,0 +1,2 @@
+import type {RadarSnapshot} from "../ai-radar/ai-radar-contract";import type {BreakingSnapshot} from "../breaking/breaking-contract";import type {ReportTypeMetadata} from "../reports/report-contracts";import type {RiskSnapshot} from "../risk/risk-contracts";import type {SearchIndex} from "./search-contracts";
+export function buildSearchIndex(input:{risk:RiskSnapshot|null;breaking:BreakingSnapshot|null;radar:RadarSnapshot|null;reportTypes:readonly ReportTypeMetadata[];generatedAt:string;degradedModules:readonly string[]}):SearchIndex;

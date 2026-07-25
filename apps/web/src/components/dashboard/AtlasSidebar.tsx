@@ -20,6 +20,7 @@ const groups = [
     title: "MONITOR",
     items: [
       ["◉", "Global Overview"],
+      ["⌕", "Intelligence Search"],
       ["◎", "World Map"],
       ["◇", "Global Risk"],
       ["◫", "Global Metrics"],

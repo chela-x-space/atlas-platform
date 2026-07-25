@@ -34,6 +34,17 @@ Reports return 200 when complete, 206 when canonical inputs are degraded/stale, 
 filters, and 503 when no current or eligible stale canonical data exists. Exports preserve provider
 attribution.
 
+## Intelligence Search APIs
+
+- `GET /api/search?q=&category=&subcategory=&provider=&country=&region=&risk=&timeRange=&from=&to=&contentType=&hasCoordinates=&hasOfficialSource=&sort=&page=&pageSize=`
+- `GET /api/search/facets` with the same filters; counts are contextual
+- `GET /api/search/suggestions?q=&limit=`
+- `GET /api/search/status`
+
+Complete indexes return 200, partial verified indexes return 206 with named warnings, invalid
+queries return 400, and unavailable indexes return 503. Results preserve canonical navigation and
+provenance. Search never returns generated replacement records.
+
 Breaking filters are deterministic and validated. `category` and `priority` allow comma-separated
 values; `limit` is bounded to 1–200. Responses use 200 for complete data, 206 for partial provider
 coverage, 400 for invalid input, and safe 503 responses when no snapshot can be produced.

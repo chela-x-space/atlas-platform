@@ -1,5 +1,6 @@
 export const MENU_ROUTES = Object.freeze({
   "Global Overview": "/app",
+  "Intelligence Search": "/app/search",
   "World Map": "/app/map",
   "Global Risk": "/app/risk",
   "Global Metrics": "/app/metrics",

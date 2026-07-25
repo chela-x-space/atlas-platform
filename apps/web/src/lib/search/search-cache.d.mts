@@ -1,0 +1,1 @@
+import type {SearchIndex} from "./search-contracts";export function withSearchCache(key:string,ttlMs:number,staleMs:number,loader:()=>Promise<SearchIndex>,now?:number):Promise<SearchIndex>;export function clearSearchCache():void;

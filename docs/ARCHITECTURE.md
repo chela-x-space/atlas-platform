@@ -25,3 +25,12 @@ the risk API before focusing an event. See `ATLAS-RISK-ENGINE.md`.
 Reports are a cached deterministic projection over the shared Risk service. The engine performs
 filtering, stable sorting, structured aggregation, and attribution-preserving serialization. It
 owns no providers, classification rules, or narrative generator. See `ATLAS-REPORTS.md`.
+
+# Intelligence Search & Explorer
+
+Search is a cached index projection that merges existing module records by canonical ID. Module
+membership adds searchable domains and navigation targets rather than duplicate documents. Pure
+modules own normalization, fixed-rule ranking, filtering, contextual facets, suggestions, URL
+serialization, and browser-local saved/history state. The service uses existing cached Risk,
+Breaking, Radar, and Reports projections and explicitly reports partial module failure. See
+`ATLAS-SEARCH-EXPLORER.md`.

@@ -1,0 +1,3 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const SAVED_SEARCH_KEY:string,RECENT_SEARCH_KEY:string,MAX_RECENT:number;
+export function loadSavedSearches(storage:Storage):any[];export function saveSearch(storage:Storage,input:any,now:number):any|null;export function renameSavedSearch(storage:Storage,id:string,name:string,now:number):boolean;export function deleteSavedSearch(storage:Storage,id:string):boolean;export function loadRecentSearches(storage:Storage):any[];export function recordRecentSearch(storage:Storage,item:any):any[];export function clearRecentSearches(storage:Storage):boolean;

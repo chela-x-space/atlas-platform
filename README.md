@@ -24,6 +24,12 @@ and never generates probabilities or forecasts. APIs: `/api/risk`, `/api/risk/su
 Breaking News, and Risk Summary reports from verified canonical data. Attribution-preserving
 exports are available as Markdown, JSON, and plain text. See `docs/ATLAS-REPORTS.md`.
 
+## Intelligence Search & Explorer
+
+`/app/search` provides deterministic, shareable search across canonical Timeline/Risk, Breaking,
+Map, Reports, and AI Radar projections. Ranking and suggestions use documented fixed rules; no LLM,
+embedding, or vector search is used. See `docs/ATLAS-SEARCH-EXPLORER.md`.
+
 ## Breaking News Center
 
 `/app/breaking` presents current verified events from existing ATLAS providers. Priority is computed
