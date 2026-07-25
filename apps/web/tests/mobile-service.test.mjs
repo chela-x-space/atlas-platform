@@ -18,7 +18,7 @@ test("mobile service uses real dashboard data and explicit fallback states",asyn
 test("mobile navigation is bounded and map is opt-in",async()=>{
   const source=await read("../src/components/mobile/AtlasMobileOverview.tsx");
   assert.match(source,/Overview<\/Link>/);
-  assert.match(source,/>Map<\/a>/);
+  assert.match(source,/href="\/app\/map">Map<\/Link>/);
   assert.match(source,/>Events<\/Link>/);
   assert.match(source,/>Alerts<\/Link>/);
   assert.match(source,/>More<\/button>/);

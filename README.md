@@ -3,7 +3,13 @@
 ATLAS is a deterministic global intelligence platform built from verified, attributable provider
 data. Production modules include the Dashboard, News Center, Source Center, Global Timeline, Event
 Detail, Event Graph, Global Metrics, Global Sentiment, AI Technology Radar, and Breaking News
-Center.
+Center, and Global Operations Map.
+
+## Global Operations Map
+
+`/app/map` plots only verified canonical events with provider-supplied coordinates. It uses
+MapLibre GL, open tiles, deterministic category symbols, and Breaking News priority colors. Missing
+locations are never inferred. See `docs/ATLAS-GLOBAL-MAP.md`.
 
 ## Breaking News Center
 

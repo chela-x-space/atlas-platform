@@ -1,0 +1,11 @@
+import type { BreakingEvent } from "../breaking/breaking-contract";
+export const MAP_LAYERS: readonly string[];
+export const MAP_PRIORITIES: readonly string[];
+export const PRIORITY_COLORS: Readonly<Record<string,string>>;
+export function validCoordinates(event: unknown): boolean;
+export function markerSize(event: Record<string,unknown>): number;
+export function normalizeMapEvent(event: BreakingEvent): (BreakingEvent & {markerSize:number}) | null;
+export function filterMapEvents(events: readonly (BreakingEvent & {markerSize:number})[], filters: {country:string;provider:string;category:string;from:string;to:string;priority:string;layers:readonly string[]}): (BreakingEvent & {markerSize:number})[];
+export function eventsToGeoJson(events: readonly (BreakingEvent & {markerSize:number})[]): GeoJSON.FeatureCollection<GeoJSON.Point>;
+export function clusterExpansionTarget(currentZoom:number, expansionZoom:number):number;
+export function currentFilterCount(filters: Record<string,unknown> & {layers:readonly string[]}):number;
