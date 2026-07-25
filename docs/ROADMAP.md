@@ -18,6 +18,8 @@
 
 - [x] v1.5 Watchlists & Intelligence Monitoring — local deterministic watchlist
   preferences, Search-index matching, internal alert lifecycle, and responsive UI.
+- [x] v1.6 Alert Center — accepted Alert Domain projection, deterministic lifecycle,
+  source aggregation, filtering, distributions, canonical navigation, and audit view.
 
 - [ ] ADR-0002 Alert Domain Boundary — **PROPOSED** architecture for future
   unified alert projections between canonical intelligence and delivery.

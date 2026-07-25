@@ -84,3 +84,21 @@ provenance. They are process-local preferences (`storage: process-local`), not a
 canonical data store, user account system, or notification service. Invalid target
 types/statuses return 400; missing watchlists return 404; unavailable canonical
 index data returns 503.
+
+## Alert Center APIs
+
+- `GET /api/alerts` — deterministic alert list with `status`, `severity`, `source`,
+  `category`, `risk`, `from`, `to`, `search`, `sort`, `page`, and `pageSize`.
+- `GET /api/alerts/{alertId}` — alert metadata, canonical reference, provenance,
+  and lifecycle audit.
+- `PATCH /api/alerts/{alertId}` — deterministic lifecycle transition.
+- `GET /api/alerts/summary` — status, severity, source distributions and latest
+  activity.
+- `GET /api/alerts/status` — Alert Domain readiness, source modules, and degraded
+  warnings.
+- `GET /api/alerts/sources` — source distribution and source warnings.
+
+Alert responses are projections and do not contain duplicated canonical payloads.
+Complete responses use 200, usable degraded responses use 206, invalid filters or
+transitions use 400, missing alerts use 404, and unavailable source projections use
+503. Delivery endpoints are not implemented.

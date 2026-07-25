@@ -1,0 +1,3 @@
+import {NextResponse} from "next/server";import {getAlertSnapshot} from "@/lib/alerts/alert-service";
+export const dynamic="force-dynamic";
+export async function GET(){try{const value=await getAlertSnapshot();return NextResponse.json({alertsVersion:"atlas-alert-center-v1.6",ready:true,sourceModules:["timeline","breaking","risk","watchlists","reports"],alertCount:value.alerts.length,degraded:value.degraded,warnings:value.warnings,generatedAt:value.generatedAt},{status:value.degraded?206:200})}catch{return NextResponse.json({alertsVersion:"atlas-alert-center-v1.6",ready:false,sourceModules:[],alertCount:0,degraded:true,warnings:["Alert source projections unavailable"],generatedAt:new Date().toISOString()},{status:503})}}

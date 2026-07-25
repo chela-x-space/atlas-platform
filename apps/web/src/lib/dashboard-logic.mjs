@@ -3,6 +3,7 @@ export const MENU_ROUTES = Object.freeze({
   "Intelligence Search": "/app/search",
   "Knowledge Graph": "/app/entities",
   Watchlists: "/app/watchlists",
+  Alerts: "/app/alerts",
   "World Map": "/app/map",
   "Global Risk": "/app/risk",
   "Global Metrics": "/app/metrics",

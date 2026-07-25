@@ -76,3 +76,13 @@ and unchanged. Matching uses exact normalized structured fields or all-token
 containment for a search query. The implementation has no authentication, cloud
 sync, external notification delivery, AI, fuzzy matching, or historical replay.
 See `ATLAS-WATCHLISTS.md`.
+
+# Alert Center
+
+v1.6 implements the accepted ADR-0002 Alert Domain boundary. The Alert Center
+projects existing Timeline, Breaking, Risk, Watchlist, and Report outputs into a
+single lifecycle/search/filter view while preserving canonical references and
+provenance. It owns no facts and does not alter producer behavior. Lifecycle state
+and audit are projection metadata; the current store is process-local and
+single-user. Email, messaging, webhooks, and push remain outside the Delivery
+Layer and this milestone. See `ATLAS-ALERT-CENTER.md`.

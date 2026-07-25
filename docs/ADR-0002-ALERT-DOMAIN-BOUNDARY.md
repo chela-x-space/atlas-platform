@@ -1,6 +1,6 @@
 # ADR-0002: Alert Domain Boundary
 
-- Status: **PROPOSED**
+- Status: **ACCEPTED**
 - Scope: architecture only
 - Approval: explicit human approval required
 - Baseline: ATLAS Architecture Freeze v1.0, active at commit `9461e86`
@@ -224,6 +224,7 @@ Watchlist matching remain subject to their existing ADR requirements.
 
 ## Approval
 
-ADR-0002 is **PROPOSED**. Human approval is required before implementation or any
-behavioral change based on this boundary. No production behavior is authorized by
-this document.
+ADR-0002 is **ACCEPTED** for the v1.6 Alert Center implementation. Its approval
+authorizes implementation of the defined projection boundary only; it does not
+authorize external delivery, authentication, multi-user storage, or changes to
+canonical contracts.

@@ -80,3 +80,10 @@ such as countries, providers, categories, risk levels, entities, locations, or
 deterministic queries. Alerts remain local and have `NEW`, `READ`, and `DISMISSED`
 states. No account, AI, canonical data creation, or external notification delivery
 is included. See [`docs/ATLAS-WATCHLISTS.md`](docs/ATLAS-WATCHLISTS.md).
+
+## Alert Center
+
+`/app/alerts` provides a deterministic lifecycle view over existing Timeline,
+Breaking, Risk, Watchlist, and Report projections. Alerts preserve canonical
+references and provenance without owning facts. External delivery, authentication,
+multi-user storage, and AI are outside v1.6. See [`docs/ATLAS-ALERT-CENTER.md`](docs/ATLAS-ALERT-CENTER.md).

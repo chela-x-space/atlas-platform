@@ -23,6 +23,7 @@ const groups = [
       ["⌕", "Intelligence Search"],
       ["◈", "Knowledge Graph"],
       ["◍", "Watchlists"],
+      ["!", "Alerts"],
       ["◎", "World Map"],
       ["◇", "Global Risk"],
       ["◫", "Global Metrics"],

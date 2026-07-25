@@ -1,0 +1,12 @@
+export const ALERTS_VERSION="atlas-alert-center-v1.6" as const;
+export const ALERT_STATUSES=["CREATED","NEW","ACKNOWLEDGED","READ","DISMISSED","ARCHIVED"] as const;
+export const ALERT_SOURCES=["timeline","breaking","risk","watchlists","reports"] as const;
+export type AlertStatus=typeof ALERT_STATUSES[number];
+export type AlertSource=typeof ALERT_SOURCES[number];
+export type AlertSeverity="CRITICAL"|"HIGH"|"ELEVATED"|"WATCH"|"INFORMATIONAL";
+export type AlertPriority="critical"|"high"|"medium"|"information";
+export type AlertReference={readonly canonicalId:string;readonly path:string|null;readonly type:string};
+export type AlertProvenance={readonly providerId:string;readonly attribution:string;readonly sourceUrl:string|null;readonly producer:string;readonly sourceRecordId:string};
+export type Alert={readonly alertId:string;readonly source:AlertSource;readonly sourceRecordId:string;readonly severity:AlertSeverity;readonly priority:AlertPriority;readonly status:AlertStatus;readonly canonicalReference:AlertReference;readonly matchingReason:string;readonly title:string;readonly category:string|null;readonly riskLevel:string|null;readonly createdAt:string;readonly updatedAt:string;readonly occurredAt:string;readonly provenance:readonly AlertProvenance[];readonly metadata:Readonly<Record<string,string|number|boolean|null>>};
+export type AlertFilters={readonly statuses:readonly AlertStatus[];readonly severities:readonly AlertSeverity[];readonly sources:readonly AlertSource[];readonly categories:readonly string[];readonly riskLevels:readonly string[];readonly from:string|null;readonly to:string|null;readonly search:string;readonly sort:"newest"|"oldest"|"severity"|"source";readonly page:number;readonly pageSize:number};
+export type AlertSummary={readonly total:number;readonly statusCounts:Readonly<Record<AlertStatus,number>>;readonly severityCounts:Readonly<Record<AlertSeverity,number>>;readonly sourceCounts:Readonly<Record<AlertSource,number>>;readonly latestActivityAt:string|null;readonly degraded:boolean;readonly warnings:readonly string[];readonly generatedAt:string};
