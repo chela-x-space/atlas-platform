@@ -43,3 +43,24 @@ Entity normalization is stable and collision-aware; graph caching exposes partia
 or stale operation explicitly. `/api/graph` retains its legacy behavior unless
 `view=entities` is requested. Traversal is limited to depth two, 100 nodes, and 200
 edges. See `ATLAS-ENTITY-KNOWLEDGE-GRAPH.md`.
+
+# Architecture governance
+
+ATLAS Architecture Freeze v1.0 is proposed over candidate commit `9ef729a` and
+the implemented baseline through v1.4. The proposal does not change runtime
+architecture or behavior.
+
+Architectural authority is ordered as: human-approved directive, accepted ADR,
+Architecture Freeze, canonical contracts, milestone specification, existing
+implementation, then local optimization. Breaking changes require an accepted
+ADR, compatibility and migration analysis, deterministic tests, and rollback.
+
+Governance documents:
+
+- `ATLAS-ARCHITECTURE-FREEZE-V1.md`
+- `ADR-0001-ATLAS-ARCHITECTURE-FREEZE-V1.md` (status: `PROPOSED`)
+- `ATLAS-CONTRACT-INVENTORY.md`
+- `ATLAS-CHANGE-CONTROL.md`
+
+The next candidate milestone is v1.5 Watchlists & Intelligence Monitoring.
+Watchlists are outside this freeze and are not yet implemented.
