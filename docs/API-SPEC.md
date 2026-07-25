@@ -102,3 +102,16 @@ Alert responses are projections and do not contain duplicated canonical payloads
 Complete responses use 200, usable degraded responses use 206, invalid filters or
 transitions use 400, missing alerts use 404, and unavailable source projections use
 503. Delivery endpoints are not implemented.
+
+## Notification Runtime APIs
+
+- `GET /api/notifications` — deterministic FIFO delivery jobs, status counts,
+  attempts, and audit snapshot.
+- `GET /api/notifications/{id}` — delivery job, attempt history, and audit.
+- `GET /api/notifications/status` — runtime readiness and webhook adapter status.
+- `POST /api/notifications/test-webhook` — enqueue and execute a validated HTTP(S)
+  webhook test using `alertId` and `url`.
+- `PATCH /api/notifications/{id}/cancel` — cancel a non-terminal delivery job.
+
+Notification state is operational metadata, separate from Alert lifecycle. The
+runtime is process-local in v1.7; webhook is the only implemented adapter.

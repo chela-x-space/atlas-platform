@@ -20,12 +20,13 @@
   preferences, Search-index matching, internal alert lifecycle, and responsive UI.
 - [x] v1.6 Alert Center — accepted Alert Domain projection, deterministic lifecycle,
   source aggregation, filtering, distributions, canonical navigation, and audit view.
+- [x] v1.7 Notification Runtime — deterministic FIFO delivery queue, webhook
+  adapter, retries, backoff, idempotency, timeout, cancellation, and DLQ state.
 
 - [x] ADR-0002 Alert Domain Boundary — **ACCEPTED** boundary for unified alert
   projections between canonical intelligence and delivery.
-- [ ] ADR-0003 Notification Delivery Boundary — **PROPOSED** architecture for
-  queues, adapters, retries, and external notification channels. No delivery
-  implementation is authorized.
+- [x] ADR-0003 Notification Delivery Boundary — **ACCEPTED** architecture for
+  queues, adapters, retries, and external notification channels.
 
 ## Next candidate milestone
 

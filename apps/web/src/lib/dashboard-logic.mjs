@@ -4,6 +4,7 @@ export const MENU_ROUTES = Object.freeze({
   "Knowledge Graph": "/app/entities",
   Watchlists: "/app/watchlists",
   Alerts: "/app/alerts",
+  Notifications: "/app/notifications",
   "World Map": "/app/map",
   "Global Risk": "/app/risk",
   "Global Metrics": "/app/metrics",

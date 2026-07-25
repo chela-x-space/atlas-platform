@@ -1,6 +1,6 @@
 # ADR-0003: Notification Delivery Boundary
 
-- Status: **PROPOSED**
+- Status: **ACCEPTED**
 - Scope: architecture only
 - Approval: human approval required
 - Depends on: ADR-0002 Alert Domain Boundary (**ACCEPTED**)
@@ -182,5 +182,5 @@ review, and compatibility with ADR-0002 and Architecture Freeze v1.0.
 
 ## Human approval
 
-Status remains **PROPOSED**. Human approval is required before any implementation
-or behavioral change begins.
+ADR-0003 is **ACCEPTED** for the v1.7 Notification Runtime implementation. Any
+future expansion beyond this boundary still requires the change-control process.

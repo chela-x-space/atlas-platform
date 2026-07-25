@@ -24,6 +24,7 @@ const groups = [
       ["◈", "Knowledge Graph"],
       ["◍", "Watchlists"],
       ["!", "Alerts"],
+      ["↗", "Notifications"],
       ["◎", "World Map"],
       ["◇", "Global Risk"],
       ["◫", "Global Metrics"],

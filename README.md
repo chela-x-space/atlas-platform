@@ -63,14 +63,21 @@ Architecture Freeze v1.0 is **ACTIVE** for the production baseline through v1.6.
 It freezes canonical ownership, deterministic
 module contracts, provenance, public routes/APIs, failure semantics, and the
 non-canonical optional-AI boundary. ADR-0002 is **ACCEPTED** and defines the
-Alert Domain boundary. ADR-0003 is **PROPOSED** and defines the future
-Notification Delivery boundary only; no delivery implementation is authorized.
+Alert Domain boundary. ADR-0003 is **ACCEPTED** and defines the Notification
+Delivery boundary.
 
 - [Architecture Freeze](docs/ATLAS-ARCHITECTURE-FREEZE-V1.md)
 - [ADR-0001](docs/ADR-0001-ATLAS-ARCHITECTURE-FREEZE-V1.md)
 - [Contract Inventory](docs/ATLAS-CONTRACT-INVENTORY.md)
 - [Change Control](docs/ATLAS-CHANGE-CONTROL.md)
 - [ADR-0003 Notification Delivery Boundary](docs/ADR-0003-NOTIFICATION-DELIVERY-BOUNDARY.md)
+
+## Notification Runtime
+
+v1.7 provides a deterministic process-local FIFO delivery runtime with retry,
+backoff, idempotency, timeout, cancellation, audit history, and a single Webhook
+adapter. Delivery state never mutates Alerts or canonical intelligence. See
+[ATLAS Notification Runtime](docs/ATLAS-NOTIFICATION-RUNTIME.md).
 
 The v1.5 Watchlists & Intelligence Monitoring milestone is implemented within
 these boundaries; multi-user persistence and external delivery remain future work.
