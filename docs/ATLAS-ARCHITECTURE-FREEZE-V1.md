@@ -1,8 +1,8 @@
 # ATLAS Architecture Freeze v1.0
 
-Status: **PROPOSED**  
-Candidate baseline: commit `9ef729a`, tag `atlas-v1.4-entity-knowledge-graph`  
-Coverage: production architecture implemented through ATLAS v1.4
+Status: **ACTIVE**
+Baseline: commit `9461e86`, tag `atlas-v1.5-watchlists`
+Coverage: production architecture implemented through ATLAS v1.5
 
 ## Purpose
 
@@ -11,8 +11,8 @@ a governance boundary, not a redesign. Its purpose is to keep verified facts,
 canonical identities, deterministic behavior, provenance, attribution, and public
 integration contracts stable while later milestones are developed.
 
-The freeze becomes authoritative only after ADR-0001 receives explicit human
-approval and is marked `ACCEPTED`.
+The freeze is authoritative for the current production baseline. Future changes
+remain subject to the authority hierarchy and accepted ADR process.
 
 ## Decision hierarchy
 
@@ -30,9 +30,10 @@ Implementation code must not silently redefine an architectural contract.
 
 ## Scope and current baseline
 
-The candidate baseline contains AI Technology Radar v0.8, Breaking News Center
+The baseline contains AI Technology Radar v0.8, Breaking News Center
 v0.9, Global Operations Map v1.0, Global Risk & Alert Engine v1.1, Reports Center
-v1.2, Intelligence Search & Explorer v1.3, and Entity Knowledge Graph v1.4.
+v1.2, Intelligence Search & Explorer v1.3, Entity Knowledge Graph v1.4, and
+Watchlists & Intelligence Monitoring v1.5.
 
 The freeze covers:
 
@@ -235,6 +236,6 @@ storage boundary.
 
 ## Human approval statement
 
-This document and ADR-0001 are proposed. Human approval is required before the
-architecture freeze is accepted. Until then, the candidate accurately documents
-the `9ef729a` baseline but does not claim governance acceptance.
+This freeze is ACTIVE for the `9461e86` baseline. ADR-0002 is separately
+PROPOSED; human approval is required before any Alert Domain implementation or
+behavioral change is authorized.

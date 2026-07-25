@@ -59,11 +59,11 @@ embeddings, probabilistic resolution, or inferred relationship generation. See
 
 ## Architecture governance
 
-Architecture Freeze v1.0 is **proposed** for the production baseline through v1.4
-at candidate commit `9ef729a`. It freezes canonical ownership, deterministic
+Architecture Freeze v1.0 is **ACTIVE** for the production baseline through v1.5.
+It freezes canonical ownership, deterministic
 module contracts, provenance, public routes/APIs, failure semantics, and the
-non-canonical optional-AI boundary. ADR-0001 still requires explicit human
-acceptance.
+non-canonical optional-AI boundary. ADR-0002 is proposed and defines the future
+Alert Domain boundary only; human approval is required before implementation.
 
 - [Architecture Freeze](docs/ATLAS-ARCHITECTURE-FREEZE-V1.md)
 - [ADR-0001](docs/ADR-0001-ATLAS-ARCHITECTURE-FREEZE-V1.md)

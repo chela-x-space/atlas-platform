@@ -46,9 +46,9 @@ edges. See `ATLAS-ENTITY-KNOWLEDGE-GRAPH.md`.
 
 # Architecture governance
 
-ATLAS Architecture Freeze v1.0 is proposed over candidate commit `9ef729a` and
-the implemented baseline through v1.4. The proposal does not change runtime
-architecture or behavior.
+ATLAS Architecture Freeze v1.0 is ACTIVE over the implemented baseline through
+v1.5. ADR-0002 is proposed and defines the future Alert Domain boundary only; it
+does not change runtime architecture or behavior.
 
 Architectural authority is ordered as: human-approved directive, accepted ADR,
 Architecture Freeze, canonical contracts, milestone specification, existing
@@ -58,7 +58,8 @@ ADR, compatibility and migration analysis, deterministic tests, and rollback.
 Governance documents:
 
 - `ATLAS-ARCHITECTURE-FREEZE-V1.md`
-- `ADR-0001-ATLAS-ARCHITECTURE-FREEZE-V1.md` (status: `PROPOSED`)
+- `ADR-0001-ATLAS-ARCHITECTURE-FREEZE-V1.md` (freeze authority: ACTIVE)
+- `ADR-0002-ALERT-DOMAIN-BOUNDARY.md` (status: `PROPOSED`)
 - `ATLAS-CONTRACT-INVENTORY.md`
 - `ATLAS-CHANGE-CONTROL.md`
 
