@@ -11,3 +11,11 @@ The map is a client visualization over the cached Breaking News projection. It o
 canonical records, priority rules, or inferred coordinates. One verified collection is filtered
 locally and supplied to MapLibre as clustered GeoJSON. Canonical IDs connect Event Detail,
 Timeline, Graph, and Source Center. See `ATLAS-GLOBAL-MAP.md`.
+
+# Global Risk & Alert Engine
+
+Risk is a cached deterministic projection over the existing Global Timeline aggregation. The
+shared engine owns versioned rule evaluation, stable sorting, filters, summaries, and safe public
+rule metadata; it owns no provider fetchers and changes no canonical event. The UI and four risk
+endpoints share that service. Map integration validates canonical identity and coordinates through
+the risk API before focusing an event. See `ATLAS-RISK-ENGINE.md`.

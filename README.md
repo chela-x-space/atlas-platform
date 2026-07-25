@@ -11,6 +11,13 @@ Center, and Global Operations Map.
 MapLibre GL, open tiles, deterministic category symbols, and Breaking News priority colors. Missing
 locations are never inferred. See `docs/ATLAS-GLOBAL-MAP.md`.
 
+## Global Risk & Alert Engine
+
+`/app/risk` applies versioned deterministic rules to verified canonical timeline records. It
+preserves provenance, exposes the matched rule, degrades conservatively when fields are missing,
+and never generates probabilities or forecasts. APIs: `/api/risk`, `/api/risk/summary`,
+`/api/risk/alerts`, and `/api/risk/rules`. See `docs/ATLAS-RISK-ENGINE.md`.
+
 ## Breaking News Center
 
 `/app/breaking` presents current verified events from existing ATLAS providers. Priority is computed

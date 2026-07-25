@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import maplibregl, { GeoJSONSource, Map as MapLibreMap, MapLayerMouseEvent } from "maplibre-gl";
 import type { BreakingEvent, BreakingSnapshot } from "@/lib/breaking/breaking-contract";
+import type { RiskAlert, RiskSnapshot } from "@/lib/risk/risk-contracts";
 import {
   clusterExpansionTarget,
   currentFilterCount,
@@ -162,6 +163,24 @@ export function GlobalOperationsMap() {
       map.setPaintProperty("atlas-critical-pulse","circle-stroke-width",expanded?2.25:1.5);
     },1400);
     return()=>window.clearInterval(timer);
+  },[mapReady]);
+
+  useEffect(()=>{
+    const map=mapRef.current;if(!mapReady||!map)return;
+    const params=new URLSearchParams(window.location.search),eventId=params.get("event");
+    if(!eventId||params.get("focus")!=="1")return;
+    let cancelled=false,marker:maplibregl.Marker|null=null;
+    fetch("/api/risk/alerts?coordinates=available&limit=200",{cache:"no-store"}).then(async response=>{
+      if(!response.ok&&response.status!==206)throw new Error();
+      const data=await response.json() as RiskSnapshot;
+      const alert=data.alerts.find((item:RiskAlert)=>item.canonicalId===eventId);
+      if(cancelled||!alert||alert.latitude===null||alert.longitude===null)return;
+      const focused:MapEvent={canonicalId:alert.canonicalId,category:alert.sourceCategory,priority:alert.priority,title:alert.title,providerId:alert.providerId,providerName:alert.providerName,country:null,region:alert.location,latitude:alert.latitude,longitude:alert.longitude,publishedAt:alert.occurredAt,updatedAt:alert.updatedAt,verified:true,sourceUrl:"",relatedTimelineEvent:alert.sourceEventId,eventDetailUrl:alert.canonicalTarget,timelineUrl:alert.timelineTarget,graphUrl:`/app/graph/${encodeURIComponent(alert.canonicalId)}`,provenance:{providerId:alert.providerId,sourceUrl:"",attribution:alert.sourceAttribution,sourceRecordId:alert.sourceEventId},markerSize:1};
+      setSelected(focused);map.easeTo({center:[alert.longitude,alert.latitude],zoom:6});
+      const element=document.createElement("button");element.type="button";element.className="global-map-risk-focus";element.setAttribute("aria-label",`Focused risk event: ${alert.title}`);
+      marker=new maplibregl.Marker({element}).setLngLat([alert.longitude,alert.latitude]).addTo(map);
+    }).catch(()=>setError(current=>current||"The requested risk event could not be verified for map focus."));
+    return()=>{cancelled=true;marker?.remove()};
   },[mapReady]);
 
   function toggleLayer(layer:string) {

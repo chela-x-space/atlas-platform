@@ -18,7 +18,7 @@ export function aiReleasePriority(release){
   const parts=version.split(".").map(Number);
   return (release.category==="model"||release.category==="agent")&&parts.length>=2&&Number.isFinite(parts[0])&&parts[0]>=1&&parts.slice(1).every(part=>part===0)?"medium":"information";
 }
-function mapCategory(item){
+export function mapBreakingCategory(item){
   if(item.category==="earthquake")return"earthquake";
   if(item.category==="cyclone"||item.category==="weather"||item.category==="climate")return"weather";
   if(item.category==="space"||item.category==="science"||item.category==="earth-observation")return"space";
@@ -27,13 +27,13 @@ function mapCategory(item){
   if(item.category==="wildfire"||item.category==="flood"||item.category==="unknown")return"disaster";
   return BREAKING_CATEGORIES.includes(item.category)?item.category:"disaster";
 }
-function timelinePriority(item,category){
+export function timelinePriority(item,category){
   if(category==="earthquake")return earthquakePriority(item.metadata?.magnitude);
   if(category==="weather")return weatherPriority(`${item.title} ${item.summary}`,item.status);
   return item.severity==="critical"?"critical":item.severity==="high"?"high":item.severity==="moderate"?"medium":"information";
 }
 function timelineEvent(item){
-  const category=mapCategory(item),priority=timelinePriority(item,category);
+  const category=mapBreakingCategory(item),priority=timelinePriority(item,category);
   if(category==="earthquake"&&priority==="information")return null;
   if(!item.sourceUrl)return null;
   const canonicalId=item.relatedEventId??item.relatedReportId??item.id;
