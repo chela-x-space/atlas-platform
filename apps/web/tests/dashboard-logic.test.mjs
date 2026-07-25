@@ -14,6 +14,7 @@ test("sidebar labels resolve only to valid configured routes", () => {
   assert.equal(routeForMenu("Global Risk"), "/app/risk");
   assert.equal(routeForMenu("Global Timeline"), "/app/timeline");
   assert.equal(routeForMenu("Source Center"), "/app/sources");
+  assert.equal(routeForMenu("Reports"), "/app/reports");
   assert.equal(routeForMenu("Volcano"), null);
 });
 

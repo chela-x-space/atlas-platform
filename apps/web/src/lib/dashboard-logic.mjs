@@ -11,6 +11,7 @@ export const MENU_ROUTES = Object.freeze({
   "Economy & Markets": "/app/markets",
   "AI & Technology": "/app/ai",
   "Source Center": "/app/sources",
+  Reports: "/app/reports",
   Settings: "/app/settings",
   "About Atlas": "/about",
 });

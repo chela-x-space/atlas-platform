@@ -18,6 +18,12 @@ preserves provenance, exposes the matched rule, degrades conservatively when fie
 and never generates probabilities or forecasts. APIs: `/api/risk`, `/api/risk/summary`,
 `/api/risk/alerts`, and `/api/risk/rules`. See `docs/ATLAS-RISK-ENGINE.md`.
 
+## Reports Center
+
+`/app/reports` creates deterministic Daily, Weekly, AI, Cybersecurity, Natural Disaster, Space,
+Breaking News, and Risk Summary reports from verified canonical data. Attribution-preserving
+exports are available as Markdown, JSON, and plain text. See `docs/ATLAS-REPORTS.md`.
+
 ## Breaking News Center
 
 `/app/breaking` presents current verified events from existing ATLAS providers. Priority is computed

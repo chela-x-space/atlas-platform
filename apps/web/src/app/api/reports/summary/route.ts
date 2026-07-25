@@ -1,0 +1,5 @@
+import {NextRequest,NextResponse} from "next/server";
+import {parseReportQuery} from "@/lib/reports/report-engine.mjs";
+import {getReport} from "@/lib/reports/report-service";
+export const dynamic="force-dynamic";
+export async function GET(request:NextRequest){const parsed=parseReportQuery(request.nextUrl.searchParams);if(!parsed.ok)return NextResponse.json({error:{code:parsed.code,message:parsed.message}},{status:400});try{const value=await getReport(parsed.filters),report=value.report;return NextResponse.json({reportsVersion:value.reportsVersion,reportId:report.reportId,reportType:report.reportType,generatedAt:report.generatedAt,coveredFrom:report.coveredFrom,coveredTo:report.coveredTo,sourceCount:report.sourceCount,eventCount:report.eventCount,categories:report.categories,summary:report.summary,degraded:value.degraded,stale:value.stale},{status:value.degraded?206:200,headers:{"Cache-Control":value.stale?"private, no-store":"public, s-maxage=60, stale-while-revalidate=300"}})}catch{return NextResponse.json({error:{code:"REPORT_SUMMARY_UNAVAILABLE",message:"Verified report summary is unavailable"}},{status:503})}}

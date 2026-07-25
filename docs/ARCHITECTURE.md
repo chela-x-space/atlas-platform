@@ -19,3 +19,9 @@ shared engine owns versioned rule evaluation, stable sorting, filters, summaries
 rule metadata; it owns no provider fetchers and changes no canonical event. The UI and four risk
 endpoints share that service. Map integration validates canonical identity and coordinates through
 the risk API before focusing an event. See `ATLAS-RISK-ENGINE.md`.
+
+# Reports Center
+
+Reports are a cached deterministic projection over the shared Risk service. The engine performs
+filtering, stable sorting, structured aggregation, and attribution-preserving serialization. It
+owns no providers, classification rules, or narrative generator. See `ATLAS-REPORTS.md`.

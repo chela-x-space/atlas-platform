@@ -23,6 +23,17 @@ Complete responses use 200; degraded or stale-backed responses use 206 and
 classification. Rules expose only IDs, versions, input fields, resulting levels, precedence, and
 fixed explanation templates.
 
+## Reports APIs
+
+- `GET /api/reports?type=&history=&category=&provider=&risk=&region=&search=`
+- `GET /api/reports/types`
+- `GET /api/reports/summary` with report filters
+- `GET /api/reports/export?format=markdown|json|text` with report filters
+
+Reports return 200 when complete, 206 when canonical inputs are degraded/stale, 400 for invalid
+filters, and 503 when no current or eligible stale canonical data exists. Exports preserve provider
+attribution.
+
 Breaking filters are deterministic and validated. `category` and `priority` allow comma-separated
 values; `limit` is bounded to 1–200. Responses use 200 for complete data, 206 for partial provider
 coverage, 400 for invalid input, and safe 503 responses when no snapshot can be produced.
