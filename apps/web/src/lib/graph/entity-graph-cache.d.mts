@@ -1,0 +1,1 @@
+import type {EntityGraphSnapshot} from "./entity-graph-contracts";export function withEntityGraphCache(key:string,ttlMs:number,staleMs:number,loader:()=>Promise<EntityGraphSnapshot>,now?:number):Promise<EntityGraphSnapshot>;export function clearEntityGraphCache():void;

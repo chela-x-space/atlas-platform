@@ -1,0 +1,1 @@
+export function normalizeEntityValue(value:unknown):string;export function entityBaseId(type:string,value:string):string|null;export function resolveEntityIds(candidates:readonly {key:string;entityType:string;label:string}[]):Map<string,string>;

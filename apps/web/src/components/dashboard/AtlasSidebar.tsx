@@ -21,6 +21,7 @@ const groups = [
     items: [
       ["◉", "Global Overview"],
       ["⌕", "Intelligence Search"],
+      ["◈", "Knowledge Graph"],
       ["◎", "World Map"],
       ["◇", "Global Risk"],
       ["◫", "Global Metrics"],

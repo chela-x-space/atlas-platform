@@ -48,3 +48,11 @@ npm run lint
 npm test
 npm run build
 ```
+
+## Entity Knowledge Graph
+
+ATLAS v1.4 adds `/app/entities`, an evidence-backed graph projection over existing
+canonical intelligence. It preserves provenance and canonical navigation, uses
+stable entity IDs and bounded traversal, and performs no LLM extraction,
+embeddings, probabilistic resolution, or inferred relationship generation. See
+[`docs/ATLAS-ENTITY-KNOWLEDGE-GRAPH.md`](docs/ATLAS-ENTITY-KNOWLEDGE-GRAPH.md).

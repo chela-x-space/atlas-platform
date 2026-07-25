@@ -48,3 +48,20 @@ provenance. Search never returns generated replacement records.
 Breaking filters are deterministic and validated. `category` and `priority` allow comma-separated
 values; `limit` is bounded to 1–200. Responses use 200 for complete data, 206 for partial provider
 coverage, 400 for invalid input, and safe 503 responses when no snapshot can be produced.
+
+## Entity Knowledge Graph APIs
+
+- `GET /api/entities` — contextual entity list/facets; accepts `q`, `entityType`,
+  `nodeType`, `category`, `country`, `region`, `provider`, `risk`,
+  `relationshipType`, `page`, `pageSize`, and deterministic `sort`.
+- `GET /api/entities/{entityId}` — entity, connected nodes, incoming/outgoing
+  evidence, canonical references, provenance, and degraded status.
+- `GET /api/entities/{entityId}/relationships` — accepts `relationshipType` and
+  `direction=incoming|outgoing`.
+- `GET /api/graph?view=entities&root={nodeId}&depth=1|2` — bounded graph projection.
+  Without `view=entities`, the existing event-graph contract is unchanged.
+- `GET /api/graph/status` — counts, included node/edge types, generation state,
+  degraded modules, and warnings.
+
+Successful partial responses use HTTP 206. Missing entities use 404; unavailable
+canonical data uses 503. No endpoint synthesizes replacement nodes or edges.

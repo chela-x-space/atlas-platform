@@ -12,6 +12,7 @@ import {
 test("sidebar labels resolve only to valid configured routes", () => {
   assert.equal(routeForMenu("World Map"), "/app/map");
   assert.equal(routeForMenu("Intelligence Search"), "/app/search");
+  assert.equal(routeForMenu("Knowledge Graph"), "/app/entities");
   assert.equal(routeForMenu("Global Risk"), "/app/risk");
   assert.equal(routeForMenu("Global Timeline"), "/app/timeline");
   assert.equal(routeForMenu("Source Center"), "/app/sources");

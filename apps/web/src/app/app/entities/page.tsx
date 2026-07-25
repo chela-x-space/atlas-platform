@@ -1,0 +1,1 @@
+import type {Metadata} from "next";import {EntityKnowledgeGraph} from "@/components/entities/EntityKnowledgeGraph";export const metadata:Metadata={title:"Entity Knowledge Graph | ATLAS",description:"Evidence-backed canonical entity graph over verified ATLAS records."};export default function EntitiesPage(){return <EntityKnowledgeGraph/>}

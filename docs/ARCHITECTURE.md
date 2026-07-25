@@ -34,3 +34,12 @@ modules own normalization, fixed-rule ranking, filtering, contextual facets, sug
 serialization, and browser-local saved/history state. The service uses existing cached Risk,
 Breaking, Radar, and Reports projections and explicitly reports partial module failure. See
 `ATLAS-SEARCH-EXPLORER.md`.
+
+# Entity Knowledge Graph
+
+The v1.4 graph service consumes the Search index projection and emits deterministic
+nodes and evidence-bearing directed edges. Canonical services remain authoritative.
+Entity normalization is stable and collision-aware; graph caching exposes partial
+or stale operation explicitly. `/api/graph` retains its legacy behavior unless
+`view=entities` is requested. Traversal is limited to depth two, 100 nodes, and 200
+edges. See `ATLAS-ENTITY-KNOWLEDGE-GRAPH.md`.
