@@ -79,6 +79,13 @@ backoff, idempotency, timeout, cancellation, audit history, and a single Webhook
 adapter. Delivery state never mutates Alerts or canonical intelligence. See
 [ATLAS Notification Runtime](docs/ATLAS-NOTIFICATION-RUNTIME.md).
 
+## Intelligence API governance
+
+ADR-0004 defines the proposed versioned Intelligence API boundary. Existing
+unversioned `/api/*` routes remain internal application APIs; no `/api/v1` public
+contract is implemented. Public representations must preserve canonical IDs,
+provenance, attribution, freshness, and degraded-state metadata.
+
 The v1.5 Watchlists & Intelligence Monitoring milestone is implemented within
 these boundaries; multi-user persistence and external delivery remain future work.
 

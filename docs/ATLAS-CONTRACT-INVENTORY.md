@@ -81,6 +81,16 @@ and attribution represented by their contract/route files are **FROZEN**.
 Validation implementation and header formatting are **INTERNAL-STABLE** unless
 consumers rely on a documented header.
 
+## Intelligence API classification
+
+All current unversioned `/api/*` endpoints listed above are **INTERNAL**. They
+serve the ATLAS application and existing modules; none is implicitly
+`PUBLIC-STABLE`, `PARTNER`, or externally supported. ADR-0004 defines the future
+`/api/v1` boundary and candidate resource families without publishing them.
+Current page/`pageSize` pagination, deterministic sorting, 200/206/400/404/503
+status behavior, provenance, attribution, freshness, and degraded metadata remain
+owned by their existing service contracts.
+
 ## Cache and degraded-state inventory
 
 Breaking, Radar/news, Risk, Reports, Search, and Entity Graph use deterministic

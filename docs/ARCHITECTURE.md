@@ -96,3 +96,10 @@ FIFO queue, bounded retry/backoff, idempotency protection, timeout, cancellation
 audit history, and one Webhook adapter. Delivery state never mutates Alerts or
 canonical intelligence. External channels and durable multi-user workers remain
 future work. See `ATLAS-NOTIFICATION-RUNTIME.md`.
+
+# Intelligence API Boundary
+
+ADR-0004 is PROPOSED and governs a future `/api/v1` compatibility boundary.
+Current unversioned `/api/*` routes remain INTERNAL and retain their existing
+response behavior. No public API contract, authentication, or versioned route is
+implemented. See `ADR-0004-INTELLIGENCE-API-BOUNDARY.md`.

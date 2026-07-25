@@ -27,6 +27,8 @@
   projections between canonical intelligence and delivery.
 - [x] ADR-0003 Notification Delivery Boundary — **ACCEPTED** architecture for
   queues, adapters, retries, and external notification channels.
+- [ ] ADR-0004 Intelligence API Boundary — **PROPOSED** versioned `/api/v1`
+  compatibility boundary; no public API implementation is authorized.
 
 ## Next candidate milestone
 

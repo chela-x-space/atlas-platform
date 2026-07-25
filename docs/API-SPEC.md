@@ -115,3 +115,12 @@ transitions use 400, missing alerts use 404, and unavailable source projections 
 
 Notification state is operational metadata, separate from Alert lifecycle. The
 runtime is process-local in v1.7; webhook is the only implemented adapter.
+
+## Intelligence API boundary
+
+ADR-0004 defines the future `/api/v1` versioned compatibility boundary. All
+currently documented unversioned `/api/*` routes are INTERNAL application APIs;
+they are not automatically public or partner contracts. No `/api/v1` routes are
+implemented. A future public envelope must preserve canonical references,
+provider attribution, freshness, degraded state, deterministic ordering, and
+validated pagination/filter semantics.
