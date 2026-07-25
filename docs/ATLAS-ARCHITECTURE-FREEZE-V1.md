@@ -237,5 +237,6 @@ storage boundary.
 ## Human approval statement
 
 This freeze is ACTIVE for the `9461e86` baseline. ADR-0002 is separately
-PROPOSED; human approval is required before any Alert Domain implementation or
-behavioral change is authorized.
+ACCEPTED and defines the Alert Domain boundary. ADR-0003 is separately
+PROPOSED; human approval is required before any Notification Delivery
+implementation or behavioral change is authorized.

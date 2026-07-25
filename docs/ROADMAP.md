@@ -21,10 +21,14 @@
 - [x] v1.6 Alert Center — accepted Alert Domain projection, deterministic lifecycle,
   source aggregation, filtering, distributions, canonical navigation, and audit view.
 
-- [ ] ADR-0002 Alert Domain Boundary — **PROPOSED** architecture for future
-  unified alert projections between canonical intelligence and delivery.
+- [x] ADR-0002 Alert Domain Boundary — **ACCEPTED** boundary for unified alert
+  projections between canonical intelligence and delivery.
+- [ ] ADR-0003 Notification Delivery Boundary — **PROPOSED** architecture for
+  queues, adapters, retries, and external notification channels. No delivery
+  implementation is authorized.
 
 ## Next candidate milestone
 
 - [ ] Future monitoring extensions — multi-user persistence and external
-  notification delivery require a future ADR and are not implemented.
+  notification delivery require accepted delivery architecture and are not
+  implemented.

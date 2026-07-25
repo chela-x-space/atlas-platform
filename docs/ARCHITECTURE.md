@@ -47,8 +47,9 @@ edges. See `ATLAS-ENTITY-KNOWLEDGE-GRAPH.md`.
 # Architecture governance
 
 ATLAS Architecture Freeze v1.0 is ACTIVE over the implemented baseline through
-v1.5. ADR-0002 is proposed and defines the future Alert Domain boundary only; it
-does not change runtime architecture or behavior.
+v1.6. ADR-0002 is ACCEPTED and defines the Alert Domain boundary. ADR-0003 is
+PROPOSED and defines the future Notification Delivery boundary only; it does not
+change runtime architecture or behavior.
 
 Architectural authority is ordered as: human-approved directive, accepted ADR,
 Architecture Freeze, canonical contracts, milestone specification, existing
@@ -59,7 +60,8 @@ Governance documents:
 
 - `ATLAS-ARCHITECTURE-FREEZE-V1.md`
 - `ADR-0001-ATLAS-ARCHITECTURE-FREEZE-V1.md` (freeze authority: ACTIVE)
-- `ADR-0002-ALERT-DOMAIN-BOUNDARY.md` (status: `PROPOSED`)
+- `ADR-0002-ALERT-DOMAIN-BOUNDARY.md` (status: `ACCEPTED`)
+- `ADR-0003-NOTIFICATION-DELIVERY-BOUNDARY.md` (status: `PROPOSED`)
 - `ATLAS-CONTRACT-INVENTORY.md`
 - `ATLAS-CHANGE-CONTROL.md`
 
@@ -85,4 +87,5 @@ single lifecycle/search/filter view while preserving canonical references and
 provenance. It owns no facts and does not alter producer behavior. Lifecycle state
 and audit are projection metadata; the current store is process-local and
 single-user. Email, messaging, webhooks, and push remain outside the Delivery
-Layer and this milestone. See `ATLAS-ALERT-CENTER.md`.
+Layer and this milestone. ADR-0003 documents that future boundary. See
+`ATLAS-ALERT-CENTER.md`.
