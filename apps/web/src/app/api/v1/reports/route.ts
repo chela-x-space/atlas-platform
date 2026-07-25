@@ -1,0 +1,3 @@
+import {NextRequest} from "next/server";import {getReport} from "@/lib/reports/report-service";import {parseReportQuery} from "@/lib/reports/report-engine.mjs";import {ok,fail} from "@/lib/api/v1-api";
+export const dynamic="force-dynamic";
+export async function GET(request:NextRequest){const parsed=parseReportQuery(request.nextUrl.searchParams);if(!parsed.ok)return fail(request,parsed.code,parsed.message);try{const value=await getReport(parsed.filters);return ok(request,{report:value.report,types:value.types},{generatedAt:value.generatedAt,degraded:value.degraded,stale:value.stale,status:value.degraded?206:200})}catch{return fail(request,"REPORTS_UNAVAILABLE","Verified reports are unavailable",503)}}

@@ -1,0 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {resolveEventDetail} from "@/lib/event-detail/event-detail-resolver";import {ok,fail} from "@/lib/api/v1-api";
+export const dynamic="force-dynamic";
+export async function GET(request:Request,{params}:{params:Promise<{eventId:string}>}){const {eventId}=await params;const result=await resolveEventDetail(eventId);if(result.status==="invalid")return fail(request,result.code,result.message);if(result.status==="not_found")return fail(request,result.code,result.message,404);if(result.status==="unavailable")return fail(request,result.code,result.message,503);return ok(request,result.response,{generatedAt:(result.response as any).generatedAt??new Date().toISOString(),degraded:Boolean((result.response as any).partial),status:(result.response as any).partial?206:200})}

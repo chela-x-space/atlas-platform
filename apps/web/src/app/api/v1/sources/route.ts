@@ -1,0 +1,3 @@
+import {getAtlasDataHub} from "@/lib/data-hub";import {getOfficialNews} from "@/lib/news/news-service";import {buildSourceOperationsProviders} from "@/lib/source-health/source-operations";import {ok,fail} from "@/lib/api/v1-api";
+export const dynamic="force-dynamic";
+export async function GET(request:Request){try{const hub=getAtlasDataHub();const [,news]=await Promise.all([hub.refreshSources(),getOfficialNews()]);return ok(request,{sources:hub.getSourceHealth(),newsProviders:news.sources,providers:buildSourceOperationsProviders(hub.getSourceHealth(),news.sources)},{generatedAt:new Date().toISOString(),degraded:false})}catch{return fail(request,"SOURCES_UNAVAILABLE","Verified source health is unavailable",503)}}

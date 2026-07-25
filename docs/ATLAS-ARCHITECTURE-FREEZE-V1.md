@@ -238,6 +238,6 @@ storage boundary.
 
 This freeze is ACTIVE for the `9461e86` baseline. ADR-0002 is separately
 ACCEPTED and defines the Alert Domain boundary. ADR-0003 is separately ACCEPTED
-and defines the Notification Delivery boundary. ADR-0004 is separately PROPOSED
-and requires human approval before any versioned public Intelligence API
-implementation or behavioral change is authorized.
+and defines the Notification Delivery boundary. ADR-0004 is ACCEPTED and governs
+the v1.8 read-only public Intelligence API boundary. Authentication, mutation,
+and partner API extensions remain future work.

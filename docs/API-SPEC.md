@@ -116,6 +116,16 @@ transitions use 400, missing alerts use 404, and unavailable source projections 
 Notification state is operational metadata, separate from Alert lifecycle. The
 runtime is process-local in v1.7; webhook is the only implemented adapter.
 
+## Intelligence API v1
+
+The PUBLIC-STABLE read-only contract is under `/api/v1`. It wraps existing
+application services in a deterministic `{data,meta}` envelope with request ID,
+generated/freshness metadata, degraded state, and collection pagination. Errors
+use the standard `{error}` envelope. Implemented resources and schemas are
+documented in `docs/ATLAS-INTELLIGENCE-API-V1.md` and
+`docs/openapi/atlas-intelligence-api-v1.yaml`. Existing unversioned `/api/*`
+routes remain INTERNAL.
+
 ## Intelligence API boundary
 
 ADR-0004 defines the future `/api/v1` versioned compatibility boundary. All

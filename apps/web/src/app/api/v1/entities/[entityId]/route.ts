@@ -1,0 +1,3 @@
+import {NextRequest} from "next/server";import {getEntity} from "@/lib/graph/entity-graph-service";import {ok,fail} from "@/lib/api/v1-api";
+export const dynamic="force-dynamic";
+export async function GET(request:NextRequest,{params}:{params:Promise<{entityId:string}>}){const {entityId}=await params;try{const value=await getEntity(entityId);return value?ok(request,value,{generatedAt:value.generatedAt,degraded:value.degraded,status:value.degraded?206:200}):fail(request,"ENTITY_NOT_FOUND","Canonical entity was not found",404)}catch{return fail(request,"ENTITY_UNAVAILABLE","Canonical entity is unavailable",503)}}

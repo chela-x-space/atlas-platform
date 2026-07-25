@@ -81,10 +81,13 @@ adapter. Delivery state never mutates Alerts or canonical intelligence. See
 
 ## Intelligence API governance
 
-ADR-0004 defines the proposed versioned Intelligence API boundary. Existing
-unversioned `/api/*` routes remain internal application APIs; no `/api/v1` public
-contract is implemented. Public representations must preserve canonical IDs,
+ADR-0004 defines the versioned Intelligence API boundary. Existing unversioned
+`/api/*` routes remain internal application APIs. v1.8 publishes a read-only
+`/api/v1` contract. Public representations must preserve canonical IDs,
 provenance, attribution, freshness, and degraded-state metadata.
+
+See [ATLAS Intelligence API v1](docs/ATLAS-INTELLIGENCE-API-V1.md) and the
+[OpenAPI contract](docs/openapi/atlas-intelligence-api-v1.yaml).
 
 The v1.5 Watchlists & Intelligence Monitoring milestone is implemented within
 these boundaries; multi-user persistence and external delivery remain future work.

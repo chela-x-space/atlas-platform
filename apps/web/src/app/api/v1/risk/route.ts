@@ -1,0 +1,3 @@
+import {NextRequest} from "next/server";import {getRiskAlerts} from "@/lib/risk/risk-service";import {parseRiskQuery} from "@/lib/risk/risk-engine.mjs";import {ok,fail} from "@/lib/api/v1-api";
+export const dynamic="force-dynamic";
+export async function GET(request:NextRequest){const parsed=parseRiskQuery(request.nextUrl.searchParams);if(!parsed.ok)return fail(request,parsed.code,parsed.message);try{const value=await getRiskAlerts(parsed.filters);return ok(request,{alerts:value.alerts,summary:value.summary,rules:value.rules,providers:value.providers},{generatedAt:value.evaluatedAt,degraded:value.degraded,stale:value.stale,status:value.degraded?206:200})}catch{return fail(request,"RISK_UNAVAILABLE","Verified risk data is unavailable",503)}}

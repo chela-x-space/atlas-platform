@@ -1,0 +1,7 @@
+import {NextResponse} from "next/server";
+import {randomUUID} from "node:crypto";
+export const API_VERSION="v1" as const;
+export function context(request:Request){const incoming=request.headers.get("x-request-id")?.trim()??"";const requestId=/^[A-Za-z0-9._:-]{1,100}$/.test(incoming)?incoming:`v1_${randomUUID()}`;return{requestId}}
+export function ok(request:Request,data:unknown,options:{generatedAt?:string|null;degraded?:boolean;stale?:boolean;pagination?:unknown;status?:number}={}){const c=context(request),generatedAt=options.generatedAt??new Date().toISOString();return NextResponse.json({data,meta:{apiVersion:API_VERSION,requestId:c.requestId,generatedAt,freshness:{generatedAt,stale:options.stale??false},degraded:options.degraded??false,...(options.pagination?{pagination:options.pagination}:{} )}},{status:options.status??(options.degraded?206:200),headers:{"X-Request-Id":c.requestId,"Cache-Control":"no-store"}})}
+export function fail(request:Request,code:string,message:string,status=400,details?:unknown){const c=context(request),retryable=status>=500||status===429;return NextResponse.json({error:{code,message,requestId:c.requestId,status,retryable,...(details?{details}:{} )}},{status,headers:{"X-Request-Id":c.requestId,"Cache-Control":"no-store"}})}
+export function page(params:URLSearchParams){const page=Number(params.get("page")??1),pageSize=Number(params.get("pageSize")??25);if(!Number.isInteger(page)||page<1||!Number.isInteger(pageSize)||pageSize<1||pageSize>100)return null;return{page,pageSize}}

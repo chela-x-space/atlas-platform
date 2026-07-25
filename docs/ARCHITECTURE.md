@@ -99,7 +99,7 @@ future work. See `ATLAS-NOTIFICATION-RUNTIME.md`.
 
 # Intelligence API Boundary
 
-ADR-0004 is PROPOSED and governs a future `/api/v1` compatibility boundary.
-Current unversioned `/api/*` routes remain INTERNAL and retain their existing
-response behavior. No public API contract, authentication, or versioned route is
-implemented. See `ADR-0004-INTELLIGENCE-API-BOUNDARY.md`.
+ADR-0004 is ACCEPTED. v1.8 implements the read-only `/api/v1` compatibility
+boundary as adapters over existing services. Current unversioned `/api/*` routes
+remain INTERNAL; authentication and mutations are not implemented. See
+`ATLAS-INTELLIGENCE-API-V1.md`.

@@ -113,3 +113,11 @@ Their names in documentation do not constitute implemented contracts.
 
 CSS, component structure, SVG/radial placement, MapLibre internals, private helper
 names, cache containers, and directory layout are **IMPLEMENTATION-DETAIL**.
+
+## Intelligence API classification
+
+All current unversioned `/api/*` endpoints are **INTERNAL**. v1.8 publishes only
+the documented read-only `/api/v1` routes as **PUBLIC-STABLE**. The v1 adapter
+preserves service-owned pagination, sorting, provenance, attribution, freshness,
+and degraded-state semantics; watchlists, alerts, notifications, and mutation
+operations remain internal.

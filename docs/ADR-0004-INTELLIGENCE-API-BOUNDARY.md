@@ -1,6 +1,6 @@
 # ADR-0004: Intelligence API Boundary
 
-- Status: **PROPOSED**
+- Status: **ACCEPTED**
 - Scope: architecture and governance only
 - Approval: human approval required
 - Baseline inspected: `33aef22` (`atlas-v1.7-notification-runtime`)
@@ -172,10 +172,11 @@ citations, and never read canonical stores directly or bypass authorization.
 
 ## Prohibitions and approval
 
-This ADR creates no `/api/v1` route, public contract, authentication, API key,
+This ADR originally created no `/api/v1` route; v1.8 now implements its approved
+read-only boundary. It creates no authentication, API key,
 rate limiter, gateway dependency, OpenAPI document, or behavior change. It does
 not alter current routes, response envelopes, canonical contracts, Search ranking,
 Graph identity, Risk classification, Alert lifecycle, or Notification Runtime.
 
-Status remains **PROPOSED**. Human approval is required before versioned public
-API implementation or any behavior-changing API governance work.
+Status is **ACCEPTED**. Future authentication, mutation, partner, or breaking
+version changes still require explicit change-control review.
