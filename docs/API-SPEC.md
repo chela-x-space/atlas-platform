@@ -65,3 +65,22 @@ coverage, 400 for invalid input, and safe 503 responses when no snapshot can be 
 
 Successful partial responses use HTTP 206. Missing entities use 404; unavailable
 canonical data uses 503. No endpoint synthesizes replacement nodes or edges.
+
+## Watchlists & Intelligence Monitoring APIs
+
+- `GET|POST /api/watchlists` — list the local watchlist projection or create a
+  watchlist with `name` and a supported `{type,value}` target.
+- `GET|PATCH|DELETE /api/watchlists/{watchlistId}` — detail, rename/enable/disable,
+  or remove a local watchlist.
+- `GET /api/watchlists/{watchlistId}/matches` — current deterministic canonical
+  matches for one watchlist.
+- `GET|PATCH /api/watchlists/alerts` — alert queue or status transition using
+  `NEW`, `READ`, or `DISMISSED`.
+- `GET /api/watchlists/summary` — local counts and latest match time.
+- `GET /api/watchlists/status` — local storage and canonical index readiness.
+
+Watchlists consume the Search projection and preserve canonical document links and
+provenance. They are process-local preferences (`storage: process-local`), not a
+canonical data store, user account system, or notification service. Invalid target
+types/statuses return 400; missing watchlists return 404; unavailable canonical
+index data returns 503.

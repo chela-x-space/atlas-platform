@@ -97,7 +97,7 @@ The following are **FROZEN**:
 ## Future/non-contract inventory
 
 Configured but disabled/planned providers, market integration, multi-user saved
-state, external notification delivery, Watchlists, semantic/vector search,
+state, external notification delivery extensions, semantic/vector search,
 probabilistic entity resolution, and AI-generated canonical data are **FUTURE**.
 Their names in documentation do not constitute implemented contracts.
 

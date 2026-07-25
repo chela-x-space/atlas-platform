@@ -221,13 +221,15 @@ there is no `/app/dashboard` route. The map has no dedicated API.
 
 ## Future milestone boundary
 
-The next authorized candidate is v1.5 Watchlists & Intelligence Monitoring. This
-freeze does not implement it.
+The v1.5 Watchlists & Intelligence Monitoring milestone is now implemented within
+this boundary as a local deterministic preference projection. It does not change
+the frozen canonical contracts. Multi-user persistence and external notification
+delivery remain future extensions.
 
-Watchlists may reference existing canonical entities, searches, categories,
+Watchlists reference existing canonical entities, searches, categories,
 providers, locations, or risk levels. They must not create facts, recompute risk,
-alter graph relationships, or change filter/query contracts. Browser-local storage
-may be used initially. Multi-user persistence or external notification delivery
+alter graph relationships, or change filter/query contracts. The current local
+store is process-local and explicitly non-canonical. Multi-user persistence or external notification delivery
 requires a future ADR when it introduces a new trust, identity, delivery, or
 storage boundary.
 

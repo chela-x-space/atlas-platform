@@ -70,5 +70,13 @@ acceptance.
 - [Contract Inventory](docs/ATLAS-CONTRACT-INVENTORY.md)
 - [Change Control](docs/ATLAS-CHANGE-CONTROL.md)
 
-The next candidate milestone is v1.5 Watchlists & Intelligence Monitoring; it is
-not implemented by this freeze.
+The v1.5 Watchlists & Intelligence Monitoring milestone is implemented within
+these boundaries; multi-user persistence and external delivery remain future work.
+
+## Watchlists & Intelligence Monitoring
+
+`/app/watchlists` monitors verified Search index documents against local targets
+such as countries, providers, categories, risk levels, entities, locations, or
+deterministic queries. Alerts remain local and have `NEW`, `READ`, and `DISMISSED`
+states. No account, AI, canonical data creation, or external notification delivery
+is included. See [`docs/ATLAS-WATCHLISTS.md`](docs/ATLAS-WATCHLISTS.md).

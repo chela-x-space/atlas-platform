@@ -41,8 +41,8 @@ Architecture-changing work has additional review, migration, compatibility,
 testing, and rollback obligations. Internal refactors and accessible presentation
 improvements remain possible when public behavior is preserved.
 
-The candidate v1.5 Watchlists milestone must reference existing canonical objects
-and may not create facts or alter classifications/relationships. New multi-user
+The implemented v1.5 Watchlists milestone references existing canonical objects
+and does not create facts or alter classifications/relationships. New multi-user
 identity/storage or notification trust boundaries require a future ADR.
 
 ## Alternatives considered

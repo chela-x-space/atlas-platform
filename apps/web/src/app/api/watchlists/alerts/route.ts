@@ -1,0 +1,5 @@
+import {NextRequest,NextResponse} from "next/server";
+import {setWatchlistAlertStatus,getWatchlistSnapshot} from "@/lib/watchlists/watchlist-service";
+export const dynamic="force-dynamic";
+export async function GET(){try{const value=await getWatchlistSnapshot();return NextResponse.json({alerts:value.alerts,summary:value.summary,status:value.status},{status:value.status.degraded?206:200})}catch{return NextResponse.json({error:{code:"WATCHLISTS_UNAVAILABLE",message:"Alert queue is temporarily unavailable"}},{status:503})}}
+export async function PATCH(request:NextRequest){try{const body=await request.json();if(!["NEW","READ","DISMISSED"].includes(body?.status)||typeof body?.alertId!=="string")return NextResponse.json({error:{code:"INVALID_ALERT_STATUS",message:"Alert ID and supported status are required"}},{status:400});return NextResponse.json(await setWatchlistAlertStatus(body.alertId,body.status))}catch{return NextResponse.json({error:{code:"INVALID_JSON",message:"Request body must be valid JSON"}},{status:400})}}

@@ -1,0 +1,7 @@
+import {getSearchIndex} from "@/lib/search/search-service";
+import {evaluateWatchlists,summarizeWatchlists} from "./watchlist-engine.mjs";
+import {getAlertStatuses,listWatchlists,recordMatches} from "./watchlist-store.mjs";
+import type {AlertStatus} from "./watchlist-contracts";
+export async function getWatchlistSnapshot(){const index=await getSearchIndex(),watchlists=listWatchlists(),raw=recordMatches(evaluateWatchlists(watchlists,index)),statuses=getAlertStatuses(),alerts=raw.map(alert=>({...alert,status:statuses.get(alert.id)??alert.status}));return{watchlists:listWatchlists(),alerts,summary:summarizeWatchlists(watchlists,alerts,index.status.generatedAt,index.status.warnings),status:{watchlistVersion:"atlas-watchlists-v1.5",ready:index.status.ready,storage:"process-local",canonicalIndexReady:index.status.ready,indexedDocumentCount:index.status.documentCount,generatedAt:index.status.generatedAt,degraded:index.status.degradedModules.length>0,warnings:index.status.warnings}}}
+export async function getWatchlist(id:string){const snapshot=await getWatchlistSnapshot(),watchlist=snapshot.watchlists.find(item=>item.id===id);return watchlist?{watchlist,matches:snapshot.alerts.filter(item=>item.watchlistId===id),summary:snapshot.summary,status:snapshot.status}:null}
+export async function setWatchlistAlertStatus(id:string,status:AlertStatus){const {setAlertStatus}=await import("./watchlist-store.mjs");setAlertStatus(id,status);return getWatchlistSnapshot()}

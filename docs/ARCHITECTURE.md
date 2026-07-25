@@ -62,5 +62,16 @@ Governance documents:
 - `ATLAS-CONTRACT-INVENTORY.md`
 - `ATLAS-CHANGE-CONTROL.md`
 
-The next candidate milestone is v1.5 Watchlists & Intelligence Monitoring.
-Watchlists are outside this freeze and are not yet implemented.
+The v1.5 Watchlists & Intelligence Monitoring milestone is implemented within
+the documented boundaries below. Future multi-user and delivery extensions remain
+outside this freeze.
+
+# Watchlists & Intelligence Monitoring
+
+v1.5 is a local deterministic projection over the v1.3 Search index. Watchlist
+definitions and alert statuses are user preferences; canonical Search documents,
+provenance, risk values, entity IDs, and graph relationships remain authoritative
+and unchanged. Matching uses exact normalized structured fields or all-token
+containment for a search query. The implementation has no authentication, cloud
+sync, external notification delivery, AI, fuzzy matching, or historical replay.
+See `ATLAS-WATCHLISTS.md`.

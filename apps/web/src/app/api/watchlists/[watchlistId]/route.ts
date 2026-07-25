@@ -1,0 +1,7 @@
+import {NextRequest,NextResponse} from "next/server";
+import {deleteWatchlist,updateWatchlist} from "@/lib/watchlists/watchlist-store.mjs";
+import {getWatchlist} from "@/lib/watchlists/watchlist-service";
+export const dynamic="force-dynamic";
+export async function GET(_request:Request,{params}:{params:Promise<{watchlistId:string}>}){const {watchlistId}=await params;try{const value=await getWatchlist(watchlistId);return value?NextResponse.json(value):NextResponse.json({error:{code:"WATCHLIST_NOT_FOUND",message:"Watchlist was not found"}},{status:404})}catch{return NextResponse.json({error:{code:"WATCHLISTS_UNAVAILABLE",message:"Watchlist matching is temporarily unavailable"}},{status:503})}}
+export async function PATCH(request:NextRequest,{params}:{params:Promise<{watchlistId:string}>}){const {watchlistId}=await params;try{const value=updateWatchlist(watchlistId,await request.json());return value?NextResponse.json(value):NextResponse.json({error:{code:"WATCHLIST_NOT_FOUND",message:"Watchlist was not found"}},{status:404})}catch{return NextResponse.json({error:{code:"INVALID_JSON",message:"Request body must be valid JSON"}},{status:400})}}
+export async function DELETE(_request:Request,{params}:{params:Promise<{watchlistId:string}>}){const {watchlistId}=await params;return deleteWatchlist(watchlistId)?new NextResponse(null,{status:204}):NextResponse.json({error:{code:"WATCHLIST_NOT_FOUND",message:"Watchlist was not found"}},{status:404})}

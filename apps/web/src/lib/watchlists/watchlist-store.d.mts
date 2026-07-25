@@ -1,0 +1,10 @@
+import type {Watchlist,WatchlistMatch,AlertStatus} from "./watchlist-contracts";
+export function listWatchlists():Watchlist[];
+export function createWatchlist(input:unknown,now?:number):Watchlist|null;
+export function getWatchlist(id:string):Watchlist|null;
+export function updateWatchlist(id:string,patch:unknown,now?:number):Watchlist|null;
+export function deleteWatchlist(id:string):boolean;
+export function recordMatches(alerts:readonly WatchlistMatch[]):WatchlistMatch[];
+export function getAlertStatuses():Map<string,AlertStatus>;
+export function setAlertStatus(id:string,status:AlertStatus):AlertStatus;
+export function clearWatchlistStore():void;

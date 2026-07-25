@@ -17,9 +17,10 @@
   through v1.4. ADR-0001 requires explicit human acceptance before this item may
   be marked complete.
 
+- [x] v1.5 Watchlists & Intelligence Monitoring — local deterministic watchlist
+  preferences, Search-index matching, internal alert lifecycle, and responsive UI.
+
 ## Next candidate milestone
 
-- [ ] v1.5 Watchlists & Intelligence Monitoring — candidate only; no implementation
-  is included in the architecture freeze. Watchlists must reference existing
-  canonical contracts and must not create facts, recompute risk, or alter graph
-  relationships.
+- [ ] Future monitoring extensions — multi-user persistence and external
+  notification delivery require a future ADR and are not implemented.
