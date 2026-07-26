@@ -54,6 +54,16 @@ Registry health records distinguish successful data, a valid empty response, pro
 
 Collectors retrieve provider data under defined authentication, rate, refresh, and failure policies. Original evidence and provenance are preserved before information is normalized.
 
+### Evidence media
+
+The Evidence Media Platform is the canonical media layer. Intelligence records retain stable media references rather than raw display URLs; the media registry owns provenance, rights, validation, audit history, and deterministic selection.
+
+```text
+Intelligence record → Media reference → Media registry → Rights filter → Deterministic selection → Product view
+```
+
+Only verified, reachable, rights-eligible media may reach a safe display projection. Official provider media, satellite imagery, maps, and logos precede licensed or open-licensed media and evidence visualizations. Missing eligible media produces no selection, preserving the current product fallback.
+
 ### Canonical intelligence
 
 Canonical records provide stable identity and shared meaning across ATLAS. Downstream domains may project, rank, connect, or present these records but do not become competing sources of truth.
@@ -80,6 +90,8 @@ Marketplace is a separate future catalog for digital products. Marketplace conte
 
 - Providers do not write directly to product views.
 - Registry state governs providers but does not create intelligence events.
+- Intelligence records do not own media-selection rules or raw media delivery.
+- Evidence media without explicit provenance and rights remains unavailable.
 - Credentials remain external secrets referenced indirectly and are never returned by registry APIs.
 - Restricted and internal-only providers are excluded from public projections.
 - Product views do not create canonical facts.

@@ -21,6 +21,12 @@ The v2.0 Global Source Registry is available only through `/api/internal/source-
 
 The registry never returns credential references. No Source Registry mutation was added to `/api/v1/*`.
 
+## Evidence Media administration
+
+The v2.1 Evidence Media Platform centralizes media provenance, rights validation, registry history, article references, and deterministic selection at `/api/internal/media`. It uses the same internal bearer token and persists to `ATLAS_EVIDENCE_MEDIA_PATH`; production requires a durable mounted path.
+
+The registry starts empty because no existing media currently satisfies the complete provenance and rights contract. ATLAS does not create placeholders or infer display rights. No media endpoint was added to `/api/v1/*`.
+
 ## Development validation
 
 From `apps/web` run:

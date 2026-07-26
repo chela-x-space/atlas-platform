@@ -18,6 +18,10 @@ Canonical intelligence has stable ownership and identity. Timeline, Search, Map,
 
 Provider identity, source links, timestamps, freshness, and required attribution follow intelligence through every permitted projection and export.
 
+## Evidence Media
+
+Media is evidence, not decoration. Intelligence records use media references; the canonical media layer owns URL validation, provenance, rights, deduplication, audit history, and deterministic selection. Media without explicit display rights is not shown, and AI-generated media never substitutes for official evidence.
+
 ## Provider Governance
 
 A provider must have an approved identity, authority, scope, rights, collection policy, failure policy, and operational owner before activation. Availability is never inferred from configuration alone.

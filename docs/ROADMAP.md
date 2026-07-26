@@ -24,23 +24,27 @@ Completed:
 
 The canonical provider control plane now governs identity, trust, licensing, coverage, collection policy, activation gates, lifecycle, version history, credential references, and explicit health outcomes.
 
+### v2.1 Evidence Media Platform — Completed
+
+The canonical media layer now provides typed provenance and rights, provider matching, URL and content validation, versioned storage, article references, safe projections, and deterministic selection without fabricated media.
+
 ## Next — Planning only
 
-### v2.1 Provider Ecosystem
+### v2.2 Provider Ecosystem
 
 Establish a controlled provider onboarding model with reusable collection contracts, evidence preservation, schema validation, failure handling, and domain governance.
 
-A safe read-only source directory may be proposed here through a separately reviewed contract. v2.0 does not change the frozen public Intelligence API.
+A safe read-only source directory may be proposed here through a separately reviewed contract. v2.0 and v2.1 do not change the frozen public Intelligence API.
 
-### v2.2 Priority Engine
+### v2.3 Priority Engine
 
 Classify verified events as Critical, High Impact, Regional, or Monitoring using deterministic evidence such as severity, official confirmation, independent sources, impact, geographic scope, and freshness.
 
-### v2.3 Entity Intelligence
+### v2.4 Entity Intelligence
 
 Expand evidence-backed identity, aliases, timelines, and relationships across people, organizations, places, companies, products, technologies, diseases, hazards, vulnerabilities, and financial assets.
 
-### v2.4 Marketplace Architecture
+### v2.5 Marketplace Architecture
 
 Define the catalog, digital product, asset, version, provenance, and license boundaries for a future digital-only Marketplace. Commerce is not included.
 

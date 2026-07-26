@@ -14,6 +14,7 @@ import {
 import { safeExternalUrl } from "@/lib/security/external-url.mjs";
 import type {
   AtlasDashboardSnapshot,
+  AtlasEvidenceMedia,
   AtlasEvent,
   AtlasEventCategory,
   AtlasSeverity,
@@ -40,8 +41,12 @@ const severityLabel: Record<AtlasSeverity, string> = {
   unknown: "Monitoring",
 };
 
-function EventCard({ event, featured = false }: { event: AtlasEvent; featured?: boolean }) {
+const visualMediaTypes=new Set(["OFFICIAL_IMAGE","SATELLITE_IMAGE","MAP","LOGO","CHART","GRAPH","INFOGRAPHIC","SCREENSHOT"]);
+function safeMediaUrl(value:string){try{const url=new URL(value);return url.protocol==="https:"&&!url.username&&!url.password?url.toString():null}catch{return null}}
+
+function EventCard({ event, featured = false, media }: { event: AtlasEvent; featured?: boolean;media?:AtlasEvidenceMedia }) {
   const sourceUrl = safeExternalUrl(event.sourceUrl);
+  const mediaUrl=media?safeMediaUrl(media.thumbnailUrl??media.displayUrl):null;
   return (
     <article className={`situation-event severity-${event.severity}${featured ? " featured" : ""}`}>
       <header>
@@ -51,6 +56,13 @@ function EventCard({ event, featured = false }: { event: AtlasEvent; featured?: 
         </span>
         <span>{event.category.replaceAll("-", " ")}</span>
       </header>
+      {media&&mediaUrl&&visualMediaTypes.has(media.mediaType)?(
+        <figure className="evidence-media">
+          {/* eslint-disable-next-line @next/next/no-img-element -- Evidence remains provider-hosted and must not be transformed or mirrored. */}
+          <img src={mediaUrl} alt={media.caption}/>
+          <figcaption>{media.attribution} · {media.licenseSummary}</figcaption>
+        </figure>
+      ):null}
       <h3>
         <Link href={`/app/events/${encodeURIComponent(event.id)}`}>{event.title}</Link>
       </h3>
@@ -181,7 +193,7 @@ export function AtlasDashboard() {
             </div>
             {topEvents.length ? (
               <div className="top-event-grid">
-                {topEvents.map((event, index) => <EventCard event={event} featured={index === 0} key={event.id} />)}
+                {topEvents.map((event, index) => <EventCard event={event} featured={index === 0} media={snapshot?.evidenceMedia?.[event.id]} key={event.id} />)}
               </div>
             ) : <div className="situation-state" role="status">{loading ? "Loading verified events…" : "No critical events detected"}</div>}
           </section>
@@ -225,7 +237,7 @@ export function AtlasDashboard() {
             </div>
             {latestEvents.length ? (
               <div className="latest-event-grid">
-                {latestEvents.map((event) => <EventCard event={event} key={event.id} />)}
+                {latestEvents.map((event) => <EventCard event={event} media={snapshot?.evidenceMedia?.[event.id]} key={event.id} />)}
               </div>
             ) : <div className="situation-state">{loading ? "Loading recent intelligence…" : events.length ? "All current events are included in the priority brief." : "Awaiting verified intelligence"}</div>}
           </section>

@@ -68,4 +68,10 @@ Roadmap entries communicate direction only. New identity, provider, storage, del
 
 The Global Source Registry is the canonical control plane for all external intelligence providers. Registration, approval, activation, collector connection, health, and public-display eligibility remain explicit and independently governed. Provider configuration is versioned and auditable; credentials remain external secrets.
 
+## DECISION-012 — Evidence Media Platform is the canonical media layer
+
+**Status:** Accepted
+
+All evidence media is governed through centralized provenance, rights, validation, versioning, references, and deterministic selection. Intelligence records and product views do not independently choose raw media URLs. AI-generated media cannot replace official evidence.
+
 See [Vision](VISION.md), [Architecture](ARCHITECTURE.md), and [Standards](STANDARDS.md).
