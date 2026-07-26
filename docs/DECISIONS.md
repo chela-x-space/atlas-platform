@@ -74,4 +74,14 @@ The Global Source Registry is the canonical control plane for all external intel
 
 All evidence media is governed through centralized provenance, rights, validation, versioning, references, and deterministic selection. Intelligence records and product views do not independently choose raw media URLs. AI-generated media cannot replace official evidence.
 
+## DECISION-013 — Provider Runtime is the canonical execution-control layer
+
+**Status:** Accepted
+
+The Source Registry remains the authority for provider identity, trust, governance, activation, configuration, and capabilities. The Provider Runtime may execute only active, eligible providers through enabled bindings to code-controlled collectors.
+
+The runtime owns deterministic scheduling, claims, bounded concurrency, provider-level rate limits, explicit retry and backoff, timeouts, append-only execution audit, and health observations derived solely from recorded outcomes. Collectors return isolated execution results and cannot write to canonical intelligence, Evidence Media, Dashboard, or public APIs.
+
+The runtime does not approve providers, infer vendor limits, create provider-specific business logic, run an unbounded worker, or use AI for canonical decisions. The public `/api/v1/*` and OpenAPI contracts remain frozen. Promotion of collector results through an Evidence Pipeline is future work.
+
 See [Vision](VISION.md), [Architecture](ARCHITECTURE.md), and [Standards](STANDARDS.md).

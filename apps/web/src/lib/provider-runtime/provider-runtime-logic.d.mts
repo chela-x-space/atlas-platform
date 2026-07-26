@@ -1,0 +1,15 @@
+import type { ProviderExecutionAttempt,ProviderExecutionError,ProviderHealthObservation,ProviderRuntimeDefinition,ProviderRuntimeState,ProviderSchedule,RuntimeProjection,RuntimeTransitionResult } from "./provider-runtime-contracts";
+export function validateRuntimeDefinition(definition:Partial<ProviderRuntimeDefinition>):{valid:boolean;errors:ProviderExecutionError[]};
+export function validateRuntimeTransition(from:ProviderRuntimeState,to:ProviderRuntimeState):RuntimeTransitionResult;
+export function evaluateRegistryEligibility(provider:unknown,definition:ProviderRuntimeDefinition,capabilities:readonly string[],now:string):{eligible:boolean;errors:ProviderExecutionError[]};
+export function validateCollectorBinding(provider:unknown,collector:unknown,binding:unknown,existing:readonly unknown[],definition:ProviderRuntimeDefinition|null):{valid:boolean;errors:ProviderExecutionError[]};
+export function isTimezone(timezone:string):boolean;
+export function parseCron(expression:string|null):readonly ((value:number)=>boolean)[]|null;
+export function nextScheduleTime(schedule:ProviderSchedule,from:string):string|null;
+export function isDue(definition:ProviderRuntimeDefinition,now:string):boolean;
+export function evaluateRateLimit(policy:ProviderRuntimeDefinition["rateLimitPolicy"],executionTimes:readonly string[],now:string):{allowed:boolean;reason:string|null;currentUsage:number;limit:number;windowStart:string;windowEnd:string;nextEligibleAt:string};
+export function evaluateConcurrency(policy:ProviderRuntimeDefinition["concurrencyPolicy"],claims:readonly unknown[],providerId:string,bindingId:string,now:string):{allowed:boolean;activeCount:number;limit:number;expiredClaimIds:string[];error:ProviderExecutionError|null};
+export function retryDecision(policy:ProviderRuntimeDefinition["retryPolicy"],attemptNumber:number,error:ProviderExecutionError|null,completedAt:string):{scheduled:boolean;reason:string;nextEligibleAt:string|null};
+export function calculateHealth(providerId:string,attempts:readonly ProviderExecutionAttempt[],observedAt:string):ProviderHealthObservation;
+export function safeRuntimeProjection(definition:ProviderRuntimeDefinition,bindings:readonly unknown[],claims:readonly unknown[],health:ProviderHealthObservation|null):RuntimeProjection;
+export function runtimeError(code:string,message:string,retryable?:boolean,classification?:string):ProviderExecutionError;

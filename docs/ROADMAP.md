@@ -28,23 +28,27 @@ The canonical provider control plane now governs identity, trust, licensing, cov
 
 The canonical media layer now provides typed provenance and rights, provider matching, URL and content validation, versioned storage, article references, safe projections, and deterministic selection without fabricated media.
 
+### v2.2 Provider Runtime — Completed
+
+The canonical execution-control layer now governs registry eligibility, collector bindings, schedules, claims, bounded concurrency, persisted rate limits, explicit retry and timeout policies, isolated execution results, observational health, and append-only audit events.
+
 ## Next — Planning only
 
-### v2.2 Provider Ecosystem
+### v2.3 Evidence Pipeline
 
-Establish a controlled provider onboarding model with reusable collection contracts, evidence preservation, schema validation, failure handling, and domain governance.
+Define how isolated collector execution results become validated, deduplicated, attributable evidence without allowing collectors to write directly to canonical intelligence.
 
-A safe read-only source directory may be proposed here through a separately reviewed contract. v2.0 and v2.1 do not change the frozen public Intelligence API.
+The completed v2.0–v2.2 milestones do not change the frozen public Intelligence API.
 
-### v2.3 Priority Engine
+### v2.4 Priority Engine
 
 Classify verified events as Critical, High Impact, Regional, or Monitoring using deterministic evidence such as severity, official confirmation, independent sources, impact, geographic scope, and freshness.
 
-### v2.4 Entity Intelligence
+### v2.5 Entity Intelligence
 
 Expand evidence-backed identity, aliases, timelines, and relationships across people, organizations, places, companies, products, technologies, diseases, hazards, vulnerabilities, and financial assets.
 
-### v2.5 Marketplace Architecture
+### v2.6 Marketplace Architecture
 
 Define the catalog, digital product, asset, version, provenance, and license boundaries for a future digital-only Marketplace. Commerce is not included.
 

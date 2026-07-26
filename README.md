@@ -27,6 +27,12 @@ The v2.1 Evidence Media Platform centralizes media provenance, rights validation
 
 The registry starts empty because no existing media currently satisfies the complete provenance and rights contract. ATLAS does not create placeholders or infer display rights. No media endpoint was added to `/api/v1/*`.
 
+## Provider Runtime administration
+
+The v2.2 Provider Runtime is the governed execution-control layer at `/api/internal/provider-runtime`. It requires `ATLAS_PROVIDER_RUNTIME_PATH` and the existing `ATLAS_INTERNAL_ADMIN_TOKEN`. Without runtime storage configuration, internal runtime endpoints return an explicit configuration error while public pages, Dashboard, Source Registry, and Evidence Media continue normally.
+
+Collectors are registered in code. The runtime stores policies, bindings, claims, attempts, observed health, and append-only audit events, but never credentials or collector output as canonical evidence. No providers, bindings, executions, or health outcomes are seeded.
+
 ## Development validation
 
 From `apps/web` run:

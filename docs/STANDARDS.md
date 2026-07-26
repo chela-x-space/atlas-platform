@@ -30,6 +30,12 @@ Registration, approval, activation, and collector connection are separate states
 
 Provider configuration changes are versioned and audited. Credential values remain in approved secret systems and are represented only by indirect references inside the registry.
 
+## Governed Execution
+
+The Source Registry authorizes provider identity and lifecycle; the Provider Runtime owns execution eligibility, schedules, claims, bounded concurrency, rate limits, retry/backoff, timeout, runtime-observed health, and execution audit. Collectors are code-controlled and return isolated results. They never write directly to canonical intelligence or product views.
+
+Runtime policies are explicit and bounded. Retries are never hidden, server-local timezone is never assumed, expired claims are recovered deterministically, and health derives only from recorded outcomes. AI cannot make governance or execution-control decisions.
+
 ## Explicit Failure
 
 Partial, stale, degraded, unavailable, and empty states are distinct. Previously verified stale data may be used only when clearly identified; upstream failure must not appear as a successful empty result.

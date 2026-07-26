@@ -9,6 +9,8 @@ Trusted Sources
       ↓
 Source Registry
       ↓
+Provider Runtime
+      ↓
 Collectors
       ↓
 Verified Evidence
@@ -50,6 +52,18 @@ Registration does not mean approval. Approval does not mean a collector exists. 
 
 Registry health records distinguish successful data, a valid empty response, provider failure, authentication failure, rate limiting, and schema failure. Registry status never fabricates ingestion success.
 
+### Provider runtime
+
+The Provider Runtime is the canonical execution-control layer. It resolves every provider through the Source Registry before an enabled, code-controlled collector binding may be scheduled, claimed, rate-limited, executed, timed out, or considered for retry.
+
+```text
+Source Registry → Runtime eligibility → Schedule → Claim → Collector → Isolated execution result
+```
+
+Scheduling is an explicit manual, interval, cron, or disabled policy with a named timezone. Bounded concurrency, persisted rate limits, explicit retry/backoff, timeouts, claim recovery, observational health, and append-only audit events are runtime responsibilities. A bounded tick replaces a permanent worker.
+
+Collector results stop at the runtime boundary in v2.2. They do not write to canonical intelligence, Evidence Media, Dashboard, or public APIs. The governed Evidence Pipeline remains future work.
+
 ### Collection and evidence
 
 Collectors retrieve provider data under defined authentication, rate, refresh, and failure policies. Original evidence and provenance are preserved before information is normalized.
@@ -90,6 +104,8 @@ Marketplace is a separate future catalog for digital products. Marketplace conte
 
 - Providers do not write directly to product views.
 - Registry state governs providers but does not create intelligence events.
+- Provider Runtime cannot approve or activate providers and cannot bypass Source Registry governance.
+- Runtime execution results are isolated until a future Evidence Pipeline validates and promotes evidence.
 - Intelligence records do not own media-selection rules or raw media delivery.
 - Evidence media without explicit provenance and rights remains unavailable.
 - Credentials remain external secrets referenced indirectly and are never returned by registry APIs.
