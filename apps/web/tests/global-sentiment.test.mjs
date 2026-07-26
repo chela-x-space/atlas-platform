@@ -246,12 +246,12 @@ test("stable recent ordering and source attribution are preserved", () => {
   assert.equal(result.recentRecords[0].provenance.sourceUrl, "https://example.test/report");
 });
 
-test("service, API, page, dashboard, stale state, and documentation expose the contract", async () => {
+test("service, API, page, dashboard, stale state, and consolidated standards expose the contract", async () => {
   const service = await readFile(new URL("../src/lib/sentiment/sentiment-service.ts", import.meta.url), "utf8");
   const api = await readFile(new URL("../src/app/api/sentiment/route.ts", import.meta.url), "utf8");
   const page = await readFile(new URL("../src/app/app/sentiment/page.tsx", import.meta.url), "utf8");
   const dashboard = await readFile(new URL("../src/components/sentiment/DashboardSentiment.tsx", import.meta.url), "utf8");
-  const docs = await readFile(new URL("../../../docs/ATLAS-GLOBAL-SENTIMENT.md", import.meta.url), "utf8");
+  const docs = await readFile(new URL("../../../docs/STANDARDS.md", import.meta.url), "utf8");
   assert.match(service, /SENTIMENT_CACHE_TTL_MS = 60_000/);
   assert.match(service, /stale: true/);
   assert.match(api, /parseSentimentQuery/);
@@ -259,6 +259,6 @@ test("service, API, page, dashboard, stale state, and documentation expose the c
   assert.match(page, /does not measure public opinion, human emotion, or predicted impact/);
   assert.match(dashboard, /No eligible verified text available/);
   assert.doesNotMatch(dashboard, /Integration pending/);
-  assert.match(docs, /No LLM is used for sentiment classification/);
-  assert.match(docs, /Missing sources are never\s+estimated/);
+  assert.match(docs, /Deterministic Before Intelligent/);
+  assert.match(docs, /upstream failure must not appear as a successful empty result/);
 });

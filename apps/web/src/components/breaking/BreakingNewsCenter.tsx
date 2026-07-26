@@ -21,6 +21,6 @@ export function BreakingNewsCenter({snapshot}:{snapshot:BreakingSnapshot}){
       </div>
       <aside className="breaking-providers"><div><span>PROVIDER HEALTH</span><h2>Verified sources</h2></div>{snapshot.providers.map(item=><article key={item.providerId}><i className={`status-${item.status}`}/><div><strong>{item.providerName}</strong><span>{item.status.replaceAll("_"," ")}</span><small>{item.itemCount} records · {item.checkedAt?new Date(item.checkedAt).toLocaleTimeString():"Check unavailable"}</small>{item.message&&<p>{item.message}</p>}</div></article>)}</aside>
     </section>
-    <footer className="breaking-method"><strong>Deterministic priority</strong><span>Earthquakes: ≥7.5 critical, 6.5–7.4 high, 5.5–6.4 medium. NOAA hurricane warnings: critical; tropical storms: high; other advisories: medium. Official AI agent/model major releases: medium; patches: information.</span><code>docs/ATLAS-BREAKING-NEWS.md</code></footer>
+    <footer className="breaking-method"><strong>Deterministic priority</strong><span>Earthquakes: ≥7.5 critical, 6.5–7.4 high, 5.5–6.4 medium. NOAA hurricane warnings: critical; tropical storms: high; other advisories: medium. Official AI agent/model major releases: medium; patches: information.</span><code>docs/STANDARDS.md</code></footer>
   </main>
 }

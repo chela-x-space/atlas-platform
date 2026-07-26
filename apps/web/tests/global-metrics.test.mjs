@@ -250,17 +250,17 @@ test("API query validation and filtering reject unknown values", () => {
   assert.equal(filterMetricsSnapshot(snapshot([item()]), index.query).activityIndex.id, "planet-activity-index");
 });
 
-test("API, page, dashboard, cache, and documentation expose the production contract", async () => {
+test("API, page, dashboard, cache, and consolidated standards expose the production contract", async () => {
   const api = await readFile(new URL("../src/app/api/metrics/route.ts", import.meta.url), "utf8");
   const service = await readFile(new URL("../src/lib/metrics/metrics-service.ts", import.meta.url), "utf8");
   const page = await readFile(new URL("../src/app/app/metrics/page.tsx", import.meta.url), "utf8");
   const dashboard = await readFile(new URL("../src/components/metrics/GlobalMetricsCompact.tsx", import.meta.url), "utf8");
-  const docs = await readFile(new URL("../../../docs/ATLAS-GLOBAL-METRICS.md", import.meta.url), "utf8");
+  const docs = await readFile(new URL("../../../docs/STANDARDS.md", import.meta.url), "utf8");
   assert.match(api, /parseMetricsQuery/);
   assert.match(api, /snapshot\.partial \? 206 : 200/);
   assert.match(service, /METRICS_CACHE_TTL_MS = 60_000/);
   assert.match(service, /stale: true/);
   assert.match(page, /not predicted impact or risk/);
   assert.match(dashboard, /Global events · 24h/);
-  assert.match(docs, /does not predict damage, impact, casualties, or future events/);
+  assert.match(docs, /Missing evidence remains missing/);
 });

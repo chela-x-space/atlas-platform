@@ -1,39 +1,68 @@
-# Production milestones
+# ATLAS Roadmap
 
-- [x] Global Operations Map — verified-coordinate MapLibre rendering, independent layers,
-  deterministic symbols, clustering, canonical navigation, and responsive accessible fallbacks.
-- [x] Global Risk & Alert Engine v1.1 — versioned deterministic classification, canonical alert
-  queue, operational matrix, risk APIs, stale/degraded behavior, and map focus integration.
-- [x] Reports Center v1.2 — eight deterministic report types, history and filters,
-  attribution-preserving exports, report APIs, and degraded cache behavior.
-- [x] Intelligence Search & Explorer v1.3 — canonical index projection, fixed-rule ranking,
-  contextual facets, deterministic suggestions, shareable URLs, and browser-local saved history.
-- [x] Entity Knowledge Graph v1.4 — deterministic entity projection, evidence-backed
-  edges, bounded traversal, accessible explorer, canonical provenance, and degraded state.
+This roadmap communicates direction, not implementation authorization. Every milestone requires separate scope, review, and approval. Existing architecture and public APIs remain frozen unless explicitly authorized.
 
-## Architecture governance
+## Current — v1.x Foundation
 
-- [x] Architecture Freeze v1.0 — **ACTIVE** for the implemented baseline through
-  v1.5.
+Completed:
 
-- [x] v1.5 Watchlists & Intelligence Monitoring — local deterministic watchlist
-  preferences, Search-index matching, internal alert lifecycle, and responsive UI.
-- [x] v1.6 Alert Center — accepted Alert Domain projection, deterministic lifecycle,
-  source aggregation, filtering, distributions, canonical navigation, and audit view.
-- [x] v1.7 Notification Runtime — deterministic FIFO delivery queue, webhook
-  adapter, retries, backoff, idempotency, timeout, cancellation, and DLQ state.
+- Verified intelligence ingestion and canonical events
+- Situation-driven Dashboard
+- Timeline and event detail
+- Search
+- Entity Graph
+- Deterministic Risk
+- Reports
+- Global Map
+- Alerts, watchlists, and notification runtime
+- Read-only Intelligence API v1
+- Marketplace navigation and Coming Soon placeholder
 
-- [x] ADR-0002 Alert Domain Boundary — **ACCEPTED** boundary for unified alert
-  projections between canonical intelligence and delivery.
-- [x] ADR-0003 Notification Delivery Boundary — **ACCEPTED** architecture for
-  queues, adapters, retries, and external notification channels.
-- [x] ADR-0004 Intelligence API Boundary — **ACCEPTED** versioned `/api/v1`
-  compatibility boundary.
-- [x] v1.8 Intelligence API — read-only PUBLIC-STABLE adapters, standard
-  envelopes, request IDs, pagination metadata, provenance, and OpenAPI contract.
+## Next — v2 Platform Foundation
 
-## Next candidate milestone
+### v2.0 Source Registry
 
-- [ ] Future monitoring extensions — multi-user persistence and external
-  notification delivery require accepted delivery architecture and are not
-  implemented.
+Govern provider identity, trust, licensing, coverage, refresh policy, credentials, rate limits, health, and operational ownership.
+
+### v2.1 Provider Ecosystem
+
+Establish a controlled provider onboarding model with reusable collection contracts, evidence preservation, schema validation, failure handling, and domain governance.
+
+### v2.2 Priority Engine
+
+Classify verified events as Critical, High Impact, Regional, or Monitoring using deterministic evidence such as severity, official confirmation, independent sources, impact, geographic scope, and freshness.
+
+### v2.3 Entity Intelligence
+
+Expand evidence-backed identity, aliases, timelines, and relationships across people, organizations, places, companies, products, technologies, diseases, hazards, vulnerabilities, and financial assets.
+
+### v2.4 Marketplace Architecture
+
+Define the catalog, digital product, asset, version, provenance, and license boundaries for a future digital-only Marketplace. Commerce is not included.
+
+## Future — v3 Product Platform
+
+### v3 Identity Platform
+
+Plan authentication, organizations, teams, roles, permissions, durable preferences, watchlists, notifications, and API credentials.
+
+### v3 Evidence-Grounded AI Workspace
+
+Plan cited research, summarization, translation, report drafting, notebooks, analyst workflows, controlled agents, and human review. AI outputs remain non-canonical.
+
+### v3 Developer Platform
+
+Plan governed API documentation, SDKs, webhooks, streaming, integrations, CLI access, and third-party applications.
+
+## Recommended order
+
+1. Source governance
+2. Provider collection and evidence
+3. Deterministic priority
+4. Entity expansion
+5. Identity and authorization
+6. Marketplace catalog architecture
+7. Evidence-grounded AI
+8. Developer ecosystem
+
+Trust, provenance, rights, and compatibility are release gates for every stage.
