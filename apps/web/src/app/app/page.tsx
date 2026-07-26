@@ -1,5 +1,5 @@
-import { ResponsiveAtlasDashboard } from "@/components/mobile/ResponsiveAtlasDashboard";
+import { AtlasDashboard } from "@/components/dashboard/AtlasDashboard";
 
 export default function DashboardPage() {
-  return <ResponsiveAtlasDashboard />;
+  return <AtlasDashboard />;
 }

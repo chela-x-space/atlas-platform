@@ -45,7 +45,7 @@ test("news service supports partial and all-source failure without mock fallback
 
 test("dashboard consumes the unified ATLAS snapshot", async () => {
   const dashboard = await read("../src/components/dashboard/AtlasDashboard.tsx");
-  assert.match(dashboard, /fetch\("\/api\/dashboard"\)/); assert.match(dashboard, /MetricStrip earthquakeCount/); assert.match(dashboard, /technologyNews/); assert.doesNotMatch(dashboard, /\/api\/earthquakes|\/api\/cyclones|\/api\/news/); assert.doesNotMatch(dashboard, /Hachijojima|GPT-4o Update|Bitcoin Reaches New High/);
+  assert.match(dashboard, /fetch\("\/api\/dashboard"\)/); assert.match(dashboard, /timelineEvents/); assert.match(dashboard, /situationCounts/); assert.doesNotMatch(dashboard, /\/api\/earthquakes|\/api\/cyclones|\/api\/news/); assert.doesNotMatch(dashboard, /Hachijojima|GPT-4o Update|Bitcoin Reaches New High/);
 });
 
 test("NHC normalization only emits coordinates present in official XML", async () => {

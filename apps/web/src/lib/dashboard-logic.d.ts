@@ -1,7 +1,13 @@
 export const MENU_ROUTES: Readonly<Record<string, string>>;
 export const EARTHQUAKE_FEEDS: Readonly<Record<"24h" | "7d" | "30d", string>>;
 export const EARTHQUAKE_LAYER_IDS: readonly string[];
+export const SEVERITY_RANK: Readonly<Record<string, number>>;
+export const SITUATION_LEVELS: readonly Readonly<{ key: string; label: string; severities: readonly string[] }>[];
 export function routeForMenu(label: string): string | null;
+export function compareDashboardEvents<T extends { id: string; severity: string; occurredAt: string; metadata?: Readonly<Record<string, unknown>> }>(left: T, right: T): number;
+export function rankDashboardEvents<T extends { id: string; severity: string; occurredAt: string; metadata?: Readonly<Record<string, unknown>> }>(events: readonly T[]): T[];
+export function situationCounts<T extends { severity: string }>(events: readonly T[]): Array<{ key: string; label: string; severities: readonly string[]; count: number }>;
+export function hotRegions<T extends { region?: string; severity: string }>(events: readonly T[]): Array<{ name: string; count: number; highestSeverity: string }>;
 export function feedForRange(range: string): string;
 export function earthquakeLayersVisible(activeLayer: string): boolean;
 export function filterEvents<T extends readonly string[]>(events: readonly T[], query: string): T[];

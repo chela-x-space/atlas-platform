@@ -64,6 +64,7 @@ const groups = [
     title: "MORE",
     items: [
       ["▣", "Reports"],
+      ["◈", "Marketplace"],
       ["ⓘ", "About Atlas"],
       ["⚙", "Settings"],
     ],
