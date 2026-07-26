@@ -34,7 +34,21 @@ Marketplace ── future digital-product domain, kept separate from intelligenc
 
 ### Sources and registry
 
-The registry governs provider identity, trust, coverage, rights, attribution, collection policy, and operational health. A configured source is not automatically approved or active.
+The Global Source Registry is the canonical control plane for external intelligence providers. It governs provider identity, trust, coverage, languages, capabilities, rights, attribution, collection policy, credentials by reference, and operational health.
+
+Provider governance is distinct from collection:
+
+```text
+Registered → Review → Approved → Active
+                         ↓         ↓
+                    Suspended ← Health
+                         ↓
+                      Retired
+```
+
+Registration does not mean approval. Approval does not mean a collector exists. Activation requires passed legal, schema, quality, operational, and security reviews plus valid collection, rights, refresh, rate-limit, timeout, and attribution configuration.
+
+Registry health records distinguish successful data, a valid empty response, provider failure, authentication failure, rate limiting, and schema failure. Registry status never fabricates ingestion success.
 
 ### Collection and evidence
 
@@ -65,6 +79,9 @@ Marketplace is a separate future catalog for digital products. Marketplace conte
 ## Boundaries
 
 - Providers do not write directly to product views.
+- Registry state governs providers but does not create intelligence events.
+- Credentials remain external secrets referenced indirectly and are never returned by registry APIs.
+- Restricted and internal-only providers are excluded from public projections.
 - Product views do not create canonical facts.
 - AI may assist analysts only through evidence-grounded, non-canonical outputs.
 - User, organization, and Marketplace data remain separate from canonical intelligence.

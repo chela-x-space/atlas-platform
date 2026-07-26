@@ -62,4 +62,10 @@ Marketplace products do not become canonical intelligence without passing the no
 
 Roadmap entries communicate direction only. New identity, provider, storage, delivery, commerce, AI, or public API boundaries require explicit approval before implementation.
 
+## DECISION-011 — Global Source Registry is the provider control plane
+
+**Status:** Accepted
+
+The Global Source Registry is the canonical control plane for all external intelligence providers. Registration, approval, activation, collector connection, health, and public-display eligibility remain explicit and independently governed. Provider configuration is versioned and auditable; credentials remain external secrets.
+
 See [Vision](VISION.md), [Architecture](ARCHITECTURE.md), and [Standards](STANDARDS.md).

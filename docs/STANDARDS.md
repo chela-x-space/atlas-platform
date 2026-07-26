@@ -22,6 +22,10 @@ Provider identity, source links, timestamps, freshness, and required attribution
 
 A provider must have an approved identity, authority, scope, rights, collection policy, failure policy, and operational owner before activation. Availability is never inferred from configuration alone.
 
+Registration, approval, activation, and collector connection are separate states. Activation requires deterministic governance gates; no AI may determine provider trust, reviews, lifecycle, or health.
+
+Provider configuration changes are versioned and audited. Credential values remain in approved secret systems and are represented only by indirect references inside the registry.
+
 ## Explicit Failure
 
 Partial, stale, degraded, unavailable, and empty states are distinct. Previously verified stale data may be used only when clearly identified; upstream failure must not appear as a successful empty result.

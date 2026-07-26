@@ -15,6 +15,12 @@ The product helps users understand the most important events happening in the wo
 
 The Markdown documents above are the product and architecture documentation system. The OpenAPI file is the machine-readable public API contract.
 
+## Source Registry administration
+
+The v2.0 Global Source Registry is available only through `/api/internal/source-registry`. Administrative requests require `ATLAS_INTERNAL_ADMIN_TOKEN` as a bearer token. Registry persistence uses `ATLAS_SOURCE_REGISTRY_PATH` when configured; the default local runtime file is suitable for development and a durable mounted path is required for production.
+
+The registry never returns credential references. No Source Registry mutation was added to `/api/v1/*`.
+
 ## Development validation
 
 From `apps/web` run:

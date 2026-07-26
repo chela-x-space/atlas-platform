@@ -18,15 +18,19 @@ Completed:
 - Read-only Intelligence API v1
 - Marketplace navigation and Coming Soon placeholder
 
-## Next — v2 Platform Foundation
+## Current — v2 Platform Foundation
 
-### v2.0 Source Registry
+### v2.0 Source Registry — Completed
 
-Govern provider identity, trust, licensing, coverage, refresh policy, credentials, rate limits, health, and operational ownership.
+The canonical provider control plane now governs identity, trust, licensing, coverage, collection policy, activation gates, lifecycle, version history, credential references, and explicit health outcomes.
+
+## Next — Planning only
 
 ### v2.1 Provider Ecosystem
 
 Establish a controlled provider onboarding model with reusable collection contracts, evidence preservation, schema validation, failure handling, and domain governance.
+
+A safe read-only source directory may be proposed here through a separately reviewed contract. v2.0 does not change the frozen public Intelligence API.
 
 ### v2.2 Priority Engine
 
