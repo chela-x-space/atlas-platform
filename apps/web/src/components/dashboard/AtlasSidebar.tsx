@@ -1,5 +1,8 @@
 "use client";
 
+import { useI18n } from "@/lib/i18n/I18nProvider";
+import type { MessageKey } from "@/lib/i18n/messages/en";
+
 type AtlasSidebarProps = {
   activeItem: string;
   onSelect: (item: string) => void;
@@ -15,58 +18,61 @@ const externalLinks: Record<string, string | undefined> = {
   Threads: process.env.NEXT_PUBLIC_THREADS_URL,
 };
 
-const groups = [
+const groups: ReadonlyArray<{
+  title: MessageKey;
+  items: ReadonlyArray<readonly [string, string, MessageKey]>;
+}> = [
   {
-    title: "MONITOR",
+    title: "navigation.monitor",
     items: [
-      ["◉", "Global Overview"],
-      ["⌕", "Intelligence Search"],
-      ["◈", "Knowledge Graph"],
-      ["◍", "Watchlists"],
-      ["!", "Alerts"],
-      ["↗", "Notifications"],
-      ["◎", "World Map"],
-      ["◇", "Global Risk"],
-      ["◫", "Global Metrics"],
-      ["◒", "Source Sentiment"],
-      ["▣", "Global Timeline"],
-      ["⌘", "Breaking News"],
+      ["◉", "Global Overview", "navigation.globalOverview"],
+      ["⌕", "Intelligence Search", "navigation.intelligenceSearch"],
+      ["◈", "Knowledge Graph", "navigation.knowledgeGraph"],
+      ["◍", "Watchlists", "navigation.watchlists"],
+      ["!", "Alerts", "navigation.alerts"],
+      ["↗", "Notifications", "navigation.notifications"],
+      ["◎", "World Map", "navigation.worldMap"],
+      ["◇", "Global Risk", "navigation.globalRisk"],
+      ["◫", "Global Metrics", "navigation.globalMetrics"],
+      ["◒", "Source Sentiment", "navigation.sourceSentiment"],
+      ["▣", "Global Timeline", "navigation.globalTimeline"],
+      ["⌘", "Breaking News", "navigation.breakingNews"],
     ],
   },
   {
-    title: "CATEGORIES",
+    title: "navigation.categories",
     items: [
-      ["◉", "Earthquake"],
-      ["▲", "Volcano"],
-      ["☁", "Weather & Climate"],
-      ["△", "Disasters"],
-      ["✕", "Conflict"],
-      ["▰", "Economy & Markets"],
-      ["✦", "AI & Technology"],
-      ["◌", "Cybersecurity"],
-      ["✈", "Aviation (Flights)"],
-      ["▰", "Marine (Ships)"],
-      ["◉", "Space & Satellites"],
-      ["ϟ", "Energy"],
-      ["♥", "Health & Disease"],
+      ["◉", "Earthquake", "navigation.earthquake"],
+      ["▲", "Volcano", "navigation.volcano"],
+      ["☁", "Weather & Climate", "navigation.weatherClimate"],
+      ["△", "Disasters", "navigation.disasters"],
+      ["✕", "Conflict", "navigation.conflict"],
+      ["▰", "Economy & Markets", "navigation.economyMarkets"],
+      ["✦", "AI & Technology", "navigation.aiTechnology"],
+      ["◌", "Cybersecurity", "navigation.cybersecurity"],
+      ["✈", "Aviation (Flights)", "navigation.aviation"],
+      ["▰", "Marine (Ships)", "navigation.marine"],
+      ["◉", "Space & Satellites", "navigation.spaceSatellites"],
+      ["ϟ", "Energy", "navigation.energy"],
+      ["♥", "Health & Disease", "navigation.healthDisease"],
     ],
   },
   {
-    title: "TOOLS",
+    title: "navigation.tools",
     items: [
-      ["⌘", "Compare Countries"],
-      ["⌘", "Data Explorer"],
-      ["⌘", "API & Widgets"],
-      ["◫", "Source Center"],
+      ["⌘", "Compare Countries", "navigation.compareCountries"],
+      ["⌘", "Data Explorer", "navigation.dataExplorer"],
+      ["⌘", "API & Widgets", "navigation.apiWidgets"],
+      ["◫", "Source Center", "navigation.sourceCenter"],
     ],
   },
   {
-    title: "MORE",
+    title: "navigation.more",
     items: [
-      ["▣", "Reports"],
-      ["◈", "Marketplace"],
-      ["ⓘ", "About Atlas"],
-      ["⚙", "Settings"],
+      ["▣", "Reports", "navigation.reports"],
+      ["◈", "Marketplace", "navigation.marketplace"],
+      ["ⓘ", "About Atlas", "navigation.about"],
+      ["⚙", "Settings", "navigation.settings"],
     ],
   },
 ];
@@ -75,6 +81,7 @@ export function AtlasSidebar({
   activeItem,
   onSelect,
 }: AtlasSidebarProps) {
+  const { t } = useI18n();
   return (
     <aside className="atlas-v4-sidebar">
       <div className="atlas-v4-brand">
@@ -82,8 +89,8 @@ export function AtlasSidebar({
 
         <div>
           <strong>ATLAS</strong>
-          <span>LIVING DASHBOARD</span>
-          <small>OF PLANET EARTH</small>
+          <span>{t("shell.subtitle")}</span>
+          <small>{t("shell.subtitleDetail")}</small>
         </div>
       </div>
 
@@ -93,21 +100,21 @@ export function AtlasSidebar({
             className="atlas-v4-menu-group"
             key={group.title}
           >
-            <p>{group.title}</p>
+            <p>{t(group.title)}</p>
 
-            {group.items.map(([icon, label]) => (
+            {group.items.map(([icon, routeLabel, messageKey]) => (
               <button
                 type="button"
-                key={label}
+                key={routeLabel}
                 className={
-                  activeItem === label
+                  activeItem === routeLabel
                     ? "atlas-v4-menu-item active"
                     : "atlas-v4-menu-item"
                 }
-                onClick={() => onSelect(label)}
+                onClick={() => onSelect(routeLabel)}
               >
-                <span>{icon}</span>
-                {label}
+                <span aria-hidden="true">{icon}</span>
+                {t(messageKey)}
               </button>
             ))}
           </section>
@@ -117,8 +124,8 @@ export function AtlasSidebar({
           <div className="atlas-v4-mobile-icon">⌖</div>
 
           <div>
-            <strong>ATLAS MOBILE</strong>
-            <small>Stay informed anywhere</small>
+            <strong>{t("shell.mobile")}</strong>
+            <small>{t("shell.mobileDescription")}</small>
           </div>
 
           <div className="atlas-v4-store-row">

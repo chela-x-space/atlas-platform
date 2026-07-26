@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { AtlasSidebar } from "./AtlasSidebar";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import {
   hotRegions,
   rankDashboardEvents,
@@ -12,6 +13,8 @@ import {
   situationCounts,
 } from "@/lib/dashboard-logic.mjs";
 import { safeExternalUrl } from "@/lib/security/external-url.mjs";
+import { useI18n } from "@/lib/i18n/I18nProvider";
+import type { MessageKey } from "@/lib/i18n/messages/en";
 import type {
   AtlasDashboardSnapshot,
   AtlasEvidenceMedia,
@@ -21,40 +24,56 @@ import type {
 } from "@/types/atlas-data";
 
 const CATEGORY_GROUPS: ReadonlyArray<{
-  label: string;
+  label: MessageKey;
   categories: readonly AtlasEventCategory[];
 }> = [
-  { label: "Markets and Economy", categories: ["market"] },
-  { label: "AI and Technology", categories: ["technology", "science"] },
-  { label: "Cyber Security", categories: ["cyber"] },
-  { label: "Weather and Disasters", categories: ["earthquake", "cyclone", "weather", "climate", "wildfire", "flood", "volcano"] },
-  { label: "Space", categories: ["space", "earth-observation"] },
-  { label: "Health", categories: ["health"] },
+  { label: "category.marketsEconomy", categories: ["market"] },
+  { label: "category.aiTechnology", categories: ["technology", "science"] },
+  { label: "category.cyberSecurity", categories: ["cyber"] },
+  { label: "category.weatherDisasters", categories: ["earthquake", "cyclone", "weather", "climate", "wildfire", "flood", "volcano"] },
+  { label: "category.space", categories: ["space", "earth-observation"] },
+  { label: "category.health", categories: ["health"] },
 ];
 
-const severityLabel: Record<AtlasSeverity, string> = {
-  critical: "Critical",
-  high: "High impact",
-  moderate: "Regional",
-  low: "Low",
-  info: "Monitoring",
-  unknown: "Monitoring",
+const severityMessage: Record<AtlasSeverity, MessageKey> = {
+  critical: "severity.critical",
+  high: "severity.highImpact",
+  moderate: "severity.regional",
+  low: "severity.low",
+  info: "severity.monitoring",
+  unknown: "severity.monitoring",
+};
+const summaryMessage = {
+  critical: "severity.critical",
+  "high-impact": "severity.highImpact",
+  regional: "severity.regional",
+  monitoring: "severity.monitoring",
+} as const satisfies Record<string, MessageKey>;
+
+const categoryMessages: Partial<Record<string, MessageKey>> = {
+  earthquake: "enum.earthquake", volcano: "enum.volcano", weather: "enum.weather",
+  disaster: "enum.disaster", conflict: "enum.conflict", economy: "enum.economy",
+  market: "enum.markets", markets: "enum.markets", technology: "enum.aiTechnology",
+  cyber: "enum.cybersecurity", cybersecurity: "enum.cybersecurity", aviation: "enum.aviation",
+  marine: "enum.marine", space: "enum.space", energy: "enum.energy", health: "enum.health",
 };
 
 const visualMediaTypes=new Set(["OFFICIAL_IMAGE","SATELLITE_IMAGE","MAP","LOGO","CHART","GRAPH","INFOGRAPHIC","SCREENSHOT"]);
 function safeMediaUrl(value:string){try{const url=new URL(value);return url.protocol==="https:"&&!url.username&&!url.password?url.toString():null}catch{return null}}
 
 function EventCard({ event, featured = false, media }: { event: AtlasEvent; featured?: boolean;media?:AtlasEvidenceMedia }) {
+  const { formatDateTime, t } = useI18n();
   const sourceUrl = safeExternalUrl(event.sourceUrl);
   const mediaUrl=media?safeMediaUrl(media.thumbnailUrl??media.displayUrl):null;
+  const categoryMessage = categoryMessages[event.category];
   return (
     <article className={`situation-event severity-${event.severity}${featured ? " featured" : ""}`}>
       <header>
         <span className="severity-chip">
           <i aria-hidden="true" />
-          {severityLabel[event.severity]}
+          {t(severityMessage[event.severity])}
         </span>
-        <span>{event.category.replaceAll("-", " ")}</span>
+        <span>{categoryMessage ? t(categoryMessage) : event.category.replaceAll("-", " ")}</span>
       </header>
       {media&&mediaUrl&&visualMediaTypes.has(media.mediaType)?(
         <figure className="evidence-media">
@@ -66,26 +85,27 @@ function EventCard({ event, featured = false, media }: { event: AtlasEvent; feat
       <h3>
         <Link href={`/app/events/${encodeURIComponent(event.id)}`}>{event.title}</Link>
       </h3>
-      <p>{event.summary || "Verified summary unavailable."}</p>
+      <p>{event.summary || t("label.noData")}</p>
       <dl>
-        <div><dt>Region</dt><dd>{event.region || event.countryCode || "Global / unspecified"}</dd></div>
-        <div><dt>Observed</dt><dd><time dateTime={event.occurredAt}>{new Date(event.occurredAt).toLocaleString()}</time></dd></div>
+        <div><dt>{t("label.region")}</dt><dd>{event.region || event.countryCode || t("label.unknown")}</dd></div>
+        <div><dt>{t("label.observed")}</dt><dd><time dateTime={event.occurredAt}>{formatDateTime(event.occurredAt)}</time></dd></div>
       </dl>
       <footer>
-        <span>Source: {event.sourceName}</span>
-        {sourceUrl ? <a href={sourceUrl} target="_blank" rel="noopener noreferrer">Verify source ↗</a> : <span>{event.attribution}</span>}
+        <span>{t("label.source")}: {event.sourceName}</span>
+        {sourceUrl ? <a href={sourceUrl} target="_blank" rel="noopener noreferrer">{t("action.verifySource")} ↗</a> : <span>{event.attribution}</span>}
       </footer>
     </article>
   );
 }
 
 export function AtlasDashboard() {
+  const { formatDateTime, formatNumber, t } = useI18n();
   const router = useRouter();
   const searchRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const [snapshot, setSnapshot] = useState<AtlasDashboardSnapshot | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -96,7 +116,7 @@ export function AtlasDashboard() {
         if (!cancelled) setSnapshot(data as AtlasDashboardSnapshot);
       })
       .catch(() => {
-        if (!cancelled) setError("Awaiting verified intelligence. ATLAS Data Hub is currently unavailable.");
+        if (!cancelled) setError(true);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -152,97 +172,98 @@ export function AtlasDashboard() {
           <Link className="situation-mobile-brand" href="/app" aria-label="ATLAS Global Intelligence home">ATLAS</Link>
           <form className="atlas-v4-search" role="search" onSubmit={submitSearch}>
             <span aria-hidden="true">⌕</span>
-            <input ref={searchRef} type="search" value={query} placeholder="Search intelligence…" aria-label="Search intelligence" onChange={(event) => setQuery(event.target.value)} />
+            <input ref={searchRef} type="search" value={query} placeholder={t("search.placeholder")} aria-label={t("search.label")} onChange={(event) => setQuery(event.target.value)} />
             <kbd>/</kbd>
           </form>
-          <nav aria-label="Dashboard utilities">
-            <Link href="/app/map">Map</Link>
-            <Link href="/app/timeline">Timeline</Link>
-            <Link href="/app/search">Search</Link>
+          <nav aria-label={t("navigation.dashboardUtilities")}>
+            <Link href="/app/map">{t("navigation.map")}</Link>
+            <Link href="/app/timeline">{t("navigation.timeline")}</Link>
+            <Link href="/app/search">{t("navigation.search")}</Link>
           </nav>
+          <LanguageSwitcher />
         </header>
 
         <div className="situation-content">
           <section className="situation-hero" aria-labelledby="global-situation-heading">
             <div>
-              <p>ATLAS · GLOBAL INTELLIGENCE PLATFORM</p>
-              <h1 id="global-situation-heading">GLOBAL SITUATION NOW</h1>
-              <span>Verified, high-impact events from connected public sources.</span>
+              <p>{t("dashboard.platform")}</p>
+              <h1 id="global-situation-heading">{t("dashboard.globalSituation.title")}</h1>
+              <span>{t("dashboard.globalSituation.description")}</span>
             </div>
             <p className="situation-freshness">
-              {snapshot ? <>Snapshot <time dateTime={snapshot.generatedAt}>{new Date(snapshot.generatedAt).toLocaleString()}</time></> : loading ? "Loading verified intelligence…" : "Data unavailable"}
+              {snapshot ? <>{t("dashboard.snapshot")} <time dateTime={snapshot.generatedAt}>{formatDateTime(snapshot.generatedAt)}</time></> : loading ? t("dashboard.loadingVerified") : t("dashboard.unavailable")}
             </p>
           </section>
 
-          {error ? <div className="situation-state error" role="status">{error}</div> : null}
+          {error ? <div className="situation-state error" role="status">{t("dashboard.error")}</div> : null}
 
-          <section className="situation-summary" aria-label="Global event severity summary" aria-busy={loading}>
+          <section className="situation-summary" aria-label={t("dashboard.severitySummary")} aria-busy={loading}>
             {summaries.map((summary) => (
               <article className={`level-${summary.key}`} key={summary.key}>
-                <span><i aria-hidden="true" />{summary.label}</span>
-                <strong>{loading ? "—" : summary.count}</strong>
-                <small>{loading ? "Awaiting verified intelligence" : summary.count === 0 ? "No events detected" : `${summary.count} verified event${summary.count === 1 ? "" : "s"}`}</small>
+                <span><i aria-hidden="true" />{t(summaryMessage[summary.key])}</span>
+                <strong>{loading ? "—" : formatNumber(summary.count)}</strong>
+                <small>{loading ? t("dashboard.awaiting") : summary.count === 0 ? t("dashboard.noEvents") : t(summary.count === 1 ? "dashboard.verifiedEvent" : "dashboard.verifiedEvents", { count: formatNumber(summary.count) })}</small>
               </article>
             ))}
           </section>
 
           <section className="situation-section top-events" aria-labelledby="top-global-events-heading">
             <div className="situation-heading">
-              <div><span>PRIORITY BRIEF</span><h2 id="top-global-events-heading">TOP GLOBAL EVENTS</h2></div>
-              <Link href="/app/timeline">View Live Timeline →</Link>
+              <div><span>{t("dashboard.priorityBrief")}</span><h2 id="top-global-events-heading">{t("dashboard.topEvents")}</h2></div>
+              <Link href="/app/timeline">{t("dashboard.viewLiveTimeline")} →</Link>
             </div>
             {topEvents.length ? (
               <div className="top-event-grid">
                 {topEvents.map((event, index) => <EventCard event={event} featured={index === 0} media={snapshot?.evidenceMedia?.[event.id]} key={event.id} />)}
               </div>
-            ) : <div className="situation-state" role="status">{loading ? "Loading verified events…" : "No critical events detected"}</div>}
+            ) : <div className="situation-state" role="status">{loading ? t("dashboard.loadingEvents") : t("dashboard.noCritical")}</div>}
           </section>
 
           <div className="situation-columns">
             <section className="situation-section hot-regions" aria-labelledby="hot-regions-heading">
-              <div className="situation-heading"><div><span>GEOGRAPHIC VIEW</span><h2 id="hot-regions-heading">HOT REGIONS</h2></div></div>
+              <div className="situation-heading"><div><span>{t("dashboard.geographicView")}</span><h2 id="hot-regions-heading">{t("dashboard.hotRegions")}</h2></div></div>
               {regions.length ? (
                 <ol>
                   {regions.map((region) => (
                     <li key={region.name}>
-                      <div><strong>{region.name}</strong><span>{severityLabel[region.highestSeverity as AtlasSeverity]} highest severity</span></div>
-                      <b>{region.count} event{region.count === 1 ? "" : "s"}</b>
-                      <Link href="/app/timeline" aria-label={`View timeline for ${region.name}`}>View →</Link>
+                      <div><strong>{region.name}</strong><span>{t("dashboard.highestSeverity", { severity: t(severityMessage[region.highestSeverity as AtlasSeverity]) })}</span></div>
+                      <b>{t(region.count === 1 ? "dashboard.event" : "dashboard.events", { count: formatNumber(region.count) })}</b>
+                      <Link href="/app/timeline" aria-label={`${t("action.viewTimeline")}: ${region.name}`}>{t("dashboard.view")} →</Link>
                     </li>
                   ))}
                 </ol>
-              ) : <div className="situation-state">{loading ? "Deriving active regions…" : "No active regions in verified intelligence"}</div>}
+              ) : <div className="situation-state">{loading ? t("dashboard.derivingRegions") : t("dashboard.noActiveRegions")}</div>}
             </section>
 
             <section className="situation-section category-intelligence" aria-labelledby="category-intelligence-heading">
-              <div className="situation-heading"><div><span>DOMAIN SIGNALS</span><h2 id="category-intelligence-heading">CATEGORY INTELLIGENCE</h2></div></div>
+              <div className="situation-heading"><div><span>{t("dashboard.domainSignals")}</span><h2 id="category-intelligence-heading">{t("dashboard.categoryIntelligence")}</h2></div></div>
               {categoryIntelligence.length ? (
                 <div className="category-grid">
                   {categoryIntelligence.map((group) => (
                     <article className={`severity-${group.events[0].severity}`} key={group.label}>
-                      <span>{group.label}</span>
-                      <strong>{group.events.length} active event{group.events.length === 1 ? "" : "s"}</strong>
-                      <small>Highest: {severityLabel[group.events[0].severity as AtlasSeverity]}</small>
+                      <span>{t(group.label)}</span>
+                      <strong>{t(group.events.length === 1 ? "dashboard.activeEvent" : "dashboard.activeEvents", { count: formatNumber(group.events.length) })}</strong>
+                      <small>{t("dashboard.highest", { severity: t(severityMessage[group.events[0].severity as AtlasSeverity]) })}</small>
                     </article>
                   ))}
                 </div>
-              ) : <div className="situation-state">{loading ? "Loading category intelligence…" : "Awaiting verified intelligence"}</div>}
+              ) : <div className="situation-state">{loading ? t("dashboard.loadingCategories") : t("dashboard.awaiting")}</div>}
             </section>
           </div>
 
           <section className="situation-section latest-intelligence" aria-labelledby="latest-intelligence-heading">
             <div className="situation-heading">
-              <div><span>VERIFIED FEED</span><h2 id="latest-intelligence-heading">LATEST VERIFIED INTELLIGENCE</h2></div>
-              <Link href="/app/sources">Source Center →</Link>
+              <div><span>{t("dashboard.verifiedFeed")}</span><h2 id="latest-intelligence-heading">{t("dashboard.latestVerified")}</h2></div>
+              <Link href="/app/sources">{t("navigation.sourceCenter")} →</Link>
             </div>
             {latestEvents.length ? (
               <div className="latest-event-grid">
                 {latestEvents.map((event) => <EventCard event={event} media={snapshot?.evidenceMedia?.[event.id]} key={event.id} />)}
               </div>
-            ) : <div className="situation-state">{loading ? "Loading recent intelligence…" : events.length ? "All current events are included in the priority brief." : "Awaiting verified intelligence"}</div>}
+            ) : <div className="situation-state">{loading ? t("dashboard.loadingRecent") : events.length ? t("dashboard.allInBrief") : t("dashboard.awaiting")}</div>}
           </section>
 
-          <p className="situation-disclaimer">ATLAS aggregates third-party public data. Coverage and update frequency vary. Verify critical information with the originating authority.</p>
+          <p className="situation-disclaimer">{t("dashboard.disclaimer")}</p>
         </div>
       </main>
     </div>

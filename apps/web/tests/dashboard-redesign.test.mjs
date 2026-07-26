@@ -5,6 +5,7 @@ import { readFile } from "node:fs/promises";
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 const dashboard = await read("../src/components/dashboard/AtlasDashboard.tsx");
 const sidebar = await read("../src/components/dashboard/AtlasSidebar.tsx");
+const english = await read("../src/lib/i18n/messages/en.ts");
 const mapPage = await read("../src/app/app/map/page.tsx");
 const marketplace = await read("../src/app/(public)/marketplace/page.tsx");
 
@@ -18,7 +19,7 @@ test("homepage follows the situation-driven hierarchy without a map component", 
   ];
   let previous = -1;
   for (const heading of headings) {
-    const index = dashboard.indexOf(heading);
+    const index = english.indexOf(heading);
     assert.ok(index > previous, `${heading} must appear in hierarchy order`);
     previous = index;
   }
@@ -31,7 +32,7 @@ test("dedicated Map route remains wired to the canonical map component", () => {
 });
 
 test("Marketplace is navigation-only and absent from homepage content", () => {
-  assert.match(sidebar, /\["◈", "Marketplace"\]/);
+  assert.match(sidebar, /\["◈", "Marketplace", "navigation\.marketplace"\]/);
   assert.doesNotMatch(dashboard, /Marketplace|products|price|checkout/i);
 });
 
@@ -43,9 +44,9 @@ test("Marketplace placeholder renders only its coming-soon positioning", () => {
 });
 
 test("dashboard exposes deterministic empty and unavailable states", () => {
-  assert.match(dashboard, /No critical events detected/);
-  assert.match(dashboard, /Awaiting verified intelligence/);
-  assert.match(dashboard, /Data unavailable/);
+  assert.match(english, /No critical events detected/);
+  assert.match(english, /Awaiting verified intelligence/);
+  assert.match(english, /Data unavailable/);
   assert.doesNotMatch(dashboard, /count:\s*\d+/);
 });
 

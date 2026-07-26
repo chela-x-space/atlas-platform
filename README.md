@@ -31,6 +31,8 @@ The registry starts empty because no existing media currently satisfies the comp
 
 The v2.2 Provider Runtime is the governed execution-control layer at `/api/internal/provider-runtime`. It requires `ATLAS_PROVIDER_RUNTIME_PATH` and the existing `ATLAS_INTERNAL_ADMIN_TOKEN`. Without runtime storage configuration, internal runtime endpoints return an explicit configuration error while public pages, Dashboard, Source Registry, and Evidence Media continue normally.
 
+The locale-neutral `/app` dashboard supports English and Thai interface labels. The selected locale is stored in the browser under `atlas.locale`; a valid saved preference takes precedence over device language, and English is the deterministic fallback. Canonical source titles, excerpts, provider identities, URLs, timestamps, attribution, and provenance are not translated or mutated.
+
 Collectors are registered in code. The runtime stores policies, bindings, claims, attempts, observed health, and append-only audit events, but never credentials or collector output as canonical evidence. No providers, bindings, executions, or health outcomes are seeded.
 
 ## Development validation

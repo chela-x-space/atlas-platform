@@ -100,6 +100,8 @@ The Dashboard presents the most important verified global events. Map, Timeline,
 
 Marketplace is a separate future catalog for digital products. Marketplace content is not automatically trusted intelligence and cannot enter canonical data without the normal provider-governance process.
 
+The `/app` presentation shell supports English and Thai through browser-local locale state. English is the deterministic server and missing-key fallback; a valid saved preference takes precedence over device language. Localization changes interface labels and formatting only. Canonical titles, excerpts, provider identities, identifiers, URLs, timestamps, and provenance remain language-preserving.
+
 ## Boundaries
 
 - Providers do not write directly to product views.
@@ -111,6 +113,7 @@ Marketplace is a separate future catalog for digital products. Marketplace conte
 - Credentials remain external secrets referenced indirectly and are never returned by registry APIs.
 - Restricted and internal-only providers are excluded from public projections.
 - Product views do not create canonical facts.
+- Presentation localization does not mutate canonical intelligence or provenance.
 - AI may assist analysts only through evidence-grounded, non-canonical outputs.
 - User, organization, and Marketplace data remain separate from canonical intelligence.
 - Public API changes require explicit authorization and compatibility planning.

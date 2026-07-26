@@ -32,6 +32,10 @@ The canonical media layer now provides typed provenance and rights, provider mat
 
 The canonical execution-control layer now governs registry eligibility, collector bindings, schedules, claims, bounded concurrency, persisted rate limits, explicit retry and timeout policies, isolated execution results, observational health, and append-only audit events.
 
+### v2.2.1 `/app` Internationalization Foundation — Completed
+
+The locale-neutral `/app` dashboard now supports English and Thai interface presentation with a browser-local preference, deterministic English fallback, locale-aware formatting, and unchanged canonical source content. Translation of dynamic source titles and excerpts remains future work.
+
 ## Next — Planning only
 
 ### v2.3 Evidence Pipeline

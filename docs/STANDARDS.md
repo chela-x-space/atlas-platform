@@ -18,6 +18,10 @@ Canonical intelligence has stable ownership and identity. Timeline, Search, Map,
 
 Provider identity, source links, timestamps, freshness, and required attribution follow intelligence through every permitted projection and export.
 
+## Language-Preserving Intelligence
+
+Interface localization is presentation state. It may translate product labels and format dates or numbers, but it must not overwrite canonical titles, excerpts, provider names, identifiers, URLs, timestamps, attribution, or provenance. Missing interface translations fall back deterministically to English; dynamic source-content translation requires a separately governed future capability.
+
 ## Evidence Media
 
 Media is evidence, not decoration. Intelligence records use media references; the canonical media layer owns URL validation, provenance, rights, deduplication, audit history, and deterministic selection. Media without explicit display rights is not shown, and AI-generated media never substitutes for official evidence.

@@ -84,4 +84,10 @@ The runtime owns deterministic scheduling, claims, bounded concurrency, provider
 
 The runtime does not approve providers, infer vendor limits, create provider-specific business logic, run an unbounded worker, or use AI for canonical decisions. The public `/api/v1/*` and OpenAPI contracts remain frozen. Promotion of collector results through an Evidence Pipeline is future work.
 
+## DECISION-014 — `/app` localization is browser-local presentation state
+
+**Status:** Accepted
+
+The locale-neutral `/app` dashboard supports English and Thai. An explicit browser preference takes precedence over device language, with English as the deterministic server and missing-key fallback. Localization may change interface labels and presentation formatting, but it does not modify canonical intelligence, provider content, identifiers, timestamps, attribution, or provenance. Dynamic source-content translation remains future work.
+
 See [Vision](VISION.md), [Architecture](ARCHITECTURE.md), and [Standards](STANDARDS.md).

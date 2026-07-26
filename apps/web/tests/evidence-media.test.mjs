@@ -100,6 +100,7 @@ test("storage, service, internal API, and dashboard fallback boundaries are wire
     "../src/components/dashboard/AtlasDashboard.tsx",
   ];
   const[store,service,auth,route,preview,bindings,dashboardApi,dashboard]=await Promise.all(paths.map(path=>readFile(new URL(path,import.meta.url),"utf8")));
+  const english=await readFile(new URL("../src/lib/i18n/messages/en.ts",import.meta.url),"utf8");
   assert.match(store,/rename\(temporary,this\.filePath\)/);
   assert.match(store,/history:MediaAssetVersion\[\]/);
   assert.match(service,/getSourceRegistry/);
@@ -112,7 +113,7 @@ test("storage, service, internal API, and dashboard fallback boundaries are wire
   assert.match(dashboardApi,/safeSelection/);
   assert.match(dashboard,/snapshot\?\.evidenceMedia/);
   assert.doesNotMatch(dashboard,/placeholder(?:-image|\.jpg)|media-placeholder/i);
-  assert.match(dashboard,/No critical events detected/);
+  assert.match(english,/No critical events detected/);
 });
 
 test("no fabricated initial media seeds or public API routes are introduced",async()=>{
