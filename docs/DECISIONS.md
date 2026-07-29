@@ -90,4 +90,10 @@ The runtime does not approve providers, infer vendor limits, create provider-spe
 
 The locale-neutral `/app` dashboard supports English and Thai. An explicit browser preference takes precedence over device language, with English as the deterministic server and missing-key fallback. Localization may change interface labels and presentation formatting, but it does not modify canonical intelligence, provider content, identifiers, timestamps, attribution, or provenance. Dynamic source-content translation remains future work.
 
+## DECISION-015 — Breaking Hero is a non-canonical presentation projection
+
+**Status:** Accepted
+
+v3.0 Phase 1 selects one hero event by reusing deterministic dashboard ordering and displays media only through the authoritative Evidence Media safe projection. Breaking labeling is limited to critical or high events observed within 24 hours of the dashboard snapshot. The hero cannot fabricate content, mutate canonical source fields, bypass rights controls, or persist priority state. This decision does not implement or replace the future Priority Engine.
+
 See [Vision](VISION.md), [Architecture](ARCHITECTURE.md), and [Standards](STANDARDS.md).

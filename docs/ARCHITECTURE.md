@@ -98,6 +98,8 @@ Reports assemble attributable intelligence without replacing its sources. The In
 
 The Dashboard presents the most important verified global events. Map, Timeline, Search, Reports, Risk, and Entity Graph remain specialized views over shared intelligence.
 
+The `/app` Breaking Hero is a presentation-only projection over the existing dashboard snapshot. It reuses deterministic dashboard ordering and consumes only the Evidence Media safe projection. It neither writes ranking state nor changes canonical event content, provider data, media rights, or dashboard/public contracts; it is not a Priority Engine.
+
 Marketplace is a separate future catalog for digital products. Marketplace content is not automatically trusted intelligence and cannot enter canonical data without the normal provider-governance process.
 
 The `/app` presentation shell supports English and Thai through browser-local locale state. English is the deterministic server and missing-key fallback; a valid saved preference takes precedence over device language. Localization changes interface labels and formatting only. Canonical titles, excerpts, provider identities, identifiers, URLs, timestamps, and provenance remain language-preserving.

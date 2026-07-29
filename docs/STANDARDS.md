@@ -26,6 +26,8 @@ Interface localization is presentation state. It may translate product labels an
 
 Media is evidence, not decoration. Intelligence records use media references; the canonical media layer owns URL validation, provenance, rights, deduplication, audit history, and deterministic selection. Media without explicit display rights is not shown, and AI-generated media never substitutes for official evidence.
 
+Homepage hero presentation uses only verified dashboard events and the safe Evidence Media projection. Selection must be deterministic and non-canonical, source titles and provider identities remain unchanged, and absent events or eligible media produce truthful empty or typography-led states rather than sample content.
+
 ## Provider Governance
 
 A provider must have an approved identity, authority, scope, rights, collection policy, failure policy, and operational owner before activation. Availability is never inferred from configuration alone.

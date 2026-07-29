@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { AtlasSidebar } from "./AtlasSidebar";
+import { BreakingHero, HeroEmptyState, HeroSkeleton } from "./BreakingHero";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import {
   hotRegions,
@@ -14,6 +15,7 @@ import {
 } from "@/lib/dashboard-logic.mjs";
 import { safeExternalUrl } from "@/lib/security/external-url.mjs";
 import { useI18n } from "@/lib/i18n/I18nProvider";
+import { isBreakingHeroEvent, selectDashboardHeroEvent } from "@/lib/dashboard-hero-logic.mjs";
 import type { MessageKey } from "@/lib/i18n/messages/en";
 import type {
   AtlasDashboardSnapshot,
@@ -99,7 +101,7 @@ function EventCard({ event, featured = false, media }: { event: AtlasEvent; feat
 }
 
 export function AtlasDashboard() {
-  const { formatDateTime, formatNumber, t } = useI18n();
+  const { formatNumber, t } = useI18n();
   const router = useRouter();
   const searchRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
@@ -137,6 +139,7 @@ export function AtlasDashboard() {
 
   const events = useMemo(() => snapshot?.timelineEvents ?? [], [snapshot]);
   const ranked = useMemo(() => rankDashboardEvents(events), [events]);
+  const heroEvent = useMemo(() => selectDashboardHeroEvent(events), [events]);
   const topEvents = ranked.slice(0, 5);
   const latestEvents = useMemo(
     () => [...ranked.slice(5)].sort((left, right) =>
@@ -184,16 +187,13 @@ export function AtlasDashboard() {
         </header>
 
         <div className="situation-content">
-          <section className="situation-hero" aria-labelledby="global-situation-heading">
-            <div>
-              <p>{t("dashboard.platform")}</p>
-              <h1 id="global-situation-heading">{t("dashboard.globalSituation.title")}</h1>
-              <span>{t("dashboard.globalSituation.description")}</span>
-            </div>
-            <p className="situation-freshness">
-              {snapshot ? <>{t("dashboard.snapshot")} <time dateTime={snapshot.generatedAt}>{formatDateTime(snapshot.generatedAt)}</time></> : loading ? t("dashboard.loadingVerified") : t("dashboard.unavailable")}
-            </p>
-          </section>
+          {loading ? <HeroSkeleton /> : heroEvent && snapshot ? (
+            <BreakingHero
+              event={heroEvent}
+              media={snapshot.evidenceMedia?.[heroEvent.id]}
+              breaking={isBreakingHeroEvent(heroEvent, snapshot.generatedAt)}
+            />
+          ) : !error ? <HeroEmptyState generatedAt={snapshot?.generatedAt} /> : null}
 
           {error ? <div className="situation-state error" role="status">{t("dashboard.error")}</div> : null}
 

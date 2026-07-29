@@ -36,6 +36,12 @@ The canonical execution-control layer now governs registry eligibility, collecto
 
 The locale-neutral `/app` dashboard now supports English and Thai interface presentation with a browser-local preference, deterministic English fallback, locale-aware formatting, and unchanged canonical source content. Translation of dynamic source titles and excerpts remains future work.
 
+## Current — v3.0 ATLAS Experience
+
+### Phase 1 Breaking Hero — Completed
+
+The first dominant `/app` content now presents one deterministically selected verified event, eligible safe Evidence Media, provenance, freshness, and evidence/source actions. This is a non-canonical presentation projection: it preserves source content and existing evidence-rights controls, permits no fabricated intelligence, and does not implement the planned Priority Engine.
+
 ## Next — Planning only
 
 ### v2.3 Evidence Pipeline

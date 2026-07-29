@@ -35,6 +35,10 @@ The locale-neutral `/app` dashboard supports English and Thai interface labels. 
 
 Collectors are registered in code. The runtime stores policies, bindings, claims, attempts, observed health, and append-only audit events, but never credentials or collector output as canonical evidence. No providers, bindings, executions, or health outcomes are seeded.
 
+## ATLAS Experience
+
+v3.0 Phase 1 adds a Breaking Intelligence Hero as the first dominant `/app` content. It deterministically projects the existing dashboard ranking and safe Evidence Media selection without changing canonical events, rights controls, dashboard contracts, or public APIs. No sample or fabricated intelligence is permitted, and this presentation layer is not the future Priority Engine.
+
 ## Development validation
 
 From `apps/web` run:
